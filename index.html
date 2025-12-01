@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hauler Helper - Star Citizen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #141b2d;
+            --bg-tertiary: #1a2332;
+            --color-primary: #4dd4ac;
+            --color-accent: #7ee7c4;
+            --color-success: #4ade80;
+            --color-warning: #fbbf24;
+            --color-danger: #ef4444;
+            --border-color: #2d3d54;
+            --text-primary: #e5e5e5;
+            --text-secondary: #8b92a8;
+        }
+
+        /* Theme: Stardust (default - teal/cyan) */
+        body[data-theme="stardust"] {
+            --color-primary: #4dd4ac;
+            --color-accent: #7ee7c4;
+        }
+
+        /* Theme: Lux (lime green) - Comprehensive palette */
+        body[data-theme="lux"] {
+            /* Backgrounds */
+            --bg-primary: #0f1510;      /* Deep Forest - Main page background (dark green tint) */
+            --bg-secondary: #1a2318;    /* Dark Olive - Panels (medium green) */
+            --bg-tertiary: #283525;     /* Forest Shadow - Dropdowns/Inputs (lighter green) */
+            
+            /* Primary brand colors */
+            --color-primary: #B4F500;   /* Electric Lime - Headers, capacity fills */
+            --color-accent: #9DFF00;    /* Vibrant Chartreuse - Hover states */
+            
+            /* Functional colors */
+            --color-success: #32CD32;   /* Fresh Lime - Add buttons */
+            --color-warning: #FFD600;   /* Golden Yellow - Warnings */
+            --color-danger: #FF4757;    /* Sunset Coral - Danger states */
+            --color-info: #00D9FF;      /* Electric Blue - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #7FE800;    /* Neon Green - Borders, panel outlines */
+            
+            /* Text */
+            --text-primary: #FFFFFF;    /* Pure White - Main readable text */
+            --text-secondary: #ADB5BD;  /* Cool Gray - Dimmed text, labels, hints */
+            --text-highlight: #00D9FF;  /* Electric Blue - important values */
+        }
+        
+        /* Lux theme - Payout dropdown special styling */
+        body[data-theme="lux"] .mission-payout select {
+            color: var(--color-info);
+            font-weight: 700;
+        }
+        
+        /* Lux theme - Stat values use cyan for high contrast */
+        body[data-theme="lux"] .stat-value {
+            color: var(--color-info);
+        }
+        
+        /* Lux theme - Location names use bright accent */
+        body[data-theme="lux"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        /* Lux theme - Mission titles use info color */
+        body[data-theme="lux"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Theme: Cruz Red */
+        /* Theme: Pulse (hot magenta) - Comprehensive palette */
+        body[data-theme="pulse"] {
+            /* Backgrounds */
+            --bg-primary: #1a1118;
+            --bg-secondary: #2a1a24;
+            --bg-tertiary: #3d2535;
+            
+            /* Primary brand colors */
+            --color-primary: #FF006E;      /* Hot Magenta - headers, main accents */
+            --color-accent: #FF1B8D;       /* Neon Fuchsia - hover states, highlights */
+            
+            /* Functional colors */
+            --color-success: #00FFA3;      /* Neon Mint - success states, add buttons */
+            --color-warning: #FF8800;      /* Bright Orange - warnings */
+            --color-danger: #E63946;       /* Vibrant Red - danger states */
+            --color-info: #00D4FF;         /* Bright Cyan - info, special highlights */
+            
+            /* Structural */
+            --border-color: #5d3d52;       /* Magenta-tinted mauve - borders */
+            
+            /* Text */
+            --text-primary: #FFFFFF;       /* Pure White - main text */
+            --text-secondary: #ADB5BD;     /* Cool Gray - secondary text */
+            --text-highlight: #00D4FF;     /* Cyan - important values (payouts, numbers) */
+            
+            /* Additional accent colors */
+            --accent-purple: #8B5CF6;      /* Premium purple */
+            --accent-yellow: #FFC837;      /* Golden yellow */
+            --accent-coral: #FF6B6B;       /* Coral red */
+            --accent-pink-light: #FFB3D9;  /* Light pink */
+        }
+        
+        /* Pulse theme - Payout dropdown special styling */
+        body[data-theme="pulse"] .mission-payout select {
+            color: var(--color-info);
+            font-weight: 700;
+        }
+        
+        /* Pulse theme - Stat values use cyan for high contrast */
+        body[data-theme="pulse"] .stat-value {
+            color: var(--color-info);
+        }
+        
+        /* Pulse theme - Location names use bright accent */
+        body[data-theme="pulse"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        /* Pulse theme - Mission titles use info color */
+        body[data-theme="pulse"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Theme: Flow (blue) - Comprehensive palette */
+        body[data-theme="flow"] {
+            /* Backgrounds */
+            --bg-primary: #0a0e1a;      /* Deep Ocean - Main page background (dark blue tint) */
+            --bg-secondary: #141b2d;    /* Midnight Blue - Panels (medium blue) */
+            --bg-tertiary: #1a2332;     /* Slate Blue - Dropdowns/Inputs (lighter blue) */
+            
+            /* Primary brand colors */
+            --color-primary: #1E90FF;   /* Sky Blue - Headers, capacity fills */
+            --color-accent: #00D4FF;    /* Electric Aqua - Hover states */
+            
+            /* Functional colors */
+            --color-success: #00FFA3;   /* Neon Mint - Add buttons */
+            --color-warning: #FFD600;   /* Golden Yellow - Warnings */
+            --color-danger: #FF4757;    /* Sunset Coral - Danger states */
+            --color-info: #00BFFF;      /* Bright Cyan - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #2d5a80;    /* Deep Sky - Borders, panel outlines */
+            
+            /* Text */
+            --text-primary: #FFFFFF;    /* Pure White - Main readable text */
+            --text-secondary: #ADB5BD;  /* Cool Gray - Dimmed text, labels, hints */
+            --text-highlight: #00BFFF;  /* Bright Cyan - important values */
+        }
+        
+        /* Flow theme - Payout dropdown special styling */
+        body[data-theme="flow"] .mission-payout select {
+            color: var(--color-info);
+            font-weight: 700;
+        }
+        
+        /* Flow theme - Stat values use cyan for high contrast */
+        body[data-theme="flow"] .stat-value {
+            color: var(--color-info);
+        }
+        
+        /* Flow theme - Location names use bright accent */
+        body[data-theme="flow"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        /* Flow theme - Mission titles use info color */
+        body[data-theme="flow"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Theme: Dark (purple) - Comprehensive palette */
+        body[data-theme="dark"] {
+            /* Backgrounds */
+            --bg-primary: #1a1118;      /* Deep Void - Main page background (dark magenta tint) */
+            --bg-secondary: #2a1a24;    /* Dark Plum - Panels (medium magenta) */
+            --bg-tertiary: #3d2535;     /* Mystic Purple - Dropdowns/Inputs (lighter magenta) */
+            
+            /* Primary brand colors */
+            --color-primary: #8B3FBF;   /* Electric Purple - Headers, capacity fills */
+            --color-accent: #A855F7;    /* Bright Violet - Hover states */
+            
+            /* Functional colors */
+            --color-success: #00FFA3;   /* Neon Mint - Add buttons */
+            --color-warning: #FF8800;   /* Bright Orange - Warnings */
+            --color-danger: #E63946;    /* Vibrant Red - Danger states */
+            --color-info: #00D4FF;      /* Electric Cyan - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #5B2E6B;    /* Royal Violet - Borders, panel outlines */
+            
+            /* Text */
+            --text-primary: #FFFFFF;    /* Pure White - Main readable text */
+            --text-secondary: #ADB5BD;  /* Cool Gray - Dimmed text, labels, hints */
+            --text-highlight: #00D4FF;  /* Cyan - important values */
+        }
+        
+        /* Dark theme - Payout dropdown special styling */
+        body[data-theme="dark"] .mission-payout select {
+            color: var(--color-info);
+            font-weight: 700;
+        }
+        
+        /* Dark theme - Stat values use cyan for high contrast */
+        body[data-theme="dark"] .stat-value {
+            color: var(--color-info);
+        }
+        
+        /* Dark theme - Location names use bright accent */
+        body[data-theme="dark"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        /* Dark theme - Mission titles use info color */
+        body[data-theme="dark"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Theme: Wednesday (gothic wine/jade) - Comprehensive palette */
+        body[data-theme="wednesday"] {
+            /* Backgrounds - Deep burgundy-tinted */
+            --bg-primary: #1f001a;      /* Midnight Burgundy - Main page background (deep wine-black) */
+            --bg-secondary: #18091b;    /* Velvet Wine - Panels (medium burgundy) */
+            --bg-tertiary: #221531;     /* Plum Shadow - Dropdowns/Inputs (plum-purple) */
+            
+            /* Primary brand colors - Rich wine and purple */ 
+            --color-primary: #ff27ed;   /* Burgundy Wine - Headers, capacity fills */
+            --color-accent: #7B3F6D;    /* Royal Purple - Hover states */
+            
+            /* Functional colors - Elegant jade and metallics */
+            --color-success: #2D7C7B;   /* Mystic Jade - Add buttons */
+            --color-warning: #a0ff61;   /* Antique Gold - Warnings */
+            --color-danger: #a0ff61;    /* Crimson Blood - Danger states */
+            --color-info: #a0ff61;      /* Jade Teal - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #5B2C6F;    /* Deep Violet - Borders, panel outlines */
+            
+            /* Text */
+            --text-primary: #a0ff61;    /* Rose White - Main readable text (warm soft white) */
+            --text-secondary: #B8A5AB;  /* Dusty Mauve - Dimmed text */
+            --text-highlight: #88ff00;  /* Jade Teal - important values */
+            
+            /* Special accents */
+            --accent-amethyst: #9966CC; /* Amethyst - Special highlights */
+            --accent-rose-gold: #B76E79; /* Rose Gold - Elegant accents */
+            --accent-emerald: #a0ff61;   /* Emerald Teal - Additional depth */
+        }
+        
+        /* Wednesday theme - Jade teal for high-value elements */
+        body[data-theme="wednesday"] .mission-payout select {
+            color: var(--color-info);
+            font-weight: 700;
+        }
+        
+        body[data-theme="wednesday"] .stat-value {
+            color: var(--color-info);
+        }
+        
+        body[data-theme="wednesday"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        body[data-theme="wednesday"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Theme: Moonshine (silver/blue) - Comprehensive palette */
+        body[data-theme="moonshine"] {
+            /* Backgrounds */
+            --bg-primary: #0f1419;      /* Midnight Steel - Main page background (dark blue-gray) */
+            --bg-secondary: #1a1f2e;    /* Deep Slate - Panels (medium blue-gray) */
+            --bg-tertiary: #2a3342;     /* Storm Gray - Dropdowns/Inputs (lighter slate-blue) */
+            
+            /* Primary brand colors */
+            --color-primary: #8BA5C1;   /* Moonlight Silver - Headers, capacity fills */
+            --color-accent: #B8D4E8;    /* Pale Sky - Hover states */
+            
+            /* Functional colors */
+            --color-success: #5FBAA7;   /* Soft Teal - Add buttons */
+            --color-warning: #D4AF6A;   /* Pale Gold - Warnings */
+            --color-danger: #D97777;    /* Dusty Rose - Danger states */
+            --color-info: #7CB8E8;      /* Ice Blue - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #3d4a5c;    /* Steel Blue - Borders, panel outlines */
+            
+            /* Text */
+            --text-primary: #E8EDF2;    /* Silver White - Main readable text (softer than pure white) */
+            --text-secondary: #8B95A5;  /* Cool Silver - Dimmed text, labels, hints */
+            --text-highlight: #7CB8E8;  /* Ice Blue - important values */
+        }
+        
+        /* Moonshine theme - Payout dropdown special styling */
+        body[data-theme="moonshine"] .mission-payout select {
+            color: var(--color-info);
+            font-weight: 700;
+        }
+        
+        /* Moonshine theme - Stat values use ice blue for high contrast */
+        body[data-theme="moonshine"] .stat-value {
+            color: var(--color-info);
+        }
+        
+        /* Moonshine theme - Location names use pale sky accent */
+        body[data-theme="moonshine"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        /* Moonshine theme - Mission titles use info color */
+        body[data-theme="moonshine"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Theme: ARGO (industrial orange) - Comprehensive palette */
+        body[data-theme="argo"] {
+            /* Backgrounds */
+            --bg-primary: #1a1612;      /* Industrial Black - Main page background (dark warm-gray) */
+            --bg-secondary: #2a2520;    /* Charcoal Steel - Panels (medium warm-gray) */
+            --bg-tertiary: #3d3832;     /* Concrete Gray - Dropdowns/Inputs (lighter warm-gray) */
+            
+            /* Primary brand colors */
+            --color-primary: #FF6600;   /* Construction Orange - Headers, capacity fills */
+            --color-accent: #FF8C42;    /* Safety Barrier - Hover states */
+            
+            /* Functional colors */
+            --color-success: #4CAF50;   /* Industrial Green - Add buttons */
+            --color-warning: #FFC107;   /* Caution Yellow - Warnings */
+            --color-danger: #D32F2F;    /* Danger Red - Danger states */
+            --color-info: #2196F3;      /* Blueprint Blue - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #5a5248;    /* Weathered Steel - Borders, panel outlines */
+            
+            /* Text */
+            --text-primary: #F5F5F5;    /* Industrial White - Main readable text */
+            --text-secondary: #9E9E9E;  /* Concrete - Dimmed text, labels, hints */
+            --text-highlight: #FFC107;  /* Caution Yellow - important values */
+        }
+        
+        /* ARGO theme - Payout dropdown special styling */
+        body[data-theme="argo"] .mission-payout select {
+            color: var(--color-warning);
+            font-weight: 700;
+        }
+        
+        /* ARGO theme - Stat values use caution yellow for high contrast */
+        body[data-theme="argo"] .stat-value {
+            color: var(--color-warning);
+        }
+        
+        /* ARGO theme - Location names use safety barrier orange */
+        body[data-theme="argo"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        /* ARGO theme - Mission titles use caution yellow */
+        body[data-theme="argo"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Theme: Starkitten (cybergoth) - Comprehensive palette with neon glow effects */
+        body[data-theme="starkitten"] {
+            /* Backgrounds - Pure void blacks */
+            --bg-primary: #000000;      /* Void Black - Main page background (pure deep void) */
+            --bg-secondary: #00222b;    /* Shadow Panel - Panels (pure black) */
+            --bg-tertiary: #00222b;     /* Dark Input - Dropdowns/Inputs (dark gray) */
+            
+            /* Primary brand colors - Hot magenta */
+            --color-primary: #FF006E;   /* Hot Magenta - Headers, capacity fills */
+            --color-accent: #FF1B8D;    /* Neon Fuchsia - Hover states */
+            
+            /* Functional colors - Electric neons */
+            --color-success: #00FFA3;   /* Neon Mint - Add buttons */
+            --color-warning: #FF8800;   /* Cyber Orange - Warnings */
+            --color-danger: #E63946;    /* Vibrant Red - Danger states */
+            --color-info: #00D4FF;      /* Electric Cyan - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #FF006E;    /* Hot Magenta - Glowing borders */
+            
+            /* Text */
+            --text-primary: #FFFFFF;    /* Pure White - Main readable text */
+            --text-secondary: #ADB5BD;  /* Cool Gray - Dimmed text */
+            --text-highlight: #00D4FF;  /* Electric Cyan - important values */
+            
+            /* Special accents */
+            --accent-purple: #B026FF;   /* Neon Purple - Special highlights */
+        }
+        
+        /* Starkitten theme - Special styling without glows */
+        body[data-theme="starkitten"] .mission-payout select {
+            color: var(--color-info);
+            font-weight: 700;
+        }
+        
+        body[data-theme="starkitten"] .stat-value {
+            color: var(--color-info);
+        }
+        
+        body[data-theme="starkitten"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        body[data-theme="starkitten"] .mission-title {
+            color: var(--text-highlight);
+        }
+        body[data-theme="cargo-explorer"] {
+            /* Backgrounds */
+            --bg-primary: #000000;      /* Blood Iron - Main page background (dark red-black) */
+            --bg-secondary: #110000;    /* Dark Crimson - Panels (medium dark red) */
+            --bg-tertiary: #240000;     /* Wine Shadow - Dropdowns/Inputs (lighter red-gray) */
+            
+            /* Primary brand colors */
+            --color-primary: #ff0000;   /* Angry Crimson - Headers, capacity fills */
+            --color-accent: #B91C1C;    /* Blood Red - Hover states */
+            
+            /* Functional colors */
+            --color-success: #fffd84;   /* Pirate Gold - Add buttons */
+            --color-warning: #FF6B35;   /* Flame Orange - Warnings */
+            --color-danger: #a5a5a5;    /* Dark Blood - Danger states */
+            --color-info: #60A5FA;      /* Steel Blue - High-contrast elements */
+            
+            /* Structural */
+            --border-color: #a70000;    /* Cold Iron - Borders, panel outlines */
+            
+            /* Text */
+            --text-primary: #c8dbff;    /* Steel White - Main readable text */
+            --text-secondary: #9CA3AF;  /* Weathered Steel - Dimmed text, labels, hints */
+            --text-highlight: #fffd84;  /* Pirate Gold - important values */
+        }
+        
+        /* Cargo Explorer theme - Payout dropdown special styling */
+        body[data-theme="cargo-explorer"] .mission-payout select {
+            color: var(--color-success);
+            font-weight: 700;
+        }
+        
+        /* Cargo Explorer theme - Stat values use pirate gold */
+        body[data-theme="cargo-explorer"] .stat-value {
+            color: var(--color-success);
+        }
+        
+        /* Cargo Explorer theme - Location names use blood red */
+        body[data-theme="cargo-explorer"] .location-name {
+            color: var(--color-accent);
+        }
+        
+        /* Cargo Explorer theme - Mission titles use pirate gold */
+        body[data-theme="cargo-explorer"] .mission-title {
+            color: var(--text-highlight);
+        }
+
+        /* Default color palette for delivery markers (changes per theme) */
+        .theme-colors {
+            --marker-1: #4dd4ac;
+            --marker-2: #ec4899;
+            --marker-3: #fbbf24;
+            --marker-4: #8b5cf6;
+            --marker-5: #3b82f6;
+            --marker-6: #f97316;
+            --marker-7: #84cc16;
+            --marker-8: #06b6d4;
+        }
+
+        body[data-theme="lux"] .theme-colors {
+            --marker-1: #B4F500;    /* Electric Lime */
+            --marker-2: #9DFF00;    /* Vibrant Chartreuse */
+            --marker-3: #32CD32;    /* Fresh Lime */
+            --marker-4: #00D9FF;    /* Electric Blue */
+            --marker-5: #FFD600;    /* Golden Yellow */
+            --marker-6: #FF4757;    /* Sunset Coral */
+            --marker-7: #7FE800;    /* Neon Green */
+            --marker-8: #d9f99d;    /* Pale Lime */
+        }
+
+        body[data-theme="pulse"] .theme-colors {
+            --marker-1: #FF006E;    /* Hot Magenta */
+            --marker-2: #00D4FF;    /* Bright Cyan */
+            --marker-3: #00FFA3;    /* Neon Mint */
+            --marker-4: #FFC837;    /* Golden Yellow */
+            --marker-5: #8B5CF6;    /* Purple */
+            --marker-6: #FF8800;    /* Orange */
+            --marker-7: #E63946;    /* Vibrant Red */
+            --marker-8: #FFB3D9;    /* Light Pink */
+        }
+
+        body[data-theme="flow"] .theme-colors {
+            --marker-1: #1E90FF;    /* Sky Blue */
+            --marker-2: #00D4FF;    /* Electric Aqua */
+            --marker-3: #00BFFF;    /* Bright Cyan */
+            --marker-4: #00FFA3;    /* Neon Mint */
+            --marker-5: #FFD600;    /* Golden Yellow */
+            --marker-6: #FF4757;    /* Sunset Coral */
+            --marker-7: #93c5fd;    /* Light Blue */
+            --marker-8: #60a5fa;    /* Soft Sky */
+        }
+
+        body[data-theme="dark"] .theme-colors {
+            --marker-1: #8B3FBF;
+            --marker-2: #A855F7;
+            --marker-3: #00D4FF;
+            --marker-4: #00FFA3;
+            --marker-5: #FF8800;
+            --marker-6: #E63946;
+            --marker-7: #c084fc;
+            --marker-8: #e9d5ff;
+        }
+
+        body[data-theme="moonshine"] .theme-colors {
+            --marker-1: #8BA5C1;
+            --marker-2: #B8D4E8;
+            --marker-3: #7CB8E8;
+            --marker-4: #5FBAA7;
+            --marker-5: #D4AF6A;
+            --marker-6: #D97777;
+            --marker-7: #cbd5e1;
+            --marker-8: #94a3b8;
+        }
+
+        body[data-theme="argo"] .theme-colors {
+            --marker-1: #FF6600;    /* Construction Orange */
+            --marker-2: #FF8C42;    /* Safety Barrier */
+            --marker-3: #FFC107;    /* Caution Yellow */
+            --marker-4: #4CAF50;    /* Industrial Green */
+            --marker-5: #2196F3;    /* Blueprint Blue */
+            --marker-6: #D32F2F;    /* Danger Red */
+            --marker-7: #fb923c;    /* Light Orange */
+            --marker-8: #fdba74;    /* Pale Orange */
+        }
+
+        body[data-theme="cargo-explorer"] .theme-colors {
+            --marker-1: #DC143C;    /* Angry Crimson */
+            --marker-2: #B91C1C;    /* Blood Red */
+            --marker-3: #D4AF37;    /* Pirate Gold */
+            --marker-4: #FF6B35;    /* Flame Orange */
+            --marker-5: #60A5FA;    /* Steel Blue */
+            --marker-6: #991B1B;    /* Dark Blood */
+            --marker-7: #EF4444;    /* Bright Red */
+            --marker-8: #FCD34D;    /* Golden Yellow */
+        }
+
+        body[data-theme="starkitten"] .theme-colors {
+            --marker-1: #FF006E;    /* Hot Magenta */
+            --marker-2: #00D4FF;    /* Electric Cyan */
+            --marker-3: #00FFA3;    /* Neon Mint */
+            --marker-4: #B026FF;    /* Neon Purple */
+            --marker-5: #FF8800;    /* Cyber Orange */
+            --marker-6: #FF1B8D;    /* Neon Fuchsia */
+            --marker-7: #E63946;    /* Vibrant Red */
+            --marker-8: #00BFFF;    /* Bright Cyan */
+        }
+
+        body[data-theme="wednesday"] .theme-colors {
+            --marker-1: #A0153E;    /* Burgundy Wine */
+            --marker-2: #3DA9A5;    /* Jade Teal */
+            --marker-3: #7B3F6D;    /* Royal Purple */
+            --marker-4: #2D7C7B;    /* Mystic Jade */
+            --marker-5: #D4A017;    /* Antique Gold */
+            --marker-6: #9966CC;    /* Amethyst */
+            --marker-7: #B76E79;    /* Rose Gold */
+            --marker-8: #50C878;    /* Emerald Teal */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #0d1424 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding-bottom: 15px;
+        }
+
+        .header h1::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            margin: 15px 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--color-primary) 50%, 
+                transparent 100%);
+        }
+
+        /* Top Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-group select {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .control-group select:hover,
+        .control-group select:focus {
+            border-color: var(--color-primary);
+            outline: none;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr 300px;
+            gap: 20px;
+        }
+
+        /* Mission Panels Column */
+        .missions-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mission-panel {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mission-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mission-payout {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mission-payout label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .mission-payout select {
+            background-color: var(--bg-tertiary);
+            color: var(--color-primary);
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            font-size: 13px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .commodity-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 80px 100px 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .commodity-row select,
+        .commodity-row input[type="number"] {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+
+        .commodity-row input[type="number"] {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .btn-remove-commodity {
+            background-color: transparent;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-remove-commodity:hover {
+            background-color: var(--color-danger);
+            color: var(--bg-primary);
+        }
+
+        .btn-add-commodity {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 1px dashed var(--color-primary);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-add-commodity:hover {
+            background-color: var(--color-primary);
+            color: var(--bg-primary);
+            border-style: solid;
+        }
+
+        .btn-add-mission {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 2px dashed var(--color-primary);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-add-mission:hover {
+            background-color: var(--color-primary);
+            color: var(--bg-primary);
+            border-style: solid;
+        }
+
+        .btn-remove-mission {
+            background-color: transparent;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-remove-mission:hover {
+            background-color: var(--color-danger);
+            color: var(--bg-primary);
+        }
+
+        /* Delivery Summary */
+        .delivery-summary {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .delivery-summary h2 {
+            font-size: 16px;
+            color: var(--color-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .delivery-location {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .location-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            min-width: 50px;
+        }
+
+        .marker-color {
+            width: 50px;
+            height: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10px;
+        }
+
+        .marker-color:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .marker-label {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+            cursor: text;
+            min-width: 20px;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .marker-label:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.5);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        .location-details {
+            flex: 1;
+        }
+
+        .location-name {
+            font-size: 13px;
+            color: var(--color-accent);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .delivery-item {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            padding-left: 10px;
+        }
+
+        .delivery-item .commodity-name {
+            color: var(--text-primary);
+        }
+
+        .box-breakdown {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 4px;
+            padding-left: 10px;
+            flex-wrap: wrap;
+        }
+
+        .box-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .box-number {
+            font-weight: 900;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        /* Stats Column */
+        .stats-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stat-panel {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            color: var(--color-primary);
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .capacity-meter {
+            margin-top: 15px;
+        }
+
+        .capacity-bar {
+            height: 30px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .capacity-fill.over-capacity {
+            background: linear-gradient(90deg, var(--color-danger), #dc2626);
+            animation: flash 1s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .capacity-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Color Picker Modal */
+        .color-picker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .color-picker-modal.active {
+            display: flex;
+        }
+
+        .color-picker-content {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 400px;
+        }
+
+        .color-picker-title {
+            font-size: 16px;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .color-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .color-option:hover {
+            border-color: var(--color-primary);
+            transform: scale(1.1);
+        }
+
+        .custom-color-input {
+            width: 100%;
+            height: 60px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .color-picker-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-color-picker {
+            flex: 1;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-cancel:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .btn-confirm {
+            background-color: var(--color-primary);
+            color: var(--bg-primary);
+            border: 1px solid var(--color-primary);
+        }
+
+        .btn-confirm:hover {
+            opacity: 0.9;
+        }
+
+        /* Hidden state */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding: 40px;
+        }
+
+        /* Scrollable container for missions */
+        .missions-scroll {
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .missions-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .missions-scroll::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .missions-scroll::-webkit-scrollbar-thumb {
+            background: var(--color-primary);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body data-theme="stardust">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HAULER HELPER</h1>
+            <div class="subtitle">Your Ship Manifest for Star Citizen</div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <label>Ship</label>
+                <select id="shipSelect" onchange="updateShip()">
+                    <option value="">Select Ship</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>System</label>
+                <select id="systemSelect" onchange="updateSystem()">
+                    <option value="">Select System</option>
+                    <option value="stanton">Stanton</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Mission Category</label>
+                <select id="categorySelect" onchange="updateCategory()">
+                    <option value="">Select Category</option>
+                    <option value="planetary">Planetary</option>
+                    <option value="local">Local (Coming Soon)</option>
+                    <option value="stellar">Stellar (Coming Soon)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Theme</label>
+                <select id="themeSelect" onchange="changeTheme()">
+                    <option value="stardust">Stardust</option>
+                    <option value="lux">Lux</option>
+                    <option value="pulse">Pulse</option>
+                    <option value="flow">Flow</option>
+                    <option value="dark">Dark</option>
+                    <option value="starkitten">Starkitten</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="moonshine">Moonshine</option>
+                    <option value="argo">ARGO</option>
+                    <option value="cargo-explorer">Cargo Explorer</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Column 1: Mission Panels -->
+            <div class="missions-column">
+                <div class="missions-scroll" id="missionsContainer">
+                    <!-- Mission panels will be added here -->
+                </div>
+                <button class="btn-add-mission" onclick="addMissionPanel()">+ Add Mission</button>
+            </div>
+
+            <!-- Column 2: Delivery Summary -->
+            <div class="delivery-summary">
+                <h2>Delivery Summary</h2>
+                <div id="deliverySummary">
+                    <div class="empty-state">No deliveries planned</div>
+                </div>
+            </div>
+
+            <!-- Column 3: Stats -->
+            <div class="stats-column">
+                <div class="stat-panel">
+                    <div class="stat-label">Total Payout</div>
+                    <div class="stat-value" id="totalPayout">0K</div>
+                </div>
+                <div class="stat-panel">
+                    <div class="stat-label">SCU Total</div>
+                    <div class="stat-value" id="scuTotal">0</div>
+                    <div class="capacity-meter">
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" id="capacityFill" style="width: 0%"></div>
+                        </div>
+                        <div class="capacity-text" id="capacityText">0 / 0 SCU</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Color Picker Modal -->
+    <div class="color-picker-modal" id="colorPickerModal">
+        <div class="color-picker-content">
+            <div class="color-picker-title">Choose Marker Color</div>
+            <div class="color-palette theme-colors" id="colorPalette">
+                <!-- Colors will be populated dynamically -->
+            </div>
+            <input type="color" class="custom-color-input" id="customColorInput">
+            <div class="color-picker-buttons">
+                <button class="btn-color-picker btn-cancel" onclick="closeColorPicker()">Cancel</button>
+                <button class="btn-color-picker btn-confirm" onclick="confirmColor()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        let missionCounter = 0;
+        let selectedShip = null;
+        let selectedSystem = null;
+        let selectedCategory = null;
+        let missions = [];
+        let locationColors = {};
+        let currentColorTarget = null;
+
+        // Theme color palettes
+        const themeColorPalettes = {
+            'stardust': ['#4dd4ac', '#ec4899', '#fbbf24', '#8b5cf6', '#3b82f6', '#f97316', '#84cc16', '#06b6d4'],
+            'lux': ['#B4F500', '#9DFF00', '#32CD32', '#00D9FF', '#FFD600', '#FF4757', '#7FE800', '#d9f99d'],
+            'pulse': ['#FF006E', '#00D4FF', '#00FFA3', '#FFC837', '#8B5CF6', '#FF8800', '#E63946', '#FFB3D9'],
+            'flow': ['#1E90FF', '#00D4FF', '#00BFFF', '#00FFA3', '#FFD600', '#FF4757', '#93c5fd', '#60a5fa'],
+            'dark': ['#8B3FBF', '#A855F7', '#00D4FF', '#00FFA3', '#FF8800', '#E63946', '#c084fc', '#e9d5ff'],
+            'starkitten': ['#FF006E', '#00D4FF', '#00FFA3', '#B026FF', '#FF8800', '#FF1B8D', '#E63946', '#00BFFF'],
+            'wednesday': ['#A0153E', '#3DA9A5', '#7B3F6D', '#2D7C7B', '#D4A017', '#9966CC', '#B76E79', '#50C878'],
+            'moonshine': ['#8BA5C1', '#B8D4E8', '#7CB8E8', '#5FBAA7', '#D4AF6A', '#D97777', '#cbd5e1', '#94a3b8'],
+            'argo': ['#FF6600', '#FF8C42', '#FFC107', '#4CAF50', '#2196F3', '#D32F2F', '#fb923c', '#fdba74'],
+            'cargo-explorer': ['#DC143C', '#B91C1C', '#D4AF37', '#FF6B35', '#60A5FA', '#991B1B', '#EF4444', '#FCD34D']
+        };
+
+        // Ships database
+        const ships = [
+            { id: "nomad", name: "Consolidated Outland Nomad", capacity: 24 },
+            { id: "starlancer-max", name: "Misc Starlancer MAX", capacity: 224 },
+            { id: "hull-c", name: "MISC Hull C", capacity: 4608 },
+            { id: "c2-hercules", name: "Crusader C2 Hercules", capacity: 624 },
+            { id: "cutlass-black", name: "Drake Cutlass Black", capacity: 46 },
+            { id: "freelancer-max", name: "MISC Freelancer MAX", capacity: 120 },
+            { id: "caterpillar", name: "Drake Caterpillar", capacity: 576 }
+        ];
+
+        // Locations database (Microtech Planetary)
+        const locations = {
+            planetary: [
+                "Covalex S4DC05", "Cry-Astro 19-02", "Cry-Astro 34-12", "Devlin Scrapyard",
+                "Greycat Complex A", "MT L1", "MT L2", "MT L3", "MT L4", "mT Depot S4C05",
+                "mT Depot S4LD01", "mT Depot S4LD13", "New Babbage", "Port Tressler",
+                "Rayari Anvik", "Rayari Cantwell", "Rayari Keltag", "Rayari McGrath",
+                "Sakura Sun Goldenrod", "Shubin SMCa-6", "Shubin SMCa-8"
+            ]
+        };
+
+        // Commodities database
+        const commodities = [
+            "Agri Supplies", "Aluminum", "C Materials", "Carbon", "Corundum", "Hydrogen",
+            "Press Ice", "Proc Food", "Quantum Fuel", "Quartz", "Scrap", "Ship Ammo",
+            "Silicon", "Stims", "Tin", "Titanium", "Tungsten", "Waste"
+        ];
+
+        // Payouts database
+        const payouts = [
+            "30k", "37k", "43k", "45k", "48k", "50k", "56k", "59k", "61k", "62k", "65k",
+            "76k", "83k", "84k", "90k", "95k", "99k", "121k", "123k", "160k", "163k",
+            "207k", "332k", "394k"
+        ];
+
+        // Initialize
+        function init() {
+            populateShipSelect();
+            loadSession();
+            loadTheme();
+            updateColorPalette();
+        }
+
+        // Populate ship select
+        function populateShipSelect() {
+            const select = document.getElementById('shipSelect');
+            select.innerHTML = '<option value="">Select Ship</option>';
+            ships.forEach(ship => {
+                const option = document.createElement('option');
+                option.value = ship.id;
+                option.textContent = ship.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Update ship
+        function updateShip() {
+            const shipId = document.getElementById('shipSelect').value;
+            selectedShip = ships.find(s => s.id === shipId);
+            updateStats();
+            saveSession();
+        }
+
+        // Update system
+        function updateSystem() {
+            selectedSystem = document.getElementById('systemSelect').value;
+            saveSession();
+        }
+
+        // Update category
+        function updateCategory() {
+            selectedCategory = document.getElementById('categorySelect').value;
+            saveSession();
+        }
+
+        // Change theme
+        function changeTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('haulerHelperTheme', theme);
+            updateColorPalette();
+        }
+
+        // Load theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('haulerHelperTheme');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme', savedTheme);
+                document.getElementById('themeSelect').value = savedTheme;
+            }
+        }
+
+        // Update color palette in picker
+        function updateColorPalette() {
+            const theme = document.body.getAttribute('data-theme');
+            const palette = themeColorPalettes[theme] || themeColorPalettes['stardust'];
+            const container = document.getElementById('colorPalette');
+            
+            container.innerHTML = palette.map(color => 
+                `<div class="color-option" style="background-color: ${color}" onclick="selectPresetColor('${color}')"></div>`
+            ).join('');
+        }
+
+        // Add mission panel
+        function addMissionPanel() {
+            if (!selectedCategory) {
+                alert('Please select a mission category first');
+                return;
+            }
+
+            missionCounter++;
+            const missionId = `mission_${missionCounter}`;
+            
+            const mission = {
+                id: missionId,
+                payout: '',
+                commodities: []
+            };
+            
+            missions.push(mission);
+            
+            const container = document.getElementById('missionsContainer');
+            const panel = createMissionPanel(missionId, missionCounter);
+            container.appendChild(panel);
+            
+            // Add first commodity row by default
+            addCommodityRow(missionId);
+            
+            saveSession();
+        }
+
+        // Create mission panel HTML
+        function createMissionPanel(missionId, missionNumber) {
+            const panel = document.createElement('div');
+            panel.className = 'mission-panel';
+            panel.id = missionId;
+            
+            panel.innerHTML = `
+                <div class="mission-header">
+                    <div class="mission-title">Mission ${missionNumber}</div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div class="mission-payout">
+                            <label>Payout:</label>
+                            <select onchange="updateMissionPayout('${missionId}', this.value)">
+                                <option value="">-</option>
+                                ${payouts.map(p => `<option value="${p}">${p}</option>`).join('')}
+                            </select>
+                        </div>
+                        <button class="btn-remove-mission" onclick="removeMissionPanel('${missionId}')">Remove</button>
+                    </div>
+                </div>
+                <div id="${missionId}_commodities"></div>
+                <button class="btn-add-commodity" onclick="addCommodityRow('${missionId}')">+ Add Commodity</button>
+            `;
+            
+            return panel;
+        }
+
+        // Add commodity row
+        function addCommodityRow(missionId) {
+            const mission = missions.find(m => m.id === missionId);
+            if (mission.commodities.length >= 4) {
+                alert('Maximum 4 commodities per mission');
+                return;
+            }
+            
+            const commodityId = `${missionId}_commodity_${mission.commodities.length}`;
+            mission.commodities.push({
+                id: commodityId,
+                pickup: '',
+                commodity: '',
+                quantity: '',
+                maxBoxSize: '4',
+                destination: ''
+            });
+            
+            const container = document.getElementById(`${missionId}_commodities`);
+            const row = createCommodityRow(missionId, commodityId, mission.commodities.length > 1);
+            container.appendChild(row);
+            
+            saveSession();
+        }
+
+        // Create commodity row HTML
+        function createCommodityRow(missionId, commodityId, showRemove) {
+            const row = document.createElement('div');
+            row.className = 'commodity-row';
+            row.id = commodityId;
+            
+            row.innerHTML = `
+                <select onchange="updateCommodity('${commodityId}', 'pickup', this.value)">
+                    <option value="">Pickup Location</option>
+                    ${locations.planetary.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
+                </select>
+                <select onchange="updateCommodity('${commodityId}', 'commodity', this.value)">
+                    <option value="">Commodity</option>
+                    ${commodities.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+                <input type="number" placeholder="SCU" min="1" onchange="updateCommodity('${commodityId}', 'quantity', this.value)">
+                <select onchange="updateCommodity('${commodityId}', 'maxBoxSize', this.value)">
+                    <option value="4">Max: 4 SCU</option>
+                    <option value="1">Max: 1 SCU</option>
+                    <option value="2">Max: 2 SCU</option>
+                    <option value="8">Max: 8 SCU</option>
+                    <option value="16">Max: 16 SCU</option>
+                    <option value="24">Max: 24 SCU</option>
+                    <option value="32">Max: 32 SCU</option>
+                </select>
+                <select onchange="updateCommodity('${commodityId}', 'destination', this.value)">
+                    <option value="">Destination</option>
+                    ${locations.planetary.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
+                </select>
+                ${showRemove ? 
+                    `<button class="btn-remove-commodity" onclick="removeCommodityRow('${missionId}', '${commodityId}')">-</button>` :
+                    `<div></div>`
+                }
+            `;
+            
+            return row;
+        }
+
+        // Update commodity data
+        function updateCommodity(commodityId, field, value) {
+            for (const mission of missions) {
+                const commodity = mission.commodities.find(c => c.id === commodityId);
+                if (commodity) {
+                    commodity[field] = value;
+                    break;
+                }
+            }
+            updateDeliverySummary();
+            updateStats();
+            saveSession();
+        }
+
+        // Update mission payout
+        function updateMissionPayout(missionId, payout) {
+            const mission = missions.find(m => m.id === missionId);
+            if (mission) {
+                mission.payout = payout;
+            }
+            updateStats();
+            saveSession();
+        }
+
+        // Remove commodity row
+        function removeCommodityRow(missionId, commodityId) {
+            const mission = missions.find(m => m.id === missionId);
+            if (mission) {
+                mission.commodities = mission.commodities.filter(c => c.id !== commodityId);
+                document.getElementById(commodityId).remove();
+            }
+            updateDeliverySummary();
+            updateStats();
+            saveSession();
+        }
+
+        // Remove mission panel
+        function removeMissionPanel(missionId) {
+            missions = missions.filter(m => m.id !== missionId);
+            document.getElementById(missionId).remove();
+            updateDeliverySummary();
+            updateStats();
+            saveSession();
+        }
+
+        // Calculate box breakdown
+        function calculateBoxBreakdown(scu, maxBoxSize = 32) {
+            const allBoxSizes = [32, 24, 16, 8, 4, 2, 1];
+            const boxSizes = allBoxSizes.filter(size => size <= maxBoxSize);
+            const breakdown = {};
+            let remaining = scu;
+            
+            for (const size of boxSizes) {
+                const count = Math.floor(remaining / size);
+                if (count > 0) {
+                    breakdown[size] = count;
+                    remaining -= size * count;
+                }
+            }
+            
+            return breakdown;
+        }
+
+        // Update delivery summary
+        function updateDeliverySummary() {
+            const container = document.getElementById('deliverySummary');
+            const deliveries = {};
+            
+            // Group by destination
+            missions.forEach(mission => {
+                mission.commodities.forEach(commodity => {
+                    if (commodity.destination && commodity.commodity && commodity.quantity) {
+                        if (!deliveries[commodity.destination]) {
+                            deliveries[commodity.destination] = [];
+                        }
+                        deliveries[commodity.destination].push({
+                            commodity: commodity.commodity,
+                            quantity: parseInt(commodity.quantity) || 0,
+                            maxBoxSize: parseInt(commodity.maxBoxSize) || 4
+                        });
+                    }
+                });
+            });
+            
+            if (Object.keys(deliveries).length === 0) {
+                container.innerHTML = '<div class="empty-state">No deliveries planned</div>';
+                return;
+            }
+            
+            // Assign colors to locations
+            const theme = document.body.getAttribute('data-theme');
+            const palette = themeColorPalettes[theme] || themeColorPalettes['stardust'];
+            let colorIndex = 0;
+            
+            Object.keys(deliveries).forEach(location => {
+                if (!locationColors[location]) {
+                    locationColors[location] = {
+                        color: palette[colorIndex % palette.length],
+                        label: (Object.keys(locationColors).length + 1).toString()
+                    };
+                    colorIndex++;
+                }
+            });
+            
+            container.innerHTML = Object.entries(deliveries).map(([location, items]) => {
+                const markerData = locationColors[location];
+                
+                return `
+                    <div class="delivery-location">
+                        <div class="location-marker">
+                            <div class="marker-color" style="background-color: ${markerData.color}" 
+                                 onclick="openColorPicker('${location}')">
+                                <input type="text" 
+                                       class="marker-label" 
+                                       value="${markerData.label}" 
+                                       onchange="updateMarkerLabel('${location}', this.value)"
+                                       onclick="event.stopPropagation()"
+                                       maxlength="3">
+                            </div>
+                        </div>
+                        <div class="location-details">
+                            <div class="location-name">${location}</div>
+                            ${items.map(item => {
+                                const boxes = calculateBoxBreakdown(item.quantity, item.maxBoxSize);
+                                return `
+                                    <div class="delivery-item">
+                                        <span class="commodity-name">${item.commodity}</span>
+                                    </div>
+                                    <div class="box-breakdown">
+                                        ${Object.entries(boxes).map(([size, count]) => `
+                                            <div class="box-icon">
+                                                <span class="box-number">${size}</span>
+                                                <span>× ${count}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update stats
+        function updateStats() {
+            // Calculate total payout
+            let totalPayout = 0;
+            missions.forEach(mission => {
+                if (mission.payout) {
+                    totalPayout += parseInt(mission.payout.replace('k', '')) * 1000;
+                }
+            });
+            
+            const payoutK = Math.floor(totalPayout / 1000);
+            document.getElementById('totalPayout').textContent = payoutK + 'K';
+            
+            // Calculate total SCU
+            let totalSCU = 0;
+            missions.forEach(mission => {
+                mission.commodities.forEach(commodity => {
+                    if (commodity.quantity) {
+                        totalSCU += parseInt(commodity.quantity) || 0;
+                    }
+                });
+            });
+            
+            document.getElementById('scuTotal').textContent = totalSCU;
+            
+            // Update capacity meter
+            if (selectedShip) {
+                const percentage = Math.min((totalSCU / selectedShip.capacity) * 100, 100);
+                const fill = document.getElementById('capacityFill');
+                fill.style.width = percentage + '%';
+                
+                if (totalSCU > selectedShip.capacity) {
+                    fill.classList.add('over-capacity');
+                } else {
+                    fill.classList.remove('over-capacity');
+                }
+                
+                document.getElementById('capacityText').textContent = 
+                    `${totalSCU} / ${selectedShip.capacity} SCU`;
+            } else {
+                document.getElementById('capacityText').textContent = '0 / 0 SCU';
+                document.getElementById('capacityFill').style.width = '0%';
+            }
+        }
+
+        // Color picker functions
+        function openColorPicker(location) {
+            currentColorTarget = location;
+            const modal = document.getElementById('colorPickerModal');
+            modal.classList.add('active');
+            
+            const currentColor = locationColors[location].color;
+            document.getElementById('customColorInput').value = currentColor;
+        }
+
+        function closeColorPicker() {
+            document.getElementById('colorPickerModal').classList.remove('active');
+            currentColorTarget = null;
+        }
+
+        function selectPresetColor(color) {
+            document.getElementById('customColorInput').value = color;
+        }
+
+        function confirmColor() {
+            if (currentColorTarget) {
+                const color = document.getElementById('customColorInput').value;
+                locationColors[currentColorTarget].color = color;
+                updateDeliverySummary();
+                saveSession();
+            }
+            closeColorPicker();
+        }
+
+        function updateMarkerLabel(location, label) {
+            locationColors[location].label = label;
+            saveSession();
+        }
+
+        // Session management
+        function saveSession() {
+            const session = {
+                ship: selectedShip?.id,
+                system: selectedSystem,
+                category: selectedCategory,
+                missions: missions,
+                locationColors: locationColors,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('haulerHelperSession', JSON.stringify(session));
+        }
+
+        function loadSession() {
+            const saved = localStorage.getItem('haulerHelperSession');
+            if (!saved) return;
+            
+            try {
+                const session = JSON.parse(saved);
+                
+                // Restore selections
+                if (session.ship) {
+                    document.getElementById('shipSelect').value = session.ship;
+                    selectedShip = ships.find(s => s.id === session.ship);
+                }
+                if (session.system) {
+                    document.getElementById('systemSelect').value = session.system;
+                    selectedSystem = session.system;
+                }
+                if (session.category) {
+                    document.getElementById('categorySelect').value = session.category;
+                    selectedCategory = session.category;
+                }
+                
+                // Restore missions
+                if (session.missions) {
+                    missions = session.missions;
+                    missionCounter = missions.length;
+                    
+                    const container = document.getElementById('missionsContainer');
+                    container.innerHTML = '';
+                    
+                    missions.forEach((mission, index) => {
+                        const panel = createMissionPanel(mission.id, index + 1);
+                        container.appendChild(panel);
+                        
+                        // Set payout
+                        const payoutSelect = panel.querySelector('select');
+                        if (payoutSelect && mission.payout) {
+                            payoutSelect.value = mission.payout;
+                        }
+                        
+                        // Restore commodities
+                        const commoditiesContainer = document.getElementById(`${mission.id}_commodities`);
+                        mission.commodities.forEach((commodity, cIndex) => {
+                            const row = createCommodityRow(mission.id, commodity.id, cIndex > 0);
+                            commoditiesContainer.appendChild(row);
+                            
+                            // Set values
+                            const selects = row.querySelectorAll('select');
+                            const input = row.querySelector('input');
+                            if (selects[0]) selects[0].value = commodity.pickup || '';
+                            if (selects[1]) selects[1].value = commodity.commodity || '';
+                            if (input) input.value = commodity.quantity || '';
+                            if (selects[2]) selects[2].value = commodity.maxBoxSize || '4';
+                            if (selects[3]) selects[3].value = commodity.destination || '';
+                        });
+                    });
+                }
+                
+                // Restore location colors
+                if (session.locationColors) {
+                    locationColors = session.locationColors;
+                }
+                
+                updateDeliverySummary();
+                updateStats();
+            } catch (e) {
+                console.error('Error loading session:', e);
+            }
+        }
+
+        // Initialize on load
+        window.onload = init;
+    </script>
+</body>
+</html>
