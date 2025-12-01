@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_1" data-name="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        isolation: isolate;
+      }
+
+      .cls-2 {
+        fill: currentColor;
+      }
+    </style>
+  </defs>
+  <path class="cls-2" d="M15.88,7.74v8.52h-7.75V7.74h7.75M16.88,6.74H7.12v10.52h9.75V6.74h0Z"/>
+  <g class="cls-1">
+    <path class="cls-2" d="M12.11,9.15h.9v6.01h-1.3v-4.68l-1.04.26-.27-1.08,1.71-.51Z"/>
+  </g>
+</svg>
