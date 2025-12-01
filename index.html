@@ -980,6 +980,19 @@
             font-size: 14px;
         }
 
+        .box-icon-svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-primary);
+            flex-shrink: 0;
+        }
+
+        .box-count {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
         /* Stats Column */
         .stats-column {
             display: flex;
@@ -1985,7 +1998,7 @@
                         </div>
                         <div class="location-details">
                             <div class="location-name">${location} (${totalQuantity} SCU Total)</div>
-                            ${items.map(item => {
+                           ${items.map(item => {
                                 const boxes = calculateBoxBreakdown(item.quantity, item.maxBoxSize);
                                 return `
                                     <div class="delivery-item">
@@ -2094,8 +2107,8 @@
                             <div class="box-breakdown">
                                 ${Object.entries(boxes).map(([size, count]) => `
                                     <div class="box-icon">
-                                        <span class="box-number">${size}</span>
-                                        <span>× ${count}</span>
+                                        <img src="assets/icons/${size}.svg" alt="${size} SCU Box" class="box-icon-svg">
+                                        <span class="box-count">× ${count}</span>
                                     </div>
                                 `).join('')}
                             </div>
