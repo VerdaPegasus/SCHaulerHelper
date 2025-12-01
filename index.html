@@ -974,12 +974,6 @@
             color: var(--text-secondary);
         }
 
-        .box-number {
-            font-weight: 900;
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-
         .box-icon-svg {
             width: 20px;
             height: 20px;
@@ -2007,8 +2001,8 @@
                                     <div class="box-breakdown">
                                         ${Object.entries(boxes).map(([size, count]) => `
                                             <div class="box-icon">
-                                                <span class="box-number">${size}</span>
-                                                <span>× ${count}</span>
+                                                <img src="assets/icons/${size}.svg" alt="${size} SCU Box" class="box-icon-svg">
+                                                <span class="box-count">× ${count}</span>
                                             </div>
                                         `).join('')}
                                     </div>
