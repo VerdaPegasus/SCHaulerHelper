@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hauler Helper - Star Citizen</title>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
         * {
             margin: 0;
@@ -377,7 +378,7 @@
             --bg-tertiary: #00222b;     /* Dark Input - Dropdowns/Inputs (dark gray) */
             
             /* Primary brand colors - Hot magenta */
-            --color-primary: #FF006E;   /* Hot Magenta - Headers, capacity fills */
+            --color-primary: #a80049;   /* Hot Magenta - Headers, capacity fills */
             --color-accent: #FF1B8D;    /* Neon Fuchsia - Hover states */
             
             /* Functional colors - Electric neons */
@@ -387,7 +388,7 @@
             --color-info: #00D4FF;      /* Electric Cyan - High-contrast elements */
             
             /* Structural */
-            --border-color: #FF006E;    /* Hot Magenta - Glowing borders */
+            --border-color: #bd4479;    /* Hot Magenta - Glowing borders */
             
             /* Text */
             --text-primary: #FFFFFF;    /* Pure White - Main readable text */
@@ -562,13 +563,13 @@
         }
 
         body[data-theme="wednesday"] .theme-colors {
-            --marker-1: #A0153E;    /* Burgundy Wine */
+            --marker-1: #830027;    /* Burgundy Wine */
             --marker-2: #3DA9A5;    /* Jade Teal */
             --marker-3: #7B3F6D;    /* Royal Purple */
             --marker-4: #2D7C7B;    /* Mystic Jade */
-            --marker-5: #D4A017;    /* Antique Gold */
+            --marker-5: #722d53;    /* Satin Rose */
             --marker-6: #9966CC;    /* Amethyst */
-            --marker-7: #B76E79;    /* Rose Gold */
+            --marker-7: #6a6277;    /* Grey Lavender */
             --marker-8: #50C878;    /* Emerald Teal */
         }
 
@@ -599,6 +600,18 @@
             color: var(--color-primary);
             margin-bottom: 10px;
             text-transform: uppercase;
+            position: relative;
+        }
+        
+        .header h1::after {
+            content: 'v3.2.5 - COLOR CONFIRM FIX';
+            position: absolute;
+            top: -15px;
+            right: 0;
+            font-size: 10px;
+            color: var(--color-success);
+            letter-spacing: 2px;
+            font-weight: 400;
         }
 
         .header .subtitle {
@@ -609,17 +622,7 @@
             padding-bottom: 15px;
         }
 
-        .header h1::after {
-            content: '';
-            display: block;
-            width: 100%;
-            height: 2px;
-            margin: 15px 0;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                var(--color-primary) 50%, 
-                transparent 100%);
-        }
+
 
         /* Top Controls */
         .controls {
@@ -821,7 +824,7 @@
             color: var(--bg-primary);
         }
 
-        /* Delivery Organizer */
+        /* Delivery Manager (formerly Delivery Organizer) */
         .delivery-summary {
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -836,6 +839,550 @@
             letter-spacing: 2px;
             margin: 0;
             font-weight: 300;
+        }
+
+        /* Tab Navigation */
+        .delivery-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab-button {
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-button:hover {
+            color: var(--color-primary);
+        }
+
+        .tab-button.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .route-action-section {
+            margin-bottom: 15px;
+        }
+
+        .route-action-header {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+
+        /* Route Planner Styles */
+        .route-stop {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .route-stop:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .route-stop.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .route-stop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .route-stop-title {
+            font-size: 14px;
+            color: var(--color-primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .route-cargo-status {
+            font-size: 11px;
+            color: var(--text-secondary);
+            background-color: var(--bg-primary);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .route-group {
+            margin-bottom: 12px;
+            padding-left: 15px;
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .route-group-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .route-group-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .route-group-destination {
+            font-size: 12px;
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        .route-group-total {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .route-mission-item {
+            font-size: 11px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 10px;
+        }
+
+        .route-mission-item .mission-number {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .route-mission-item .commodity {
+            color: var(--text-primary);
+        }
+
+        .route-action-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Cargo Grid Cells */
+        .cargo-group-cell {
+            min-height: 150px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .cargo-group-cell.empty-cell {
+            transition: all 0.2s;
+        }
+
+        .cargo-group-cell.empty-cell:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+
+        .cargo-drag-handle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: grab;
+            user-select: none;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+            pointer-events: none;  /* Let drag events pass through to parent */
+        }
+
+        .cargo-drag-handle:hover {
+            opacity: 1;
+        }
+
+        .cargo-group-card:active .cargo-drag-handle {
+            cursor: grabbing;
+        }
+
+        .cargo-group-card {
+            background-color: var(--bg-tertiary);
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .cargo-group-card:active {
+            cursor: grabbing;
+        }
+
+        .cargo-group-card:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .cargo-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .cargo-group-label-edit {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            transition: opacity 0.2s;
+        }
+
+        .cargo-group-label-edit:hover {
+            opacity: 0.7;
+        }
+
+        .cargo-group-scu {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .cargo-group-color-edit {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s;
+        }
+
+        .cargo-group-color-edit:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .cargo-group-destination {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .expand-indicator {
+            font-size: 11px;
+            color: var(--color-primary);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 8px 0;
+            transition: color 0.2s;
+        }
+
+        .expand-indicator:hover {
+            color: var(--color-accent);
+        }
+
+        .cargo-group-details {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .cargo-group-card.expanded .cargo-group-details {
+            display: block;
+        }
+
+        .cargo-group-card.expanded .expand-indicator::after {
+            content: ' ▼';
+        }
+
+        .cargo-group-card:not(.expanded) .expand-indicator::after {
+            content: ' ▶';
+        }
+
+        .cargo-group-details-item {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .cargo-group-details-item .mission-num {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .cargo-group-details-item .commodity {
+            color: var(--text-primary);
+        }
+
+
+        /* Cargo Grid Styles */
+        .grid-layout-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .grid-layout-btn {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .grid-layout-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .grid-layout-btn.active {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--bg-primary);
+        }
+
+        .cargo-grid-container {
+            display: grid;
+            gap: 15px;
+            padding: 10px;
+        }
+
+        /* Grid layout - dynamic via JavaScript */
+        .cargo-grid-container {
+            grid-template-columns: repeat(2, 1fr); /* Default, overridden by JS */
+        }
+
+        .cargo-group-card {
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: grab;
+            transition: all 0.2s;
+            min-height: 80px;
+        }
+
+        .cargo-group-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .cargo-group-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .cargo-group-card.drag-over {
+            border-color: var(--color-primary);
+            background-color: rgba(77, 212, 172, 0.1);
+        }
+
+        .cargo-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cargo-group-label {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .cargo-group-scu {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .cargo-group-destination {
+            font-size: 13px;
+            color: var(--color-accent);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .cargo-group-details {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .cargo-group-card.expanded .cargo-group-details {
+            display: block;
+        }
+
+        .cargo-group-details-item {
+            font-size: 11px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+        }
+
+        .cargo-group-details-item .mission-num {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .cargo-group-details-item .commodity {
+            color: var(--text-primary);
+        }
+
+        .expand-indicator {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            user-select: none;
+        }
+
+        /* Screenshot OCR Section */
+        .ocr-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .ocr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ocr-title {
+            font-size: 13px;
+            color: var(--color-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .ocr-toggle {
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .ocr-toggle:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .ocr-content {
+            display: none;
+        }
+
+        .ocr-content.active {
+            display: block;
+        }
+
+        .ocr-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ocr-upload-area:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(77, 212, 172, 0.05);
+        }
+
+        .ocr-upload-area.processing {
+            border-color: var(--color-warning);
+            background-color: rgba(251, 191, 36, 0.05);
+            cursor: wait;
+        }
+
+        .ocr-upload-icon {
+            font-size: 48px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .ocr-upload-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .ocr-upload-hint {
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .ocr-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .ocr-status.processing {
+            background-color: rgba(251, 191, 36, 0.1);
+            color: var(--color-warning);
+        }
+
+        .ocr-status.success {
+            background-color: rgba(74, 222, 128, 0.1);
+            color: var(--color-success);
+        }
+
+        .ocr-status.error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .ocr-file-input {
+            display: none;
         }
 
         .btn-toggle-layout {
@@ -1011,10 +1558,10 @@
         }
 
         .stat-value {
-            font-size: 48px;
+            font-size: 36px;
             color: var(--color-primary);
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .capacity-meter {
@@ -1238,7 +1785,13 @@
         <div class="header">
             <h1>HAULER HELPER</h1>
             <div class="subtitle">Your Ship Manifest for Star Citizen</div>
+            <div style="font-weight: bold; color: var(--color-warning); font-size: 11px; margin-top: 10px; letter-spacing: 1px;">
+                THIS IS A WORK IN PROGRESS, EXPECT BUGS AND MISSING/INCORRECT INFORMATION
+            </div>
         </div>
+        
+        <!-- Decorative gradient line -->
+        <div style="width: 100%; height: 2px; margin: 25px 0 30px 0; background: linear-gradient(90deg, transparent 0%, var(--color-primary) 50%, transparent 100%);"></div>
 
         <!-- Controls -->
         <div class="controls">
@@ -1252,7 +1805,12 @@
                 <label>System</label>
                 <select id="systemSelect" onchange="updateSystem()">
                     <option value="">Select System</option>
-                    <option value="stanton">Stanton</option>
+                    <option value="microtech">microTech</option>
+                    <option value="hurston" disabled>Hurston (Coming Soon)</option>
+                    <option value="arccorp" disabled>ArcCorp (Coming Soon)</option>
+                    <option value="crusader" disabled>Crusader (Coming Soon)</option>
+                    <option value="nyx" disabled>Nyx (Coming Soon)</option>
+                    <option value="pyro" disabled>Pyro (Coming Soon)</option>
                 </select>
             </div>
             <div class="control-group">
@@ -1262,6 +1820,7 @@
                     <option value="planetary">Planetary</option>
                     <option value="local">Local</option>
                     <option value="stellar">Stellar</option>
+                    <option value="interstellar">Interstellar</option>
                 </select>
             </div>
             <div class="control-group">
@@ -1285,28 +1844,76 @@
         <div class="main-layout">
             <!-- Column 1: Mission Panels -->
             <div class="missions-column">
+                <!-- Screenshot OCR Section -->
+                <div class="ocr-section">
+                    <div class="ocr-header">
+                        <div class="ocr-title">📸 Screenshot Scanner (Experimental)</div>
+                        <button class="ocr-toggle" onclick="toggleOCRSection()">Show</button>
+                    </div>
+                    <div class="ocr-content" id="ocrContent">
+                        <input type="file" id="ocrFileInput" class="ocr-file-input" accept="image/*" onchange="processScreenshot(event)">
+                        <div class="ocr-upload-area" id="ocrUploadArea" onclick="document.getElementById('ocrFileInput').click()">
+                            <div class="ocr-upload-icon">📷</div>
+                            <div class="ocr-upload-text">Click to upload mission screenshot</div>
+                            <div class="ocr-upload-hint">Supports PNG, JPG, or any image format</div>
+                        </div>
+                        <div class="ocr-status" id="ocrStatus" style="display: none;"></div>
+                    </div>
+                </div>
+
                 <div class="missions-scroll" id="missionsContainer">
                     <!-- Mission panels will be added here -->
                 </div>
                 <button class="btn-add-mission" onclick="addMissionPanel()">+ Add Mission</button>
             </div>
 
-            <!-- Column 2: Delivery Organizer -->
+            <!-- Column 2: Delivery Manager -->
             <div class="delivery-summary">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Delivery Organizer</h2>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <select id="organizerGroupBy" onchange="changeOrganizerGrouping()" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 10px; border-radius: 4px; font-size: 12px;">
-                            <option value="location">By Location</option>
-                            <option value="commodity">By Commodity</option>
+                    <h2>Delivery Manager</h2>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="delivery-tabs">
+                    <button class="tab-button active" onclick="switchDeliveryTab('route')">Route Planner</button>
+                    <button class="tab-button" onclick="switchDeliveryTab('grid')">Visualizer</button>
+                </div>
+                
+
+                <!-- Cargo Grid Tab -->
+                <div id="gridTab" class="tab-content" style="display: none;">
+                    <div class="grid-layout-selector">
+                        <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Columns:</span>
+                        <select id="gridColumns" onchange="updateGridLayout()" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 10px; border-radius: 4px; font-size: 12px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
                         </select>
-                        <button class="btn-toggle-layout" onclick="toggleDeliveryLayout()" title="Toggle layout">
-                            <span id="layoutIcon">⚏</span>
-                        </button>
+                        <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-left: 15px;">Rows:</span>
+                        <select id="gridRows" onchange="updateGridLayout()" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 10px; border-radius: 4px; font-size: 12px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <div id="cargoGrid" class="cargo-grid-container layout-2x1">
+                        <div class="empty-state">No cargo groups to display</div>
                     </div>
                 </div>
-                <div id="deliverySummary">
-                    <div class="empty-state">No deliveries planned</div>
+                
+                <!-- Route Planner Tab -->
+                <div id="routeTab" class="tab-content" style="display: block;">
+                    <div id="routePlanner">
+                        <div class="empty-state">No route planned</div>
+                    </div>
                 </div>
             </div>
 
@@ -1355,7 +1962,9 @@
         let locationColors = {};
         let deliveryOrder = []; // Track custom order of delivery locations
         let commodityOrder = []; // Track custom order of commodities
-        let organizerGroupBy = 'location'; // Track grouping method: 'location' or 'commodity'
+        let cargoGridLayout = '2x1'; // Track cargo grid layout
+        let cargoGridOrder = []; // Track custom order of groups in cargo grid
+        let cargoGroups = {}; // Store cargo groups for persistent colors/labels
         let currentColorTarget = null;
 
         // Theme color palettes
@@ -1372,7 +1981,7 @@
             'cargo-explorer': ['#DC143C', '#B91C1C', '#D4AF37', '#FF6B35', '#60A5FA', '#991B1B', '#EF4444', '#FCD34D']
         };
 
-        // Ships database
+        // Ships database (sorted alphabetically by name)
         const ships = [
             {id: "aegis_avenger_titan", name: "Aegis Avenger Titan", capacity: 8},
             {id: "aegis_reclaimer", name: "Aegis Reclaimer", capacity: 420},
@@ -1423,26 +2032,34 @@
             {id: "rsi_zeus_es", name: "RSI Zeus ES", capacity: 32}
         ];
 
-        // Locations database (Microtech Planetary)
+        // Locations database (sorted alphabetically)
         const locations = {
             planetary: [
                 "Covalex S4DC05", "Cry-Astro 19-02", "Cry-Astro 34-12", "Devlin Scrapyard",
-                "Greycat Complex A", "MT L1", "MT L2", "MT L3", "MT L4", "mT Depot S4C05",
-                "mT Depot S4LD01", "mT Depot S4LD13", "New Babbage", "Port Tressler",
+                "Greycat Complex A", "MT Depot S4C05", "MT Depot S4LD01", "MT Depot S4LD13",
+                "MT L1", "MT L2", "MT L3", "MT L4", "New Babbage", "Port Tressler",
                 "Rayari Anvik", "Rayari Cantwell", "Rayari Keltag", "Rayari McGrath",
                 "Sakura Sun Goldenrod", "Shubin SMCa-6", "Shubin SMCa-8"
             ],
             local: [
-                "MT Logistics S4LD13", "Rayari Deltana", "Rayari Keltag",
+                "Covalex S4DC05", "MT Logistics S4LD13", "Rayari Deltana", "Rayari Keltag",
                 "SMO S4DC10", "SMO S4DC13", "SMO S4DC18", "SMO S4DC22"
             ],
             stellar: [
                 "ARC-L1", "ARC-L2", "ARC-L5", "Baijini", "CRU-L1", "CRU-L4", "CRU-L5",
                 "Everus", "HUR-L1", "MIC-L1", "MIC-L2", "Seraphim", "Tressler"
+            ],
+            interstellar: [
+                "ARC 048 - Wala", "Baijini - Arc", "Brio's Breaker Yrd - Daymar",
+                "Bueno Ravine - Pyro III", "Canard View - Pyro VI", "Chawla Beach - Pyro IV",
+                "Deakins RO - Yela", "Everus - Hurston", "HDMS-Hahn - Magda",
+                "Jackson's Swap - Pyro II", "Levski - Nyx", "Port Tressler - MicroT",
+                "Rayari McGrath - Clio", "Ruin Station - Pyro IV", "Sacren's Plot - Pyro IV",
+                "Shephrds Rest - Pyro III", "Shubin SAL-5 - Lyria", "Shubin SMO-18 - MicroT"
             ]
         };
 
-        // Commodities database
+        // Commodities database (sorted alphabetically)
         const commodities = {
             planetary: [
                 "Agri Supplies", "Aluminum", "C Materials", "Carbon", "Corundum", "Hydrogen",
@@ -1450,17 +2067,23 @@
                 "Silicon", "Stims", "Tin", "Titanium", "Tungsten", "Waste"
             ],
             local: [
-                "Corundum", "Hydrogen Fuel", "Press Ice", "Proc Food", "Quantum Fuel",
+                "Agri Supplies", "Corundum", "Hydrogen", "Hydrogen Fuel", "Press Ice", "Proc Food", "Quantum Fuel",
                 "Quartz", "Scrap", "Ship Ammo", "Stims", "Waste"
             ],
             stellar: [
                 "Agricultural Supplies", "Aluminum", "Beryl", "Carbon", "Corundum", "Hydrogen",
                 "Pressurized Ice", "Processed Food", "Quartz", "Scrap", "Tin", "Titanium",
                 "Tungsten", "Waste"
+            ],
+            interstellar: [
+                "Argon", "Atlasium", "Cobalt", "Distilled Spirits", "Fresh Food", "Hydrogen",
+                "Hydrogen Fuel", "Iodine", "Medical Supplies", "Nitrogen", "Organics",
+                "Press Ice", "Processed Food", "Ranta Dung", "RMC", "Scrap", "Ship Ammo",
+                "Souvenirs", "Stims", "ThermalFoam"
             ]
         };
 
-        // Payouts database
+        // Payouts database (sorted numerically low to high)
         const payouts = {
             planetary: [
                 "30k", "37k", "43k", "45k", "48k", "50k", "56k", "59k", "61k", "62k", "65k",
@@ -1475,33 +2098,94 @@
                 "68.25k", "79.25k", "81.25k", "124.75k", "126.25k", "127.25k", "136.5k",
                 "137.5k", "142k", "162.25k", "245.5k", "247.75k", "276.25k", "282.5k",
                 "289k", "313.25k", "314k", "319k", "339.5k", "383k"
+            ],
+            interstellar: [
+                "92.75k", "99.25k", "102.25k", "119.5k", "123k", "140.75k", "150.25k",
+                "153.5k", "195k", "222.25k", "287k", "525.5k"
             ]
         };
 
+
+        // Load cargo grid expanded state
+        function loadCargoGridExpandedState() {
+            const saved = localStorage.getItem('haulerHelperCargoGridExpanded');
+            if (saved === 'true') {
+                cargoGridExpanded = true;
+            }
+        }
+
         // Initialize
         function init() {
+            console.log('%c🎯 HAULER HELPER v3.2.5 - COLOR CONFIRM FIX', 'background: #4dd4ac; color: #000; font-size: 16px; padding: 8px;');
+
+            // HANDLE dragstart at document level (since addEventListener on cards doesn't work)
+            document.addEventListener('dragstart', function(e) {
+                // Check if it's a cargo card
+                if (e.target.classList && e.target.classList.contains('cargo-group-card')) {
+                    handleCargoGridDragStart(e);
+                }
+            }, true); // Use capture phase
+            
+            document.addEventListener('dragend', function(e) {
+                if (e.target.classList && e.target.classList.contains('cargo-group-card')) {
+                    handleCargoGridDragEnd(e);
+                }
+            }, true);
+            
+            document.addEventListener('dragover', function(e) {
+                if ((e.target.classList && e.target.classList.contains('cargo-group-card')) ||
+                    (e.target.classList && e.target.classList.contains('empty-cell'))) {
+                    handleCargoGridDragOver(e);
+                }
+            }, true);
+            
+            document.addEventListener('drop', function(e) {
+                if ((e.target.classList && e.target.classList.contains('cargo-group-card')) ||
+                    (e.target.classList && e.target.classList.contains('empty-cell'))) {
+                    handleCargoGridDrop(e);
+                }
+            }, true);
+            
+            // Route stop drag handlers
+            document.addEventListener('dragstart', function(e) {
+                if (e.target.classList && e.target.classList.contains('route-stop')) {
+                    handleRouteStopDragStart(e);
+                }
+            }, true);
+            
+            document.addEventListener('dragend', function(e) {
+                if (e.target.classList && e.target.classList.contains('route-stop')) {
+                    handleRouteStopDragEnd(e);
+                }
+            }, true);
+            
+            document.addEventListener('dragover', function(e) {
+                if (e.target.closest && e.target.closest('.route-stop')) {
+                    handleRouteStopDragOver(e);
+                }
+            }, true);
+            
+            document.addEventListener('drop', function(e) {
+                if (e.target.closest && e.target.closest('.route-stop')) {
+                    handleRouteStopDrop(e);
+                }
+            }, true);
+            
+
+
             populateShipSelect();
             loadSession();
             loadTheme();
             loadDeliveryLayout();
             loadDeliveryOrder();
             loadCommodityOrder();
-            loadOrganizerGrouping();
+            loadCargoGridLayout();
             updateColorPalette();
         }
 
-        // Load delivery layout preference
+        // Load delivery layout preference (removed - tabs removed)
         function loadDeliveryLayout() {
-            const savedLayout = localStorage.getItem('haulerHelperDeliveryLayout');
-            const container = document.getElementById('deliverySummary');
-            const icon = document.getElementById('layoutIcon');
-            
-            if (savedLayout === 'two-column') {
-                container.classList.add('two-column');
-                icon.textContent = '☰';
-            } else {
-                icon.textContent = '⚏';
-            }
+            // Function removed - By Location and By Commodity tabs removed
         }
 
         // Populate ship select
@@ -1558,16 +2242,22 @@
 
         // Toggle delivery organizer layout
         function toggleDeliveryLayout() {
-            const container = document.getElementById('deliverySummary');
+            // const container = document.getElementById('deliverySummary'); // Removed - By Location tab removed
+            // const containerCommodity = document.getElementById('deliverySummaryCommodity'); // Removed - By Commodity tab removed
             const icon = document.getElementById('layoutIcon');
+            const iconCommodity = document.getElementById('layoutIconCommodity');
             
             if (container.classList.contains('two-column')) {
                 container.classList.remove('two-column');
+                containerCommodity.classList.remove('two-column');
                 icon.textContent = '⚏'; // Single column icon
+                iconCommodity.textContent = '⚏';
                 localStorage.setItem('haulerHelperDeliveryLayout', 'single');
             } else {
                 container.classList.add('two-column');
+                containerCommodity.classList.add('two-column');
                 icon.textContent = '☰'; // Two column icon
+                iconCommodity.textContent = '☰';
                 localStorage.setItem('haulerHelperDeliveryLayout', 'two-column');
             }
         }
@@ -1597,6 +2287,353 @@
             }
             e.dataTransfer.dropEffect = 'move';
             return false;
+        }
+
+        // OCR Screenshot Processing
+        function toggleOCRSection() {
+            const content = document.getElementById('ocrContent');
+            const button = event.target;
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                button.textContent = 'Show';
+            } else {
+                content.classList.add('active');
+                button.textContent = 'Hide';
+            }
+        }
+
+        function processScreenshot(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const uploadArea = document.getElementById('ocrUploadArea');
+            const status = document.getElementById('ocrStatus');
+            
+            // Show processing state
+            uploadArea.classList.add('processing');
+            status.style.display = 'block';
+            status.className = 'ocr-status processing';
+            status.textContent = 'Processing screenshot... This may take 10-30 seconds.';
+            
+            // Create image element
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                
+                // Run Tesseract OCR
+                Tesseract.recognize(
+                    imageData,
+                    'eng',
+                    {
+                        logger: m => {
+                            if (m.status === 'recognizing text') {
+                                const percent = Math.round(m.progress * 100);
+                                status.textContent = `Processing: ${percent}%`;
+                            }
+                        }
+                    }
+                ).then(({ data: { text } }) => {
+                    console.log('OCR Text:', text);
+                    
+                    // Parse the text to extract mission data
+                    const missionData = parseMissionFromOCR(text);
+                    
+                    if (missionData) {
+                        // Auto-populate mission
+                        addMissionFromOCR(missionData);
+                        
+                        status.className = 'ocr-status success';
+                        status.textContent = `✓ Mission extracted! Found: ${missionData.commodities.length} commodity(ies)`;
+                    } else {
+                        status.className = 'ocr-status error';
+                        status.textContent = '✗ Could not extract mission data. Try a clearer screenshot.';
+                    }
+                    
+                    uploadArea.classList.remove('processing');
+                    
+                    // Reset file input
+                    event.target.value = '';
+                    
+                }).catch(err => {
+                    console.error('OCR Error:', err);
+                    status.className = 'ocr-status error';
+                    status.textContent = '✗ Error processing image. Please try again.';
+                    uploadArea.classList.remove('processing');
+                    event.target.value = '';
+                });
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function parseMissionFromOCR(text) {
+            // Enhanced parser for Star Citizen mission screenshots
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            
+            console.log('=== OCR PARSING START ===');
+            console.log('Raw lines:', lines);
+            
+            const missionData = {
+                payout: '',
+                commodities: []
+            };
+            
+            const fullText = lines.join(' ');
+            
+            // Enhanced patterns for Star Citizen UI
+            const payoutPattern = /[¤#]?\s*([\d,]+)(?:[.,](\d{3}))?/;
+            
+            // Pattern: "Collect [Commodity] from [Location]"
+            // Can include variations like "Collect Quartz (Raw) from Shubin Mining Facility SMCa-6"
+            const collectPattern = /collect\s+([\w\s()-]+?)\s+from\s+([\w\s-]+?)(?:\.|$|deliver|on\s+\w|at\s+\w|above\s+\w)/gi;
+            
+            // Pattern: "Deliver [Quantity] SCU of [Commodity] to [Location]"
+            // Handles both "Deliver 28 SCU" and "Deliver 0/28 SCU" (progress format)
+            // Stops at common UI text or location suffixes
+            const deliverPattern = /deliver\s+(?:\d+\/)?(\d+)\s*SCU\s+of\s+([\w\s()-]+?)\s+to\s+([\w\s-]+?)(?:\s+(?:on|at|above)\s|\.|$|\s+(?:research|outpost|station|depot|facility|spaceport|harbor|workcenter|complex|point|rank|experienced|junior|senior|master|member|rookie))/gi;
+            
+            // Extract payout
+            for (const line of lines) {
+                const payoutMatch = line.match(payoutPattern);
+                if (payoutMatch && payoutMatch[1]) {
+                    const payoutNum = parseInt(payoutMatch[1].replace(/,/g, ''));
+                    if (payoutNum > 1000 && !missionData.payout) {
+                        if (payoutNum >= 1000) {
+                            missionData.payout = (payoutNum / 1000).toFixed(2).replace(/\.?0+$/, '') + 'k';
+                        }
+                    }
+                }
+            }
+            
+            console.log('Extracted payout:', missionData.payout);
+            
+            // Extract all pickups (Collect X from Y)
+            const pickups = {}; // { commodityName: [locations] }
+            let collectMatch;
+            while ((collectMatch = collectPattern.exec(fullText)) !== null) {
+                const commodity = collectMatch[1].trim();
+                const location = collectMatch[2].trim();
+                
+                console.log('Found COLLECT:', commodity, 'from', location);
+                
+                const cleanedCommodity = cleanCommodityName(commodity);
+                const cleanedLocation = cleanLocationName(location);
+                
+                if (!pickups[cleanedCommodity]) {
+                    pickups[cleanedCommodity] = [];
+                }
+                pickups[cleanedCommodity].push(cleanedLocation);
+            }
+            
+            console.log('All pickups:', pickups);
+            
+            // Extract all deliveries (Deliver X SCU of Y to Z)
+            const deliveries = []; // [{ commodity, quantity, destination }]
+            let deliverMatch;
+            while ((deliverMatch = deliverPattern.exec(fullText)) !== null) {
+                const quantity = deliverMatch[1];
+                const commodity = deliverMatch[2].trim();
+                const location = deliverMatch[3].trim();
+                
+                console.log('Found DELIVER:', quantity, 'SCU of', commodity, 'to', location);
+                
+                deliveries.push({
+                    commodity: cleanCommodityName(commodity),
+                    quantity: quantity,
+                    destination: cleanLocationName(location)
+                });
+            }
+            
+            console.log('All deliveries:', deliveries);
+            
+            // Match pickups with deliveries to create complete commodity entries
+            for (const delivery of deliveries) {
+                const commodityName = delivery.commodity;
+                const pickupLocations = pickups[commodityName] || [];
+                
+                // Use first pickup location for this commodity (or empty if none found)
+                const pickupLocation = pickupLocations[0] || '';
+                
+                missionData.commodities.push({
+                    pickup: pickupLocation,
+                    commodity: commodityName,
+                    quantity: delivery.quantity,
+                    destination: delivery.destination,
+                    maxBoxSize: '4'
+                });
+                
+                console.log('Created commodity entry:', {
+                    pickup: pickupLocation,
+                    commodity: commodityName,
+                    quantity: delivery.quantity,
+                    destination: delivery.destination
+                });
+            }
+            
+            // Return mission data if we found at least one commodity
+            if (missionData.commodities.length > 0) {
+                console.log('=== SUCCESS: Parsed mission ===', missionData);
+                return missionData;
+            }
+            
+            console.log('=== FAILED: No complete commodities found ===');
+            return null;
+        }
+        
+        function cleanCommodityName(name) {
+            if (!name || !selectedCategory) return name;
+            
+            // Remove parenthetical suffixes like "(Raw)"
+            const baseName = name.replace(/\s*\([^)]+\)\s*$/g, '').trim();
+            
+            const categoryList = commodities[selectedCategory] || [];
+            
+            // Try exact match with full name (case insensitive)
+            const exactMatch = categoryList.find(c => 
+                c.toLowerCase() === name.toLowerCase()
+            );
+            if (exactMatch) return exactMatch;
+            
+            // Try exact match with base name (without suffix)
+            const exactBaseMatch = categoryList.find(c => 
+                c.toLowerCase() === baseName.toLowerCase()
+            );
+            if (exactBaseMatch) return exactBaseMatch;
+            
+            // Try partial match with full name
+            const partialMatch = categoryList.find(c => 
+                name.toLowerCase().includes(c.toLowerCase()) || 
+                c.toLowerCase().includes(name.toLowerCase())
+            );
+            if (partialMatch) return partialMatch;
+            
+            // Try partial match with base name
+            const partialBaseMatch = categoryList.find(c => 
+                baseName.toLowerCase().includes(c.toLowerCase()) || 
+                c.toLowerCase().includes(baseName.toLowerCase())
+            );
+            if (partialBaseMatch) return partialBaseMatch;
+            
+            // Try matching by key words (for compound names like "Hydrogen Fuel")
+            const words = baseName.split(/\s+/);
+            for (const word of words) {
+                if (word.length > 3) { // Only try meaningful words
+                    const wordMatch = categoryList.find(c =>
+                        c.toLowerCase().includes(word.toLowerCase())
+                    );
+                    if (wordMatch) return wordMatch;
+                }
+            }
+            
+            // If no match found, return original name
+            console.log('Warning: Could not match commodity:', name, 'in category:', selectedCategory);
+            return name;
+        }
+        
+        function cleanLocationName(name) {
+            if (!name || !selectedCategory) return name;
+            
+            // Remove common suffix phrases that aren't part of the location name
+            // Strip: "above X", "on X", "at X's L1 Lagrange point", etc.
+            name = name.replace(/\s+(above|on|at)\s+[\w\s'-]+$/gi, '').trim();
+            
+            // Remove common location type suffixes that might confuse matching
+            name = name.replace(/\s+(Research Outpost|Logistics Depot|Depot|Station|Facility|Spaceport|Harbor|Workcenter|Complex|Point)$/gi, '').trim();
+            
+            const categoryList = locations[selectedCategory] || [];
+            
+            // Try exact match (case insensitive)
+            const exactMatch = categoryList.find(loc => 
+                loc.toLowerCase() === name.toLowerCase()
+            );
+            if (exactMatch) return exactMatch;
+            
+            // Try partial match (location contains name or name contains location)
+            const partialMatch = categoryList.find(loc => {
+                const locLower = loc.toLowerCase();
+                const nameLower = name.toLowerCase();
+                return locLower.includes(nameLower) || nameLower.includes(locLower);
+            });
+            if (partialMatch) return partialMatch;
+            
+            // Try matching by location code (e.g., S4LD13, SMCa-6, CRU-L1)
+            const codeMatch = name.match(/([A-Z]+[\d-]+[A-Z]*\d*)/i);
+            if (codeMatch) {
+                const code = codeMatch[1];
+                const codePartialMatch = categoryList.find(loc => 
+                    loc.toLowerCase().includes(code.toLowerCase())
+                );
+                if (codePartialMatch) return codePartialMatch;
+            }
+            
+            // Try matching by key words in name
+            const words = name.split(/\s+/);
+            for (const word of words) {
+                if (word.length > 3) { // Only try meaningful words
+                    const wordMatch = categoryList.find(loc =>
+                        loc.toLowerCase().includes(word.toLowerCase())
+                    );
+                    if (wordMatch) return wordMatch;
+                }
+            }
+            
+            // If no match found, return original cleaned name
+            console.log('Warning: Could not match location:', name, 'in category:', selectedCategory);
+            return name;
+        }
+
+        function addMissionFromOCR(missionData) {
+            // Add a new mission panel
+            addMissionPanel();
+            
+            // Get the last added mission
+            const lastMission = missions[missions.length - 1];
+            const panel = document.getElementById(lastMission.id);
+            
+            // Set payout
+            if (missionData.payout) {
+                const payoutSelect = panel.querySelector('select');
+                if (payoutSelect) {
+                    // Try to find matching payout
+                    const options = Array.from(payoutSelect.options);
+                    const matchingOption = options.find(opt => opt.value === missionData.payout);
+                    if (matchingOption) {
+                        payoutSelect.value = missionData.payout;
+                        updateMissionPayout(lastMission.id, missionData.payout);
+                    }
+                }
+            }
+            
+            // Remove default commodity row
+            lastMission.commodities = [];
+            const commoditiesContainer = document.getElementById(`${lastMission.id}_commodities`);
+            commoditiesContainer.innerHTML = '';
+            
+            // Add commodities from OCR
+            missionData.commodities.forEach((commodity, index) => {
+                addCommodityRow(lastMission.id);
+                
+                const commodityData = lastMission.commodities[index];
+                const row = document.getElementById(commodityData.id);
+                
+                // Set values
+                const selects = row.querySelectorAll('select');
+                const input = row.querySelector('input');
+                
+                if (selects[0]) selects[0].value = commodity.pickup || '';
+                if (selects[1]) selects[1].value = commodity.commodity || '';
+                if (input) input.value = commodity.quantity || '';
+                if (selects[3]) selects[3].value = commodity.destination || '';
+                
+                // Update the commodity data
+                updateCommodity(commodityData.id, 'pickup', commodity.pickup || '');
+                updateCommodity(commodityData.id, 'commodity', commodity.commodity || '');
+                updateCommodity(commodityData.id, 'quantity', commodity.quantity || '');
+                updateCommodity(commodityData.id, 'destination', commodity.destination || '');
+            });
+            
+            saveSession();
         }
 
         function handleDragLeave(e) {
@@ -1630,7 +2667,7 @@
                 } else {
                     saveDeliveryOrder();
                 }
-                updateDeliverySummary();
+                // updateDeliverySummary removed
             }
 
             return false;
@@ -1666,21 +2703,7 @@
             }
         }
 
-        // Change organizer grouping method
-        function changeOrganizerGrouping() {
-            organizerGroupBy = document.getElementById('organizerGroupBy').value;
-            localStorage.setItem('haulerHelperOrganizerGroupBy', organizerGroupBy);
-            updateDeliverySummary();
-        }
 
-        // Load organizer grouping preference
-        function loadOrganizerGrouping() {
-            const saved = localStorage.getItem('haulerHelperOrganizerGroupBy');
-            if (saved) {
-                organizerGroupBy = saved;
-                document.getElementById('organizerGroupBy').value = saved;
-            }
-        }
 
         // Load theme
         function loadTheme() {
@@ -1819,9 +2842,9 @@
                 </select>
                 <input type="number" placeholder="SCU" min="1" onchange="updateCommodity('${commodityId}', 'quantity', this.value)">
                 <select onchange="updateCommodity('${commodityId}', 'maxBoxSize', this.value)">
-                    <option value="4">Max: 4 SCU</option>
                     <option value="1">Max: 1 SCU</option>
                     <option value="2">Max: 2 SCU</option>
+                    <option value="4">Max: 4 SCU</option>
                     <option value="8">Max: 8 SCU</option>
                     <option value="16">Max: 16 SCU</option>
                     <option value="24">Max: 24 SCU</option>
@@ -1849,7 +2872,8 @@
                     break;
                 }
             }
-            updateDeliverySummary();
+            generateRoutePlan();
+            generateCargoGrid();
             updateStats();
             saveSession();
         }
@@ -1871,7 +2895,8 @@
                 mission.commodities = mission.commodities.filter(c => c.id !== commodityId);
                 document.getElementById(commodityId).remove();
             }
-            updateDeliverySummary();
+            generateRoutePlan();
+            generateCargoGrid();
             updateStats();
             saveSession();
         }
@@ -1880,7 +2905,8 @@
         function removeMissionPanel(missionId) {
             missions = missions.filter(m => m.id !== missionId);
             document.getElementById(missionId).remove();
-            updateDeliverySummary();
+            generateRoutePlan();
+            generateCargoGrid();
             updateStats();
             saveSession();
         }
@@ -1918,101 +2944,208 @@
         }
 
         // Update delivery summary
-        function updateDeliverySummary() {
-            const container = document.getElementById('deliverySummary');
+
+        // Group deliveries by location
+
+        // Tab switching function
+        function switchDeliveryTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
             
-            if (organizerGroupBy === 'commodity') {
-                updateDeliverySummaryByCommodity(container);
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab and activate button
+            if (tabName === 'route') {
+                document.getElementById('routeTab').style.display = 'block';
+            } else if (tabName === 'grid') {
+                document.getElementById('gridTab').style.display = 'block';
+            }
+            
+            // Activate the clicked button
+            event.target.classList.add('active');
+        }
+
+        // Generate optimized route plan
+        // Update cargo grid layout based on columns and rows dropdowns
+        function updateGridLayout() {
+            const cols = parseInt(document.getElementById('gridColumns').value);
+            const rows = parseInt(document.getElementById('gridRows').value);
+            
+            cargoGridLayout = {cols: cols, rows: rows};
+            localStorage.setItem('haulerHelperCargoGridLayout', JSON.stringify(cargoGridLayout));
+            
+            generateCargoGrid();
+        }
+
+        // Load cargo grid layout preference
+        function loadCargoGridLayout() {
+            const saved = localStorage.getItem('haulerHelperCargoGridLayout');
+            if (saved) {
+                try {
+                    cargoGridLayout = JSON.parse(saved);
+                    document.getElementById('gridColumns').value = cargoGridLayout.cols || 3;
+                    document.getElementById('gridRows').value = cargoGridLayout.rows || 3;
+                } catch (e) {
+                    cargoGridLayout = {cols: 3, rows: 3};
+                }
             } else {
-                updateDeliverySummaryByLocation(container);
+                cargoGridLayout = {cols: 3, rows: 3};
             }
         }
 
-        // Group deliveries by location
-        function updateDeliverySummaryByLocation(container) {
-            const deliveries = {};
+        // Generate cargo grid with free positioning
+        function generateCargoGrid() {
+            const container = document.getElementById('cargoGrid');
             
-            // Group by destination
-            missions.forEach(mission => {
-                mission.commodities.forEach(commodity => {
-                    if (commodity.destination && commodity.commodity && commodity.quantity) {
-                        if (!deliveries[commodity.destination]) {
-                            deliveries[commodity.destination] = [];
-                        }
-                        deliveries[commodity.destination].push({
-                            commodity: commodity.commodity,
-                            quantity: parseInt(commodity.quantity) || 0,
-                            maxBoxSize: parseInt(commodity.maxBoxSize) || 4
-                        });
-                    }
-                });
-            });
-            
-            if (Object.keys(deliveries).length === 0) {
-                container.innerHTML = '<div class="empty-state">No deliveries planned</div>';
+            if (!container) {
+                console.error('❌ cargoGrid container not found!');
                 return;
             }
             
-            // Assign colors to locations
+            // Get cargo groups from missions
+            const groupData = {};
+            
+            missions.forEach((mission, missionIndex) => {
+                mission.commodities.forEach(commodity => {
+                    if (!commodity.pickup || !commodity.destination || !commodity.commodity || !commodity.quantity) {
+                        return;
+                    }
+                    
+                    const scu = parseInt(commodity.quantity) || 0;
+                    const destination = commodity.destination;
+                    
+                    if (!groupData[destination]) {
+                        groupData[destination] = {
+                            destination: destination,
+                            totalSCU: 0,
+                            items: []
+                        };
+                    }
+                    
+                    groupData[destination].totalSCU += scu;
+                    groupData[destination].items.push({
+                        missionNum: missionIndex + 1,
+                        commodity: commodity.commodity,
+                        scu: scu,
+                        pickup: commodity.pickup,
+                        maxBoxSize: parseInt(commodity.maxBoxSize) || 4
+                    });
+                });
+            });
+            
+            if (Object.keys(groupData).length === 0) {
+                container.innerHTML = '<div class="empty-state">No cargo groups to display</div>';
+                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                return;
+            }
+            
+            // Assign colors and labels to groups
             const theme = document.body.getAttribute('data-theme');
             const palette = themeColorPalettes[theme] || themeColorPalettes['stardust'];
-            let colorIndex = 0;
+            let groupIndex = 0;
             
-            Object.keys(deliveries).forEach(location => {
-                if (!locationColors[location]) {
-                    locationColors[location] = {
-                        color: palette[colorIndex % palette.length],
-                        label: (Object.keys(locationColors).length + 1).toString()
+            Object.keys(groupData).forEach(destination => {
+                if (!cargoGroups[destination]) {
+                    const groupLetter = String.fromCharCode(65 + groupIndex);
+                    cargoGroups[destination] = {
+                        label: groupLetter,
+                        color: palette[groupIndex % palette.length],
+                        position: null  // Will be set by user
                     };
-                    colorIndex++;
+                    groupIndex++;
                 }
             });
             
-            // Update delivery order array if new locations added
-            const currentLocations = Object.keys(deliveries);
-            deliveryOrder = deliveryOrder.filter(loc => currentLocations.includes(loc));
-            currentLocations.forEach(loc => {
-                if (!deliveryOrder.includes(loc)) {
-                    deliveryOrder.push(loc);
-                }
-            });
+            // Calculate grid dimensions
+            const cols = cargoGridLayout.cols || 3;
+            const rows = cargoGridLayout.rows || 3;
+            const totalCells = rows * cols;
             
-            // Sort deliveries by custom order
-            const sortedDeliveries = deliveryOrder
-                .filter(loc => deliveries[loc])
-                .map(loc => [loc, deliveries[loc]]);
+            // Build grid with positioned groups
+            container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
             
-            container.innerHTML = sortedDeliveries.map(([location, items]) => {
-                const markerData = locationColors[location];
-                const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+            // Create array of cells
+            const cells = [];
+            for (let i = 0; i < totalCells; i++) {
+                cells.push({ position: i, group: null });
+            }
+            
+            // Place groups in their positions (or auto-place if no position set)
+            let autoPosition = 0;
+            Object.keys(groupData).forEach(destination => {
+                const group = cargoGroups[destination];
+                const data = groupData[destination];
                 
-                return `
-                    <div class="delivery-location" draggable="true" data-location="${location}"
-                         ondragstart="handleDragStart(event)" 
-                         ondragend="handleDragEnd(event)"
-                         ondragover="handleDragOver(event)"
-                         ondrop="handleDrop(event)"
-                         ondragleave="handleDragLeave(event)">
-                        <div class="location-marker">
-                            <div class="marker-color" style="background-color: ${markerData.color}" 
-                                 onclick="openColorPicker('${location}')">
-                                <input type="text" 
-                                       class="marker-label" 
-                                       value="${markerData.label}" 
-                                       onchange="updateMarkerLabel('${location}', this.value)"
-                                       onclick="event.stopPropagation()"
-                                       maxlength="3">
-                            </div>
+                // Use saved position or auto-place
+                let position = group.position;
+                if (position === null || position === undefined || position >= totalCells) {
+                    // Auto-place in next available spot
+                    while (autoPosition < totalCells && cells[autoPosition].group !== null) {
+                        autoPosition++;
+                    }
+                    position = autoPosition;
+                    group.position = position;
+                }
+                
+                if (position < totalCells) {
+                    cells[position].group = {
+                        destination: destination,
+                        ...data,
+                        ...group
+                    };
+                }
+            });
+            
+            // Render grid
+            container.innerHTML = cells.map((cell, index) => {
+                if (!cell.group) {
+                    // Empty cell - drop target
+                    return `
+                        <div class="cargo-group-cell empty-cell" 
+                             data-position="${index}">
                         </div>
-                        <div class="location-details">
-                            <div class="location-name">${location} (${totalQuantity} SCU Total)</div>
-                           ${items.map(item => {
-                                const boxes = calculateBoxBreakdown(item.quantity, item.maxBoxSize);
+                    `;
+                }
+                
+                const g = cell.group;
+                return `
+                    <div class="cargo-group-card" 
+                         data-destination="${g.destination}"
+                         data-position="${index}"
+                         style="border-color: ${g.color}"
+                         draggable="true">
+                        <div class="cargo-group-header">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div class="cargo-drag-handle" title="Drag to reposition">⋮⋮</div>
+                                <div class="cargo-group-label-edit" 
+                                     style="color: ${g.color}; cursor: pointer; pointer-events: auto;"
+                                     onclick="event.stopPropagation(); editCargoGroupLabel('${g.destination}', event)">
+                                    ${g.label}
+                                </div>
+                            </div>
+                            <div class="cargo-group-scu">${g.totalSCU} SCU</div>
+                        </div>
+                        <div class="cargo-group-color-edit"
+                             style="background-color: ${g.color}; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; margin: 8px 0;"
+                             onclick="event.stopPropagation(); editCargoGroupColor('${g.destination}')">
+                        </div>
+                        <div class="cargo-group-destination">${g.destination}</div>
+                        <div class="expand-indicator" onclick="event.stopPropagation(); toggleCargoGroupExpand(this.parentElement)">Click to expand</div>
+                        <div class="cargo-group-details">
+                            ${g.items.map(item => {
+                                const boxes = calculateBoxBreakdown(item.scu, item.maxBoxSize);
                                 return `
-                                    <div class="delivery-item">
-                                        <span class="commodity-name">${item.commodity}</span>
+                                    <div class="cargo-group-details-item">
+                                        <span class="mission-num">Mission ${item.missionNum}:</span>
+                                        <span class="commodity">${item.commodity}</span>
+                                        <span>(${item.scu} SCU)</span>
                                     </div>
-                                    <div class="box-breakdown">
+                                    <div class="box-breakdown" style="padding-left: 10px; margin-bottom: 8px;">
                                         ${Object.entries(boxes).map(([size, count]) => `
                                             <div class="box-icon">
                                                 ${getBoxIconSVG(size)}
@@ -2026,105 +3159,563 @@
                     </div>
                 `;
             }).join('');
+            
+            // Attach drag handlers and apply expanded state after rendering
+            setTimeout(() => {
+                attachCargoGridDragHandlers();
+                
+                // Apply expanded state to all cards
+                if (cargoGridExpanded) {
+                    document.querySelectorAll('.cargo-group-card').forEach(card => {
+                        card.classList.add('expanded');
+                    });
+                }
+                
+                console.log('✅ Cargo grid rendering complete');
+            }, 0);
         }
 
-        // Group deliveries by commodity
-        function updateDeliverySummaryByCommodity(container) {
-            const deliveries = {};
+        // Edit cargo group label
+        function editCargoGroupLabel(destination, event) {
+            event.stopPropagation();
+            const newLabel = prompt('Enter new label for this cargo group:', cargoGroups[destination].label);
+            if (newLabel !== null && newLabel.trim() !== '') {
+                cargoGroups[destination].label = newLabel.trim();
+                generateCargoGrid();
+                generateRoutePlan(); // Update route planner too
+                saveSession();
+            }
+        }
+
+        // Edit cargo group color
+        function editCargoGroupColor(destination) {
+            currentColorTarget = destination;
+            const modal = document.getElementById('colorPickerModal');
+            modal.classList.add('active');
             
-            // Group by commodity
-            missions.forEach(mission => {
-                mission.commodities.forEach(commodity => {
-                    if (commodity.destination && commodity.commodity && commodity.quantity) {
-                        if (!deliveries[commodity.commodity]) {
-                            deliveries[commodity.commodity] = [];
-                        }
-                        deliveries[commodity.commodity].push({
-                            destination: commodity.destination,
-                            quantity: parseInt(commodity.quantity) || 0,
-                            maxBoxSize: parseInt(commodity.maxBoxSize) || 4
-                        });
+            const currentColor = cargoGroups[destination].color;
+            document.getElementById('customColorInput').value = currentColor;
+        }
+
+
+
+
+        // DIAGNOSTIC: Check actual DOM state
+        window.diagnoseCargoGrid = function() {
+            const cards = document.querySelectorAll('.cargo-group-card');
+            console.log('=== CARGO GRID DIAGNOSTICS ===');
+            console.log('Found cards:', cards.length);
+            
+            cards.forEach((card, i) => {
+                console.log(`Card ${i}:`, {
+                    draggable: card.draggable,
+                    hasAttribute: card.hasAttribute('draggable'),
+                    getAttribute: card.getAttribute('draggable'),
+                    ondragstart: card.ondragstart,
+                    destination: card.getAttribute('data-destination'),
+                    classList: Array.from(card.classList),
+                    computedStyle: {
+                        pointerEvents: getComputedStyle(card).pointerEvents,
+                        userDrag: getComputedStyle(card).webkitUserDrag || getComputedStyle(card).userDrag
                     }
                 });
+                
+                // Check first child (drag handle)
+                const dragHandle = card.querySelector('.cargo-drag-handle');
+                if (dragHandle) {
+                    console.log('  Drag handle:', {
+                        computedStyle: {
+                            pointerEvents: getComputedStyle(dragHandle).pointerEvents
+                        }
+                    });
+                }
             });
             
-            if (Object.keys(deliveries).length === 0) {
-                container.innerHTML = '<div class="empty-state">No deliveries planned</div>';
+            console.log('=== END DIAGNOSTICS ===');
+        };
+
+        // TEST FUNCTION - User can call this from console
+        window.testDragStart = function() {
+            console.log('🧪 Testing if handleCargoGridDragStart exists:', typeof handleCargoGridDragStart);
+            console.log('🧪 Testing draggedCargoGroup:', draggedCargoGroup);
+            console.log('🧪 Testing cargoGroups:', cargoGroups);
+        };
+
+
+        // Attach drag handlers to all cargo cards after grid generation
+        function attachCargoGridDragHandlers() {
+            const cards = document.querySelectorAll('.cargo-group-card');
+            
+            cards.forEach(card => {
+                // Remove any existing handlers first
+                card.ondragstart = null;
+                card.ondragend = null;
+                card.ondragover = null;
+                card.ondrop = null;
+                
+                // Attach new handlers (though document-level handlers will catch them)
+                card.addEventListener('dragstart', handleCargoGridDragStart, false);
+                card.addEventListener('dragend', handleCargoGridDragEnd, false);
+                card.addEventListener('dragover', handleCargoGridDragOver, false);
+                card.addEventListener('drop', handleCargoGridDrop, false);
+            });
+            
+            // Also attach to empty cells
+            const emptyCells = document.querySelectorAll('.empty-cell');
+            
+            emptyCells.forEach(cell => {
+                cell.ondragover = null;
+                cell.ondrop = null;
+                cell.addEventListener('dragover', handleCargoGridDragOver, false);
+                cell.addEventListener('drop', handleCargoGridDrop, false);
+            });
+        }
+
+        // Cargo grid drag and drop handlers
+        let draggedCargoGroup = null;
+        let cargoGridExpanded = false; // Track if cargo grid cards are expanded
+        let routeStops = []; // Store current route stops for reordering
+
+        function handleCargoGridDragStart(e) {
+            // When called from document listener, use e.target instead of e.currentTarget
+            const cardElement = e.currentTarget === document ? e.target : e.currentTarget;
+            
+            draggedCargoGroup = cardElement.getAttribute('data-destination');
+            console.log('🔵 Drag start:', draggedCargoGroup);
+            
+            if (!draggedCargoGroup) {
+                console.log('❌ No destination attribute found!');
                 return;
             }
             
-            // Assign colors to commodities (reuse locationColors structure)
+            cardElement.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', draggedCargoGroup);
+        }
+
+        function handleCargoGridDragEnd(e) {
+            const cardElement = e.currentTarget === document ? e.target : e.currentTarget;
+            cardElement.style.opacity = '1';
+            console.log('🔴 DRAG END');
+        }
+
+        function handleCargoGridDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleCargoGridDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('🟢 DROP EVENT FIRED');
+            
+            if (!draggedCargoGroup) {
+                console.log('❌ No dragged group!');
+                return false;
+            }
+            
+            const target = e.currentTarget === document ? e.target : e.currentTarget;
+            const targetPosition = parseInt(target.getAttribute('data-position'));
+            const targetDestination = target.getAttribute('data-destination');
+            
+            console.log('🎯 DROP TARGET:', {
+                targetPosition,
+                targetDestination,
+                draggedGroup: draggedCargoGroup,
+                draggedPosition: cargoGroups[draggedCargoGroup]?.position
+            });
+            
+            // Get dragged item's current position
+            const draggedPosition = cargoGroups[draggedCargoGroup].position;
+            
+            if (targetDestination && targetDestination !== draggedCargoGroup) {
+                // Swap positions with another card
+                console.log('🔄 SWAPPING:', draggedCargoGroup, '↔️', targetDestination);
+                const temp = cargoGroups[targetDestination].position;
+                cargoGroups[targetDestination].position = draggedPosition;
+                cargoGroups[draggedCargoGroup].position = targetPosition;
+            } else if (!targetDestination) {
+                // Drop on empty cell - just move
+                console.log('📦 MOVING to empty cell:', targetPosition);
+                cargoGroups[draggedCargoGroup].position = targetPosition;
+            } else {
+                console.log('⚠️ Dropped on self, no action');
+            }
+            
+            // Regenerate grid and save
+            console.log('♻️ Regenerating grid...');
+            generateCargoGrid();
+            saveSession();
+            
+            draggedCargoGroup = null;
+            return false;
+        }
+
+        // Toggle cargo group expansion
+        function toggleCargoGroupExpand(card) {
+            // Toggle the global expanded state
+            cargoGridExpanded = !cargoGridExpanded;
+            
+            // Apply to all cards
+            document.querySelectorAll('.cargo-group-card').forEach(c => {
+                if (cargoGridExpanded) {
+                    c.classList.add('expanded');
+                } else {
+                    c.classList.remove('expanded');
+                }
+            });
+            
+            // Save state
+            localStorage.setItem('haulerHelperCargoGridExpanded', cargoGridExpanded);
+        }
+
+        // Update confirmColor to handle cargo groups
+        function confirmColor() {
+            if (currentColorTarget) {
+                const color = document.getElementById('customColorInput').value;
+                
+                // Check if it's a cargo group or location marker
+                if (cargoGroups[currentColorTarget]) {
+                    cargoGroups[currentColorTarget].color = color;
+                    generateCargoGrid();
+                    generateRoutePlan(); // Update route planner colors too
+                } else if (locationColors[currentColorTarget]) {
+                    locationColors[currentColorTarget].color = color;
+                    // updateDeliverySummary removed
+                }
+                
+                saveSession();
+            }
+            closeColorPicker();
+        }
+
+
+
+
+        // Route planner drag and drop handlers
+        let draggedRouteStop = null;
+        
+        function handleRouteStopDragStart(e) {
+            const stopElement = e.currentTarget === document ? e.target : e.currentTarget;
+            draggedRouteStop = parseInt(stopElement.getAttribute('data-stop-index'));
+            console.log('🔵 Dragging route stop:', draggedRouteStop);
+            stopElement.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+        
+        function handleRouteStopDragEnd(e) {
+            const stopElement = e.currentTarget === document ? e.target : e.currentTarget;
+            stopElement.style.opacity = '1';
+            draggedRouteStop = null;
+        }
+        
+        function handleRouteStopDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        
+        function handleRouteStopDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.preventDefault();
+            
+            if (draggedRouteStop === null) return false;
+            
+            const targetElement = e.currentTarget === document ? e.target : e.currentTarget;
+            const targetStop = targetElement.closest('.route-stop');
+            if (!targetStop) return false;
+            
+            const targetIndex = parseInt(targetStop.getAttribute('data-stop-index'));
+            
+            if (draggedRouteStop === targetIndex) return false;
+            
+            console.log('🔄 Swapping stops:', draggedRouteStop, '↔️', targetIndex);
+            
+            // Swap stops in array
+            const temp = routeStops[draggedRouteStop];
+            routeStops[draggedRouteStop] = routeStops[targetIndex];
+            routeStops[targetIndex] = temp;
+            
+            // Re-render with new order
+            renderRoutePlan(routeStops);
+            
+            return false;
+        }
+
+        function generateRoutePlan() {
+            const container = document.getElementById('routePlanner');
+            
+            // Build comprehensive location map
+            const locationMap = {}; // { location: { pickups: [], deliveries: [] } }
+            
+            missions.forEach((mission, missionIndex) => {
+                mission.commodities.forEach(commodity => {
+                    if (!commodity.pickup || !commodity.destination || !commodity.commodity || !commodity.quantity) {
+                        return;
+                    }
+                    
+                    const scu = parseInt(commodity.quantity) || 0;
+                    const pickup = commodity.pickup;
+                    const destination = commodity.destination;
+                    
+                    // Initialize location entries
+                    if (!locationMap[pickup]) locationMap[pickup] = { pickups: [], deliveries: [] };
+                    if (!locationMap[destination]) locationMap[destination] = { pickups: [], deliveries: [] };
+                    
+                    // Add pickup action
+                    locationMap[pickup].pickups.push({
+                        missionNum: missionIndex + 1,
+                        commodity: commodity.commodity,
+                        scu: scu,
+                        destination: destination,
+                        maxBoxSize: parseInt(commodity.maxBoxSize) || 4,
+                        id: `m${missionIndex + 1}-${commodity.commodity}-${destination}` // Unique ID
+                    });
+                    
+                    // Add delivery action
+                    locationMap[destination].deliveries.push({
+                        missionNum: missionIndex + 1,
+                        commodity: commodity.commodity,
+                        scu: scu,
+                        pickup: pickup,
+                        id: `m${missionIndex + 1}-${commodity.commodity}-${destination}` // Same ID as pickup
+                    });
+                });
+            });
+            
+            if (Object.keys(locationMap).length === 0) {
+                container.innerHTML = '<div class="empty-state">No route planned</div>';
+                return;
+            }
+            
+            // Assign colors to cargo groups (by destination)
             const theme = document.body.getAttribute('data-theme');
             const palette = themeColorPalettes[theme] || themeColorPalettes['stardust'];
-            let colorIndex = 0;
+            let groupIndex = 0;
             
-            Object.keys(deliveries).forEach(commodity => {
-                if (!locationColors[commodity]) {
-                    locationColors[commodity] = {
-                        color: palette[colorIndex % palette.length],
-                        label: (Object.keys(locationColors).length + 1).toString()
-                    };
-                    colorIndex++;
+            // Assign groups for each destination
+            Object.keys(locationMap).forEach(location => {
+                if (locationMap[location].pickups.length > 0) {
+                    locationMap[location].pickups.forEach(pickup => {
+                        if (!cargoGroups[pickup.destination]) {
+                            const groupLetter = String.fromCharCode(65 + groupIndex);
+                            cargoGroups[pickup.destination] = {
+                                label: groupLetter,
+                                color: palette[groupIndex % palette.length]
+                            };
+                            groupIndex++;
+                        }
+                    });
                 }
             });
             
-            // Update commodity order array if new commodities added
-            const currentCommodities = Object.keys(deliveries);
-            commodityOrder = commodityOrder.filter(com => currentCommodities.includes(com));
-            currentCommodities.forEach(com => {
-                if (!commodityOrder.includes(com)) {
-                    commodityOrder.push(com);
-                }
+            // Build optimized route with proper pickup-before-delivery logic
+            const stops = [];
+            const cargoOnBoard = new Set(); // Track IDs of cargo currently on ship
+            const allPickupIds = new Set();
+            const allDeliveryIds = new Set();
+            
+            // Collect all pickup and delivery IDs
+            Object.values(locationMap).forEach(loc => {
+                loc.pickups.forEach(p => allPickupIds.add(p.id));
+                loc.deliveries.forEach(d => allDeliveryIds.add(d.id));
             });
             
-            // Sort by custom order
-            const sortedDeliveries = commodityOrder
-                .filter(com => deliveries[com])
-                .map(com => [com, deliveries[com]]);
+            // Identify the first pickup location (starting location)
+            let firstPickupLocation = null;
+            if (missions.length > 0 && missions[0].commodities.length > 0) {
+                firstPickupLocation = missions[0].commodities[0].pickup;
+            }
             
-            container.innerHTML = sortedDeliveries.map(([commodity, items]) => {
-                const markerData = locationColors[commodity];
-                const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-                const boxes = calculateBoxBreakdown(totalQuantity, Math.max(...items.map(i => i.maxBoxSize)));
+            let currentCargo = 0;
+            const shipCapacity = selectedShip ? selectedShip.capacity : 999999;
+            
+            // Keep visiting locations until everything is delivered
+            while (allDeliveryIds.size > 0) {
+                let madeProgress = false;
                 
-                return `
-                    <div class="delivery-location" draggable="true" data-location="${commodity}"
-                         ondragstart="handleDragStart(event)" 
-                         ondragend="handleDragEnd(event)"
-                         ondragover="handleDragOver(event)"
-                         ondrop="handleDrop(event)"
-                         ondragleave="handleDragLeave(event)">
-                        <div class="location-marker">
-                            <div class="marker-color" style="background-color: ${markerData.color}" 
-                                 onclick="openColorPicker('${commodity}')">
-                                <input type="text" 
-                                       class="marker-label" 
-                                       value="${markerData.label}" 
-                                       onchange="updateMarkerLabel('${commodity}', this.value)"
-                                       onclick="event.stopPropagation()"
-                                       maxlength="3">
-                            </div>
-                        </div>
-                        <div class="location-details">
-                            <div class="location-name">${commodity} (${totalQuantity} SCU Total)</div>
-                            ${items.map(item => `
-                                <div class="delivery-item">
-                                    <span class="commodity-name">${item.destination} (${item.quantity} SCU)</span>
-                                </div>
-                            `).join('')}
-                            <div class="box-breakdown">
-                                ${Object.entries(boxes).map(([size, count]) => `
-                                    <div class="box-icon">
-                                        ${getBoxIconSVG(size)}
-                                        <span class="box-count">× ${count}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                // Phase 1: Visit locations with pickups (prioritize locations that also have deliveries)
+                // BUT: Defer first pickup location deliveries until the end
+                const locationsByPriority = Object.keys(locationMap).sort((a, b) => {
+                    const aIsFirst = a === firstPickupLocation;
+                    const bIsFirst = b === firstPickupLocation;
+                    const aHasDeliveryOnly = locationMap[a].pickups.length === 0 && 
+                                             locationMap[a].deliveries.some(d => cargoOnBoard.has(d.id));
+                    const bHasDeliveryOnly = locationMap[b].pickups.length === 0 && 
+                                             locationMap[b].deliveries.some(d => cargoOnBoard.has(d.id));
+                    
+                    // Deprioritize first location if it only has deliveries (save for end)
+                    if (aIsFirst && aHasDeliveryOnly && !bIsFirst) return 1;
+                    if (bIsFirst && bHasDeliveryOnly && !aIsFirst) return -1;
+                    
+                    const aHasBoth = locationMap[a].pickups.length > 0 && 
+                                     locationMap[a].deliveries.some(d => cargoOnBoard.has(d.id));
+                    const bHasBoth = locationMap[b].pickups.length > 0 && 
+                                     locationMap[b].deliveries.some(d => cargoOnBoard.has(d.id));
+                    
+                    if (aHasBoth && !bHasBoth) return -1;
+                    if (!aHasBoth && bHasBoth) return 1;
+                    
+                    const aHasPickup = locationMap[a].pickups.length > 0;
+                    const bHasPickup = locationMap[b].pickups.length > 0;
+                    
+                    if (aHasPickup && !bHasPickup) return -1;
+                    if (!aHasPickup && bHasPickup) return 1;
+                    
+                    return 0;
+                });
+                
+                for (const location of locationsByPriority) {
+                    const loc = locationMap[location];
+                    
+                    // Check if we should visit this location
+                    const hasPickupsToGet = loc.pickups.some(p => allPickupIds.has(p.id));
+                    const hasDeliveriesToMake = loc.deliveries.some(d => cargoOnBoard.has(d.id));
+                    
+                    if (!hasPickupsToGet && !hasDeliveriesToMake) continue;
+                    
+                    // Skip first location if it only has deliveries and other locations still need visiting
+                    const isFirstLocation = location === firstPickupLocation;
+                    const onlyHasDeliveries = !hasPickupsToGet && hasDeliveriesToMake;
+                    const otherLocationsRemain = Object.keys(locationMap).some(loc => 
+                        loc !== location && 
+                        (locationMap[loc].pickups.some(p => allPickupIds.has(p.id)) ||
+                         locationMap[loc].deliveries.some(d => cargoOnBoard.has(d.id)))
+                    );
+                    
+                    if (isFirstLocation && onlyHasDeliveries && otherLocationsRemain) {
+                        continue; // Skip first location, visit other locations first
+                    }
+                    
+                    // Create stop
+                    const pickupsAtThisStop = loc.pickups.filter(p => allPickupIds.has(p.id));
+                    const deliveriesAtThisStop = loc.deliveries.filter(d => cargoOnBoard.has(d.id));
+                    
+                    if (pickupsAtThisStop.length === 0 && deliveriesAtThisStop.length === 0) continue;
+                    
+                    const pickupSCU = pickupsAtThisStop.reduce((sum, p) => sum + p.scu, 0);
+                    const deliverySCU = deliveriesAtThisStop.reduce((sum, d) => sum + d.scu, 0);
+                    
+                    stops.push({
+                        location: location,
+                        pickups: pickupsAtThisStop,
+                        deliveries: deliveriesAtThisStop,
+                        cargoBeforeStop: currentCargo,
+                        cargoAfterStop: currentCargo - deliverySCU + pickupSCU
+                    });
+                    
+                    // Update cargo state
+                    deliveriesAtThisStop.forEach(d => {
+                        cargoOnBoard.delete(d.id);
+                        allDeliveryIds.delete(d.id);
+                    });
+                    
+                    pickupsAtThisStop.forEach(p => {
+                        cargoOnBoard.add(p.id);
+                        allPickupIds.delete(p.id);
+                    });
+                    
+                    currentCargo = currentCargo - deliverySCU + pickupSCU;
+                    madeProgress = true;
+                    break; // Visit one location at a time
+                }
+                
+                if (!madeProgress) {
+                    // Safety check - shouldn't happen if data is valid
+                    console.error('Route planner stuck - no valid next stop found');
+                    break;
+                }
+            }
+            
+            // Store stops and render
+            routeStops = stops;
+            renderRoutePlan(stops);
         }
+        
+        // Render route plan (separated so we can re-render after drag)
+        function renderRoutePlan(stops) {
+            const container = document.getElementById('routePlanner');
+            const shipCapacity = selectedShip ? selectedShip.capacity : 999999;
+            
+            // Recalculate cargo levels based on current order
+            let currentCargo = 0;
+            stops.forEach(stop => {
+                stop.cargoBeforeStop = currentCargo;
+                const pickupSCU = stop.pickups.reduce((sum, p) => sum + p.scu, 0);
+                const deliverySCU = stop.deliveries.reduce((sum, d) => sum + d.scu, 0);
+                currentCargo = currentCargo - deliverySCU + pickupSCU;
+                stop.cargoAfterStop = currentCargo;
+            });
+            
+            container.innerHTML = `
+                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
+                    Optimized Route - ${stops.length} Stops
+                </div>
+                ${stops.map((stop, index) => {
+                    const hasPickups = stop.pickups.length > 0;
+                    const hasDeliveries = stop.deliveries.length > 0;
+                    
+                    return `
+                        <div class="route-stop" data-stop-index="${index}" draggable="true">
+                            <div class="route-stop-header">
+                                <div class="route-stop-title">Stop ${index + 1}: ${stop.location}</div>
+                                <div class="route-cargo-status">Cargo: ${stop.cargoAfterStop}/${shipCapacity} SCU</div>
+                            </div>
+                            
+                            ${hasDeliveries ? `
+                                <div class="route-action-section">
+                                    <div class="route-action-header" style="color: var(--color-success);">
+                                        <span style="font-size: 16px; margin-right: 8px;">▼</span> DELIVERY
+                                    </div>
+                                    ${stop.deliveries.map(item => {
+                                        const group = cargoGroups[stop.location];
+                                        return `
+                                            <div class="route-mission-item" style="border-left: 3px solid ${group?.color || '#888'}; padding-left: 12px; margin-left: 20px;">
+                                                <span class="mission-number">Mission ${item.missionNum}:</span>
+                                                <span class="commodity">${item.commodity}</span>
+                                                <span>(${item.scu} SCU)</span>
+                                                <span style="color: ${group?.color || '#888'}; font-weight: 600; margin-left: 8px;">Group ${group?.label || '?'}</span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            ${hasPickups ? `
+                                <div class="route-action-section">
+                                    <div class="route-action-header" style="color: var(--color-warning);">
+                                        <span style="font-size: 16px; margin-right: 8px;">▲</span> PICKUP
+                                    </div>
+                                    ${stop.pickups.map(item => {
+                                        const group = cargoGroups[item.destination];
+                                        return `
+                                            <div class="route-mission-item" style="border-left: 3px solid ${group?.color || '#888'}; padding-left: 12px; margin-left: 20px;">
+                                                <span class="mission-number">Mission ${item.missionNum}:</span>
+                                                <span class="commodity">${item.commodity}</span>
+                                                <span>(${item.scu} SCU)</span>
+                                                <span style="color: ${group?.color || '#888'}; font-weight: 600; margin-left: 8px;">→ Group ${group?.label || '?'}</span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        }
+
+
+
+
+
+        // Group deliveries by commodity
 
         // Update stats
         function updateStats() {
@@ -2136,8 +3727,9 @@
                 }
             });
             
-            const payoutK = Math.floor(totalPayout / 1000);
-            document.getElementById('totalPayout').textContent = payoutK + 'K';
+            // Format with commas
+            const payoutFormatted = totalPayout.toLocaleString('en-US');
+            document.getElementById('totalPayout').textContent = payoutFormatted;
             
             // Calculate total SCU
             let totalSCU = 0;
@@ -2190,15 +3782,7 @@
             document.getElementById('customColorInput').value = color;
         }
 
-        function confirmColor() {
-            if (currentColorTarget) {
-                const color = document.getElementById('customColorInput').value;
-                locationColors[currentColorTarget].color = color;
-                updateDeliverySummary();
-                saveSession();
-            }
-            closeColorPicker();
-        }
+
 
         function updateMarkerLabel(location, label) {
             locationColors[location].label = label;
@@ -2282,7 +3866,9 @@
                     locationColors = session.locationColors;
                 }
                 
-                updateDeliverySummary();
+                // Generate route plan and cargo grid
+                generateRoutePlan();
+                generateCargoGrid();
                 updateStats();
             } catch (e) {
                 console.error('Error loading session:', e);
@@ -2291,6 +3877,28 @@
 
         // Initialize on load
         window.onload = init;
+
+        // Reset missions only (keep ship, system, category, theme)
+        function resetMissions() {
+            if (confirm('Clear all missions? This will remove all mission data but keep your ship, system, category, and theme settings.')) {
+                // Clear missions
+                missions = [];
+                missionCounter = 0;
+                locationColors = {};
+                deliveryOrder = [];
+                commodityOrder = [];
+                cargoGridOrder = [];
+                cargoGroups = {};
+                
+                // Clear mission panels
+                document.getElementById('missionsContainer').innerHTML = '';
+                
+                // Update displays
+                // updateDeliverySummary removed
+                updateStats();
+                saveSession();
+            }
+        }
 
         // Reset function
         function resetAll() {
@@ -2309,6 +3917,7 @@
         }
     </script>
 
+    <button class="btn-reset" onclick="resetMissions()" title="Clear missions only" style="bottom: 80px;">Reset Missions</button>
     <button class="btn-reset" onclick="resetAll()" title="Reset all data and preferences">Reset All</button>
 
     <footer class="footer">
