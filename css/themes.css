@@ -8,6 +8,7 @@
     --bg-primary: #0a0e1a;
     --bg-secondary: #141b2d;
     --bg-tertiary: #1a2332;
+    --bg-gradient-end: #121625;
     --color-primary: #4dd4ac;
     --color-accent: #7ee7c4;
     --color-success: #4ade80;
@@ -34,6 +35,7 @@ body[data-theme="lux"] {
     --bg-primary: #0e160f;      /* Deep Forest - Main page background (dark green tint) */
     --bg-secondary: #1a2318;    /* Dark Olive - Panels (medium green) */
     --bg-tertiary: #283525;     /* Forest Shadow - Dropdowns/Inputs (lighter green) */
+    --bg-gradient-end: #121625; /* standard blue */
     
     /* Primary brand colors */
     --color-primary: #B4F500;   /* Electric Lime - Headers, capacity fills */
@@ -78,6 +80,7 @@ body[data-theme="pulse"] {
     --bg-primary: #1a1118;
     --bg-secondary: #2a1a24;
     --bg-tertiary: #3d2535;
+    --bg-gradient-end: #121625; /* standard blue */
     
     /* Primary brand colors */
     --color-primary: #FF006E;      /* Hot Magenta - headers, main accents */
@@ -128,7 +131,8 @@ body[data-theme="flow"] {
     --bg-primary: #0a0e1a;      /* Deep Ocean - Main page background (dark blue tint) */
     --bg-secondary: #141b2d;    /* Midnight Blue - Panels (medium blue) */
     --bg-tertiary: #1a2332;     /* Slate Blue - Dropdowns/Inputs (lighter blue) */
-    
+    --bg-gradient-end: #121625; /* standard blue */
+
     /* Primary brand colors */
     --color-primary: #1E90FF;   /* Sky Blue - Headers, capacity fills */
     --color-accent: #00D4FF;    /* Electric Aqua - Hover states */
@@ -172,6 +176,7 @@ body[data-theme="dark"] {
     --bg-primary: #1e0c27;      /* Deep Void - Main page background (dark magenta tint) */
     --bg-secondary: #3b1957;    /* Dark Plum - Panels (medium magenta) */
     --bg-tertiary: #3d164e;     /* Mystic Purple - Dropdowns/Inputs (lighter magenta) */
+    --bg-gradient-end: #121625; /* standard blue */
     
     /* Primary brand colors */
     --color-primary: #f0daff;   /* Electric Purple - Headers, capacity fills */
@@ -216,6 +221,7 @@ body[data-theme="wednesday"] {
     --bg-primary: #1f001a;      /* Midnight Burgundy - Main page background (deep wine-black) */
     --bg-secondary: #18091b;    /* Velvet Wine - Panels (medium burgundy) */
     --bg-tertiary: #221531;     /* Plum Shadow - Dropdowns/Inputs (plum-purple) */
+    --bg-gradient-end: #121625; /* standard blue */
     
     /* Primary brand colors - Rich wine and purple */ 
     --color-primary: #ff2793;   /* Burgundy Wine - Headers, capacity fills */
@@ -259,12 +265,64 @@ body[data-theme="wednesday"] .mission-title {
     color: var(--text-highlight);
 }
 
+/* Theme: Cassette (Cassette Futurism) - Comprehensive palette */
+body[data-theme="cassette"] {
+    /* Backgrounds - Warm retro computer beiges */
+    --bg-primary: #1a1612;      /* Warm Black - Main page background */
+    --bg-secondary: #2d2620;    /* Vintage Beige Shadow - Panels */
+    --bg-tertiary: #3d352c;     /* Computer Case - Dropdowns/Inputs */
+    --bg-gradient-end: #2d1f18; /* Warm Brown gradient end */
+    
+    /* Primary brand colors - Amber displays */
+    --color-primary: #FF9F40;   /* Warm Amber - Headers, capacity fills */
+    --color-accent: #FFB366;    /* Soft Orange - Hover states */
+    
+    /* Functional colors - Arc Raiders inspired primaries */
+    --color-success: #00FF41;   /* Terminal Green - Add buttons */
+    --color-warning: #FFD800;   /* Signal Yellow - Warnings */
+    --color-danger: #FF3333;    /* Alert Red - Danger states */
+    --color-info: #3399FF;      /* System Blue - High-contrast elements */
+    
+    /* Structural */
+    --border-color: #564a3d;    /* Vintage Panel - Borders, outlines */
+    
+    /* Text */
+    --text-primary: #F4E8D8;    /* Warm Cream - Main readable text */
+    --text-secondary: #A89780;  /* Muted Tan - Dimmed text, labels */
+    --text-highlight: #FFD800;  /* Signal Yellow - important values */
+    
+    /* Arc Raiders accent colors */
+    --accent-red: #FF3333;      /* Alert Red */
+    --accent-green: #00FF41;    /* Terminal Green */
+    --accent-blue: #3399FF;     /* System Blue */
+    --accent-yellow: #FFD800;   /* Signal Yellow */
+}
+
+/* Cassette theme - Special styling */
+body[data-theme="cassette"] .mission-payout select {
+    color: var(--color-info);
+    font-weight: 700;
+}
+
+body[data-theme="cassette"] .stat-value {
+    color: var(--text-highlight);
+}
+
+body[data-theme="cassette"] .location-name {
+    color: var(--color-accent);
+}
+
+body[data-theme="cassette"] .mission-title {
+    color: var(--color-info);
+}
+
 /* Theme: Moonshine (silver/blue) - Comprehensive palette */
 body[data-theme="moonshine"] {
     /* Backgrounds */
     --bg-primary: #0f1419;      /* Midnight Steel - Main page background (dark blue-gray) */
     --bg-secondary: #1a1f2e;    /* Deep Slate - Panels (medium blue-gray) */
     --bg-tertiary: #2a3342;     /* Storm Gray - Dropdowns/Inputs (lighter slate-blue) */
+    --bg-gradient-end: #121625; /* standard blue */
     
     /* Primary brand colors */
     --color-primary: #8BA5C1;   /* Moonlight Silver - Headers, capacity fills */
@@ -309,6 +367,7 @@ body[data-theme="argo"] {
     --bg-primary: #1a1612;      /* Industrial Black - Main page background (dark warm-gray) */
     --bg-secondary: #2a2520;    /* Charcoal Steel - Panels (medium warm-gray) */
     --bg-tertiary: #3d3832;     /* Concrete Gray - Dropdowns/Inputs (lighter warm-gray) */
+    --bg-gradient-end: #121625; /* standard blue */
     
     /* Primary brand colors */
     --color-primary: #FF6600;   /* Construction Orange - Headers, capacity fills */
@@ -347,51 +406,54 @@ body[data-theme="argo"] .mission-title {
     color: var(--text-highlight);
 }
 
-/* Theme: Starkitten (cybergoth) - Comprehensive palette */
+/* Theme: Starkitten (kawaii brand) - Comprehensive palette */
 body[data-theme="starkitten"] {
-    /* Backgrounds - Cybergoth aesthetic */
-    --bg-primary: #85e9ff;      /* Void Black - Main page background (pure deep void) */
-    --bg-secondary: #b14b7b;    /* Shadow Panel - Panels (pure black) */
-    --bg-tertiary: #004c5e;     /* Dark Input - Dropdowns/Inputs (dark gray) */
+    /* Backgrounds - Bright and clean */
+    --bg-primary: #9df0ff;      /* Pure White - Main page background */
+    --bg-secondary: #fda9da;    /* Soft White - Panels */
+    --bg-tertiary: #82f7ff;     /* Light Gray - Dropdowns/Inputs */
+    --bg-gradient-end: #E0F7FF; /* Soft Cyan Tint - gradient end */
     
-    /* Primary brand colors - Hot magenta */
-    --color-primary: #ffffff;   /* Hot Magenta - Headers, capacity fills */
-    --color-accent: #ffffff;    /* Neon Fuchsia - Hover states */
+    /* Primary brand colors - Hot pink and cyan */
+    --color-primary: #000000;   /* Hot Pink - Headers, capacity fills */
+    --color-accent: #00a4c5;    /* Electric Cyan - Hover states, highlights */
     
-    /* Functional colors - Electric neons */
-    --color-success: #69ABB9;   /* Neon Mint - Add buttons */
-    --color-warning: #ffffff;   /* Cyber Orange - Warnings */
-    --color-danger: #ffffff;    /* Vibrant Red - Danger states */
-    --color-info: #ffffff;      /* Electric Cyan - High-contrast elements */
+    /* Functional colors - Bright and playful */
+    --color-success: #00CBA0;   /* Teal Green - Add buttons */
+    --color-warning: #000000;   /* Pastel Pink - Warnings */
+    --color-danger: #FF006E;    /* Deep Magenta - Danger states */
+    --color-info: #00D4FF;      /* Electric Cyan - High-contrast elements */
     
     /* Structural */
-    --border-color: #69ABB9;    /* Hot Magenta - Glowing borders */
+    --border-color: #ffffff;    /* Light Gray - Borders */
     
-    /* Text */
-    --text-primary: #ffffff;    /* Pure White - Main readable text */
-    --text-secondary: #ffffff;  /* Cool Gray - Dimmed text */
-    --text-highlight: #ffffff;  /* Electric Cyan - important values */
+    /* Text - Dark for light background */
+    --text-primary: #360214;    /* Dark Gray - Main readable text */
+    --text-secondary: #66213c;  /* Medium Gray - Dimmed text */
+    --text-highlight: #00A8CC;  /* Deep Cyan - important values */
     
     /* Special accents */
-    --accent-purple: #ffffff;   /* Neon Purple - Special highlights */
+    --accent-purple: #B026FF;   /* Neon Purple - Special highlights */
+    --accent-cyan: #00FFC8;     /* Kawaii Cyan */
+    --accent-pink-light: #FFE0F0; /* Soft Pink backgrounds */
 }
 
 /* Starkitten theme - Component-specific styling */
 body[data-theme="starkitten"] .mission-payout select {
-    color: var(--color-info);
+    color: var(--color-accent);
     font-weight: 700;
 }
 
 body[data-theme="starkitten"] .stat-value {
-    color: var(--color-info);
-}
-
-body[data-theme="starkitten"] .location-name {
     color: var(--color-accent);
 }
 
+body[data-theme="starkitten"] .location-name {
+    color: var(--color-primary);
+}
+
 body[data-theme="starkitten"] .mission-title {
-    color: var(--text-highlight);
+    color: var(--color-accent);
 }
 
 /* Theme: Cargo Explorer (red/gold pirate) - Comprehensive palette */
@@ -400,6 +462,7 @@ body[data-theme="cargo-explorer"] {
     --bg-primary: #000000;      /* Blood Iron - Main page background (dark red-black) */
     --bg-secondary: #110000;    /* Dark Crimson - Panels (medium dark red) */
     --bg-tertiary: #240000;     /* Wine Shadow - Dropdowns/Inputs (lighter red-gray) */
+    --bg-gradient-end: #121625; /* standard blue */
     
     /* Primary brand colors */
     --color-primary: #ff0000;   /* Angry Crimson - Headers, capacity fills */
@@ -532,14 +595,14 @@ body[data-theme="cargo-explorer"] .theme-colors {
 }
 
 body[data-theme="starkitten"] .theme-colors {
-    --marker-1: #ffffff;    /* Hot Magenta */
-    --marker-2: #f0cbff;    /* Electric Cyan */
-    --marker-3: #d2afff;    /* Neon Mint */
-    --marker-4: #9be3ff;    /* Neon Purple */
-    --marker-5: #eaffb8;    /* Cyber Orange */
-    --marker-6: #b0ffb0;    /* Neon Fuchsia */
-    --marker-7: #ffa2c1;    /* Vibrant Red */
-    --marker-8: #000000;    /* Bright Cyan */
+    --marker-1: #00D4FF;    /* Electric Cyan */
+    --marker-2: #FF1B8D;    /* Hot Pink */
+    --marker-3: #00CBA0;    /* Teal Cyan */
+    --marker-4: #FF69B4;    /* Bubblegum Pink */
+    --marker-5: #00A8CC;    /* Deep Cyan */
+    --marker-6: #B026FF;    /* Neon Purple */
+    --marker-7: #00E5FF;    /* Bright Cyan */
+    --marker-8: #FF006E;    /* Deep Magenta */
 }
 
 body[data-theme="wednesday"] .theme-colors {
@@ -551,4 +614,15 @@ body[data-theme="wednesday"] .theme-colors {
     --marker-6: #9966CC;    /* Amethyst */
     --marker-7: #6a6277;    /* Grey Lavender */
     --marker-8: #50C878;    /* Emerald Teal */
+}
+
+body[data-theme="cassette"] .theme-colors {
+    --marker-1: #FF9F40;    /* Warm Amber */
+    --marker-2: #00FF41;    /* Terminal Green */
+    --marker-3: #FFD800;    /* Signal Yellow */
+    --marker-4: #FF3333;    /* Alert Red */
+    --marker-5: #3399FF;    /* System Blue */
+    --marker-6: #FFB366;    /* Soft Orange */
+    --marker-7: #00CC33;    /* Deep Green */
+    --marker-8: #FF6B35;    /* Copper Orange */
 }
