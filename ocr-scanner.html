@@ -1075,6 +1075,49 @@
             }
         }
 
+        // Normalize location names extracted from OCR
+        function normalizeLocationName(location) {
+            if (!location) return '';
+            
+            let normalized = location.trim();
+            
+            // Fix OCR character confusions
+            normalized = normalized
+                .replace(/\bSM0-/g, 'SMO-')        // SM0 (zero) → SMO (letter O)
+                .replace(/\bSMo-/g, 'SMO-')        // SMo → SMO
+                .replace(/\bSMc-/g, 'SMC-')        // SMc → SMC
+                .replace(/\bSMca-/g, 'SMCa-')      // SMca → SMCa
+                .replace(/\bS4DC0/g, 'S4DC')       // S4DC0 (zero) → S4DC
+                .replace(/\bS4DCO/g, 'S4DC');      // S4DCO (letter O) → S4DC
+            
+            // Extract just the facility code if present in a longer name
+            // "Shubin Mining Facility SMO-13" → "Shubin SMO-13"
+            // "Covalex Distribution Center S4DC05" → "Covalex S4DC05"
+            const facilityPatterns = [
+                { pattern: /Shubin\s+Mining\s+Facility\s+(SMO-\d+)/i, replacement: 'Shubin $1' },
+                { pattern: /Shubin\s+Mining\s+Facility\s+(SMC[a-z]?-\d+)/i, replacement: 'Shubin $1' },
+                { pattern: /Covalex\s+Distribution\s+Center\s+(S4DC\d+)/i, replacement: 'Covalex $1' },
+                { pattern: /MT\s+Depot\s+(S4\w+\d+)/i, replacement: 'mT Depot $1' },
+                { pattern: /MT\s+Logistics\s+(S4\w+\d+)/i, replacement: 'MT Logistics $1' },
+            ];
+            
+            for (const { pattern, replacement } of facilityPatterns) {
+                if (pattern.test(normalized)) {
+                    normalized = normalized.replace(pattern, replacement);
+                    break;
+                }
+            }
+            
+            // If no facility code found, try to extract just meaningful parts
+            // Remove generic suffixes
+            normalized = normalized
+                .replace(/\s+Mining\s+Facility$/i, '')
+                .replace(/\s+Distribution\s+Center$/i, '')
+                .replace(/\s+Distribution$/i, '');
+            
+            return normalized.trim();
+        }
+
         // Star Citizen mission parser
         // Star Citizen mission parser - IMPROVED for real OCR data
         function parseStarCitizenMission(text) {
@@ -1237,7 +1280,7 @@
             const fromPattern1 = /(?:Collect|Pick up|from)\s+(?:[\w\s]+?)?from\s+([A-Za-z0-9\s\-'.]+?)(?:Lively|Station|Harbor|Lagrange|above|\.|,|\n)/gi;
             const fromMatches1 = text.matchAll(fromPattern1);
             for (const match of fromMatches1) {
-                const location = match[1].trim();
+                const location = normalizeLocationName(match[1]);
                 if (location && location.length > 2 && !result.pickupLocations.includes(location)) {
                     result.pickupLocations.push(location);
                 }
@@ -1247,7 +1290,7 @@
             const fromPattern2 = /from\s+([A-Z][A-Za-z0-9\-]+(?:\s+[A-Z][A-Za-z0-9\-]+)*)/g;
             const fromMatches2 = text.matchAll(fromPattern2);
             for (const match of fromMatches2) {
-                const location = match[1].trim();
+                const location = normalizeLocationName(match[1]);
                 if (location && location.length > 2 && !result.pickupLocations.includes(location)) {
                     result.pickupLocations.push(location);
                 }
@@ -1258,7 +1301,7 @@
             const deliverMatches = text.matchAll(deliverPattern);
             for (const match of deliverMatches) {
                 const qty = match[1];
-                const location = match[2].trim();
+                const location = normalizeLocationName(match[2]);
                 
                 // Use the same comprehensive quantity parser
                 const quantity = parseQuantityString(qty);
@@ -1280,7 +1323,7 @@
             const flexMatches = text.matchAll(flexDeliverPattern);
             for (const match of flexMatches) {
                 const qty = match[1];
-                const location = match[2].trim();
+                const location = normalizeLocationName(match[2]);
                 
                 // Use parseQuantityString which handles all OCR errors including "B"
                 const quantity = parseQuantityString(qty);
@@ -1301,7 +1344,7 @@
             const toPattern1 = /(?:Deliver|to)\s+(?:[\d\/]+\s+SCU\s+of\s+[\w\s]+?)?to\s+([A-Za-z0-9\s\-'.]+?)(?:above|Harbor|Station|Lagrange|\.|,|\n)/gi;
             const toMatches1 = text.matchAll(toPattern1);
             for (const match of toMatches1) {
-                const location = match[1].trim();
+                const location = normalizeLocationName(match[1]);
                 if (location && location.length > 2 && !result.deliveryLocations.includes(location)) {
                     result.deliveryLocations.push(location);
                 }
@@ -1311,7 +1354,7 @@
             const toPattern2 = /to\s+([A-Z][A-Za-z0-9\-]+(?:\s+[A-Z][A-Za-z0-9\-]+)*)/g;
             const toMatches2 = text.matchAll(toPattern2);
             for (const match of toMatches2) {
-                const location = match[1].trim();
+                const location = normalizeLocationName(match[1]);
                 if (location && location.length > 2 && !result.deliveryLocations.includes(location)) {
                     result.deliveryLocations.push(location);
                 }
@@ -1326,7 +1369,7 @@
             for (const pattern of locationAbbrevs) {
                 const matches = text.matchAll(pattern);
                 for (const match of matches) {
-                    const location = match[0].trim();
+                    const location = normalizeLocationName(match[0]);
                     // Try to determine if pickup or delivery based on context
                     const beforeText = text.substring(Math.max(0, match.index - 50), match.index).toLowerCase();
                     const afterText = text.substring(match.index, Math.min(text.length, match.index + 50)).toLowerCase();
