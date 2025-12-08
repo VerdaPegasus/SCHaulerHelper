@@ -477,22 +477,25 @@
             
             try {
                 const data = JSON.parse(importData);
-                console.log('📥 OCR Import detected:', data);
-                
-                // Clear the import flag immediately
-                localStorage.removeItem('haulerHelperOCRImport');
-                
-                // Add a new mission with the imported data
-                addMissionPanel();
-                
-                // Get the newly created mission
-                const lastMission = missions[missions.length - 1];
-                
-                // Set payout if available
-                if (data.payout) {
-                    // Match payout to database format
-                    const matchedPayout = matchPayout(data.payout, selectedSystem, selectedCategory);
-                    console.log('💰 Payout matching:', data.payout, '→', matchedPayout);
+                    console.log('📥 OCR Import detected:', data);
+
+                    // Clear the import flag immediately
+                    localStorage.removeItem('haulerHelperOCRImport');
+
+                    // Extract mission data from the first mission
+                    const missionData = data.missions && data.missions[0] ? data.missions[0] : data;
+
+                    // Add a new mission with the imported data
+                    addMissionPanel();
+
+                    // Get the newly created mission
+                    const lastMission = missions[missions.length - 1];
+
+                    // Set payout if available
+                    if (missionData.payout) {
+                        // Match payout to database format
+                        const matchedPayout = matchPayout(missionData.payout, selectedSystem, selectedCategory);
+                        console.log('💰 Payout matching:', missionData.payout, '→', matchedPayout);
                     
                     if (matchedPayout) {
                         lastMission.payout = matchedPayout;
@@ -504,16 +507,16 @@
                     }
                 }
                 
-                // Add commodities
-                if (data.commodities && data.commodities.length > 0) {
-                    // Remove the default empty commodity row
-                    if (lastMission.commodities.length > 0) {
-                        const firstCommodityId = lastMission.commodities[0].id;
-                        removeCommodityRow(lastMission.id, firstCommodityId);
-                    }
-                    
-                    // Add each imported commodity
-                    data.commodities.forEach((commodity, index) => {
+                    // Add commodities
+                        if (missionData.commodities && missionData.commodities.length > 0) {
+                            // Remove the default empty commodity row
+                            if (lastMission.commodities.length > 0) {
+                                const firstCommodityId = lastMission.commodities[0].id;
+                                removeCommodityRow(lastMission.id, firstCommodityId);
+                            }
+                            
+                            // Add each imported commodity
+                            missionData.commodities.forEach((commodity, index) => {
                         if (commodity.commodity || commodity.pickup || commodity.destination) {
                             addCommodityRow(lastMission.id);
                             const commodityId = `${lastMission.id}_commodity_${index}`;
@@ -554,7 +557,7 @@
                 
                 // Show success message
                 setTimeout(() => {
-                    alert('✅ Mission data imported from OCR Scanner!');
+                    //alert('✅ Mission data imported from OCR Scanner!');
                 }, 500);
                 
             } catch (e) {
@@ -663,7 +666,7 @@
                 
                 // Show success message
                 setTimeout(() => {
-                    alert(`✅ ${successCount} mission${successCount !== 1 ? 's' : ''} imported from OCR Scanner!`);
+                    //alert(`✅ ${successCount} mission${successCount !== 1 ? 's' : ''} imported from OCR Scanner!`);
                 }, 500);
                 
             } catch (e) {

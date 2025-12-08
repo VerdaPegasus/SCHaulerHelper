@@ -1,148 +1,259 @@
 /**
- * Locations Database
- * All trading locations organized by system, then by mission category
- * Sorted alphabetically within each category
+ * LOCATIONS DATABASE - Star Citizen Hauler Helper
+ * 
+ * STRUCTURE: Organized by SYSTEM first, then CATEGORY
+ * 
+ * locations[system][category] = [...locations]
+ * 
+ * SYSTEMS: microtech, hurston, arccorp, crusader, nyx, universal
+ * CATEGORIES: planetary, local, stellar, interstellar
  */
 
 const LOCATIONS_DATABASE = {
+    // ============================================================================
+    // MICROTECH SYSTEM
+    // ============================================================================
     microtech: {
+        // PLANETARY: microTech planet + moons only
         planetary: [
-            "Covalex S4DC05", "Cry-Astro 19-02", "Cry-Astro 34-12", "Devlin Scrapyard",
-            "Greycat Complex A", "MT Depot S4C05", "MT Depot S4LD01", "MT Depot S4LD13",
-            "MT L1", "MT L2", "MT L3", "MT L4", "New Babbage", "Port Tressler",
-            "Rayari Anvik", "Rayari Cantwell", "Rayari Keltag", "Rayari McGrath",
-            "Sakura Sun Goldenrod", "Shubin SMCa-6", "Shubin SMCa-8"
+            "Covalex S4DC05",
+            "Cry-Astro 19-02",
+            "Cry-Astro 34-12",
+            "Greycat Complex-A",
+            "Greycat Complex-B",
+            "MIC-L1",
+            "MIC-L2",
+            "MIC-L3",
+            "MIC-L4",
+            "MIC-L5",
+            "MicroTech S4LD01",
+            "MicroTech S4LD13",
+            "New Babbage",
+            "Port Tressler",
+            "Rayari Anvik",
+            "Rayari Cantwell",
+            "Rayari Deltana",
+            "Rayari Kaltag",
+            "Rayari McGrath",
+            "Sakura Sun Goldenrod",
+            "Sakura Sun Magnolia",
+            "Security Post Kareah",
+            "Shubin SMCa-6",
+            "Shubin SMCa-8",
+            "Shubin SMO-10",
+            "Shubin SMO-13",
+            "Shubin SMO-18",
+            "Shubin SMO-22"
         ],
+        
+        // LOCAL: Multi-moon within microTech region
         local: [
-            "Covalex S4DC05", "MT Logistics S4LD13", "Rayari Deltana", "Rayari Keltag",
-            "SMO S4DC10", "SMO S4DC13", "SMO S4DC18", "SMO S4DC22"
+            "Covalex S4DC05",
+            "MicroTech S4LD13",
+            "Rayari Deltana",
+            "Rayari Kaltag",
+            "Shubin SMO-10",
+            "Shubin SMO-13",
+            "Shubin SMO-18",
+            "Shubin SMO-22"
         ],
+        
+        // STELLAR: Cross-planet in Stanton system
         stellar: [
-            "ARC-L1", "ARC-L2", "ARC-L5", "Baijini", "CRU-L1", "CRU-L4", "CRU-L5",
-            "Everus", "HUR-L1", "MIC-L1", "MIC-L2", "Seraphim", "Tressler"
-        ],
-        interstellar: [
-            "ARC 048 - Wala", "Baijini - Arc", "Brio's Breaker Yrd - Daymar",
-            "Bueno Ravine - Pyro III", "Canard View - Pyro VI", "Chawla Beach - Pyro IV",
-            "Deakins RO - Yela", "Everus - Hurston", "HDMS-Hahn - Magda",
-            "Jackson's Swap - Pyro II", "Levski - Nyx", "Port Tressler - MicroT",
-            "Rayari McGrath - Clio", "Ruin Station - Pyro IV", "Sacren's Plot - Pyro IV",
-            "Shephrds Rest - Pyro III", "Shubin SAL-5 - Lyria", "Shubin SMO-18 - MicroT"
-        ]
-    },
-    hurston: {
-        planetary: [
-            "Covalex Distribution Center S1DC06",
-            "Covalex Distribution Center S1DC0B",
-            "Dupree Industrial Manufacturing Facility",
-            "Everus Harbor",
-            "HDMS-Hahn",
-            "HDMS-Periman",
-            "HDMS-Ryder",
-            "HDMS-Woodruff",
-            "HDPC-Cassillo",
-            "HDPC-Farnesway",
-            "Sakura Sun Magnolia Workcenter",
-            "Teasa Spaceport"
-        ],
-        local: [
-            "HDMS-Edmond", "HDMS-Hadley", "HDMS-Operei", "HDMS-Pinewood", 
-            "HDMS-Stanhope", "HDMS-Thedus", "HDPC-Cassillo", "HDPC-Farnesway", 
-            "Reclamation Orinth", "Teasa Spaceport"
-        ],
-        stellar: [
-            "ARC-L1 Wide Forest Station",
-            "ARC-L2 Lively Pathway Station",
-            "ARC-L5 Yellow Core Station",
-            "ARC-LS Yellow Core Station",
+            "ARC-L1", "ARC-L2", "ARC-L3", "ARC-L4", "ARC-L5",
+            "Area18",
             "Baijini Point",
-            "CRU-L1 Ambitious Dream Station",
-            "CRU-L4 Shallow Fields Station",
+            "CRU-L1", "CRU-L2", "CRU-L3", "CRU-L4", "CRU-L5",
             "Everus Harbor",
-            "HUR-L1 Green Glade Station",
-            "HUR-L2 Faithful Dream Station",
-            "HUR-L3 Thundering Express Station",
-            "HUR-L4 Melodic Fields Station",
-            "HUR-LS High Course Station",
-            "MIC-L1 Shallow Frontier Station",
-            "MIC-L2 Long Forest Station",
+            "Grim HEX",
+            "HUR-L1", "HUR-L2", "HUR-L3", "HUR-L4", "HUR-L5",
+            "Lorville",
+            "MIC-L1", "MIC-L2", "MIC-L3", "MIC-L4", "MIC-L5",
+            "New Babbage",
+            "Orison",
+            "Port Olisar",
             "Port Tressler",
             "Seraphim Station"
-        ],
-        interstellar: [
-            "ArcCorp Mining Area 045", "ArcCorp Mining Area 061", "Baijini Point",
-            "Brio's Breaker Yard", "Chawla's Beach", "Everus Harbor", "HDMS-Thedus",
-            "Jackson's Swap", "Levski", "Port Tressler", "Rayari", "Ruin Station",
-            "Sacren's Plot", "Shepherd's Rest"
         ]
     },
-    arccorp: {
+    
+    // ============================================================================
+    // HURSTON SYSTEM
+    // ============================================================================
+    hurston: {
         planetary: [
-            "ArcCorp Mining Area 045", "ArcCorp Mining Area 048", "ArcCorp Mining Area 056",
-            "ArcCorp Mining Area 061", "Baijini Point", "Everus Harbor", "HDPC-Cassillo",
-            "HDPC-Farnesway", "Riker Memorial Spaceport", "Samson & Son's Salvage Center",
-            "Shubin Mining Facility SAL-2", "Shubin Mining Facility SAL-5",
-            "Teasa Spaceport in Lorville"
+            "Brio's Breaker Yard",
+            "Bud's Growery",
+            "Everus Harbor",
+            "HDMS-Anderson", "HDMS-Bezdek", "HDMS-Edmond", "HDMS-Hadley",
+            "HDMS-Hahn", "HDMS-Lathan", "HDMS-Norgaard", "HDMS-Oparei",
+            "HDMS-Perlman", "HDMS-Pinewood", "HDMS-Ryder", "HDMS-Stanhope",
+            "HDMS-Thedus", "HDMS-Woodruff",
+            "HDPC-Cassillo", "HDPC-Farnesway",
+            "HUR-L1", "HUR-L2", "HUR-L3", "HUR-L4", "HUR-L5",
+            "Lorville",
+            "Reclamation Orinth",
+            "Samson & Son's",
+            "Shubin SPAL-3", "Shubin SPAL-7", "Shubin SPAL-9", "Shubin SPAL-12",
+            "Shubin SPMC-1", "Shubin SPMC-3", "Shubin SPMC-5",
+            "Shubin SPMC-10", "Shubin SPMC-11", "Shubin SPMC-14"
         ],
-        stellar: [
-            "ARC-L1 Wide Forest Station", "ARC-L2 Lively Pathway Station",
-            "ARC-L3 Modern Express Station", "ARC-L4 Faint Glen Station",
-            "ARC-L5 Yellow Core Station", "ARC-LS Yellow Core Station",
-            "Baijini Point", "CRU-L1 Ambitious Dream Station",
-            "CRU-L4 Shallow Fields Station", "Everus Harbor",
-            "HUR-L2 Faithful Dream Station", "MIC-L1 Shallow Frontier Station",
-            "MIC-L2 Long Forest Station", "Port Tressler", "Seraphim Station"
-        ]
-    },
-    crusader: {
-        planetary: [
-            "August Dunlow Spaceport", "Brio's Breaker Yard", "Deakins Research Outpost",
-            "Everus Harbor", "HDPC-Cassillo", "Seraphim Station", "Shubin Mining Facility",
-            "Teasa Spaceport in Lorville", "Terra Mills HydroFarm"
+        
+        local: [
+            "HDMS-Anderson", "HDMS-Bezdek", "HDMS-Edmond",
+            "Shubin SPAL-3", "Shubin SPAL-7", "Shubin SPAL-9",
+            "Shubin SPMC-1", "Shubin SPMC-3", "Shubin SPMC-5"
         ],
+        
         stellar: [
-            "ARC-L1 Wide Forest Station", "ARC-L2 Lively Pathway Station",
-            "ARC-L5 Yellow Core Station", "ARC-LS Yellow Core Station",
-            "Baijini Point", "Beautiful Glen Station", "CRU-L1 Ambitious Dream Station",
-            "CRU-L4 Shallow Fields Station", "CRU-L5 Beautiful Glen Station",
-            "Everus Harbor", "HUR-L2 Faithful Dream Station",
-            "MIC-L1 Shallow Frontier Station", "MIC-L2 Long Forest Station",
-            "Port Tressler", "Seraphim Station", "Shallow Fields Station"
-        ]
-    },
-    nyx: {
-        interstellar: [
-            "Areal8", "Baijini Point", "Everus Harbor", "Grim HEX", "Levski",
+            "ARC-L1", "ARC-L2", "ARC-L3", "ARC-L4", "ARC-L5",
+            "Area18",
+            "Baijini Point",
+            "CRU-L1", "CRU-L2", "CRU-L3", "CRU-L4", "CRU-L5",
+            "Everus Harbor",
+            "Grim HEX",
+            "HUR-L1", "HUR-L2", "HUR-L3", "HUR-L4", "HUR-L5",
+            "Lorville",
+            "MIC-L1", "MIC-L2", "MIC-L3", "MIC-L4", "MIC-L5",
+            "New Babbage",
+            "Orison",
+            "Port Olisar",
+            "Port Tressler",
             "Seraphim Station"
         ]
     },
-    // Universal Interstellar locations (system-agnostic)
+    
+    // ============================================================================
+    // ARCCORP SYSTEM
+    // ============================================================================
+    arccorp: {
+        planetary: [
+            "ARC-L1", "ARC-L2", "ARC-L3", "ARC-L4", "ARC-L5",
+            "ArcCorp 045", "ArcCorp 048", "ArcCorp 056",
+            "ArcCorp 061", "ArcCorp 141", "ArcCorp 157",
+            "Area18",
+            "Baijini Point",
+            "Loveridge Mineral"
+        ],
+        
+        local: [
+            "ArcCorp 045", "ArcCorp 048", "ArcCorp 056"
+        ],
+        
+        stellar: [
+            "ARC-L1", "ARC-L2", "ARC-L3", "ARC-L4", "ARC-L5",
+            "Area18",
+            "Baijini Point",
+            "CRU-L1", "CRU-L2", "CRU-L3", "CRU-L4", "CRU-L5",
+            "Everus Harbor",
+            "Grim HEX",
+            "HUR-L1", "HUR-L2", "HUR-L3", "HUR-L4", "HUR-L5",
+            "Lorville",
+            "MIC-L1", "MIC-L2", "MIC-L3", "MIC-L4", "MIC-L5",
+            "New Babbage",
+            "Orison",
+            "Port Olisar",
+            "Port Tressler",
+            "Seraphim Station"
+        ]
+    },
+    
+    // ============================================================================
+    // CRUSADER SYSTEM
+    // ============================================================================
+    crusader: {
+        planetary: [
+            "CRU-L1", "CRU-L2", "CRU-L3", "CRU-L4", "CRU-L5",
+            "Orison",
+            "Port Olisar",
+            "Seraphim Station",
+            "Shubin SAL-2", "Shubin SAL-5",
+            "Shubin SCD-1"
+        ],
+        
+        local: [
+            "Shubin SAL-2", "Shubin SAL-5",
+            "Shubin SCD-1"
+        ],
+        
+        stellar: [
+            "ARC-L1", "ARC-L2", "ARC-L3", "ARC-L4", "ARC-L5",
+            "Area18",
+            "Baijini Point",
+            "CRU-L1", "CRU-L2", "CRU-L3", "CRU-L4", "CRU-L5",
+            "Everus Harbor",
+            "Grim HEX",
+            "HUR-L1", "HUR-L2", "HUR-L3", "HUR-L4", "HUR-L5",
+            "Lorville",
+            "MIC-L1", "MIC-L2", "MIC-L3", "MIC-L4", "MIC-L5",
+            "New Babbage",
+            "Orison",
+            "Port Olisar",
+            "Port Tressler",
+            "Seraphim Station"
+        ]
+    },
+    
+    // ============================================================================
+    // NYX SYSTEM
+    // ============================================================================
+    nyx: {
+        planetary: [
+            "Levski",
+            "Ruptura OLP",
+            "Ruptura PAF-I",
+            "Ruptura PAF-II",
+            "Ruptura PAF-III"
+        ],
+        
+        local: [
+            "Levski"
+        ],
+        
+        stellar: [
+            "Levski",
+            "Ruptura OLP",
+            "Ruptura PAF-I",
+            "Ruptura PAF-II",
+            "Ruptura PAF-III"
+        ]
+    },
+    
+    // ============================================================================
+    // UNIVERSAL (Cross-system, used for interstellar category)
+    // ============================================================================
     universal: {
         interstellar: [
-            "Areal8", "ARC-L1 Wide Forest Station", "ARC-L2 Lively Pathway Station",
-            "ARC-L3 Modern Express Station", "ARC-L4 Faint Glen Station",
-            "ARC-L5 Yellow Core Station", "ArcCorp Mining Area 045",
-            "ArcCorp Mining Area 048", "ArcCorp Mining Area 056",
-            "ArcCorp Mining Area 061", "August Dunlow Spaceport",
-            "Baijini Point", "Beautiful Glen Station", "Brio's Breaker Yard",
-            "Bueno Ravine", "Canard View", "Chawla Beach", "CRU-L1 Ambitious Dream Station",
-            "CRU-L4 Shallow Fields Station", "CRU-L5 Beautiful Glen Station",
-            "Deakins Research Outpost", "Everus Harbor", "Grim HEX",
-            "HDMS-Hahn", "HDMS-Thedus", "HDPC-Cassillo", "HDPC-Farnesway",
-            "HUR-L1 Green Glade Station", "HUR-L2 Faithful Dream Station",
-            "HUR-L3 Thundering Express Station", "HUR-L4 Melodic Fields Station",
-            "Jackson's Swap", "Levski", "MIC-L1 Shallow Frontier Station",
-            "MIC-L2 Long Forest Station", "Port Tressler",
-            "Rayari", "Rayari McGrath", "Riker Memorial Spaceport", "Ruin Station",
-            "Sacren's Plot", "Samson & Son's Salvage Center", "Seraphim Station",
-            "Shepherd's Rest", "Shubin Mining Facility SAL-2",
-            "Shubin Mining Facility SAL-5", "Shubin SAL-5", "Shubin SMO-18",
-            "Teasa Spaceport", "Terra Mills HydroFarm"
+            // Pyro System
+            "Magnus Gateway",
+            "Pyro Gateway",
+            
+            // Nyx System
+            "Levski",
+            "Ruptura OLP",
+            "Ruptura PAF-I",
+            "Ruptura PAF-II",
+            "Ruptura PAF-III",
+            
+            // Other Stations
+            "Attritus OLP",
+            "Bacchus Flotilla",
+            "Buloi Sataball Arena",
+            "Checkmate Station",
+            "Dudley & Daughters",
+            "Orbituary",
+            "Prime",
+            "Ruin Station"
         ]
     }
 };
 
-// Make available globally
+// Export for browser
 if (typeof window !== 'undefined') {
     window.LOCATIONS_DATABASE = LOCATIONS_DATABASE;
+}
+
+// Export for Node.js
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { LOCATIONS_DATABASE };
 }

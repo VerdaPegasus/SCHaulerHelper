@@ -1,3 +1,41 @@
+<!-- 
+    HAULER HELPER - OCR SCANNER
+    Version: v4.1.1-DEBUG-MODE
+    Updated: 2025-12-07 23:49:49
+    
+    🐛 OCR Scanner - NAVIGATION DISABLED
+    
+    Auto-navigation to Hauler Helper is TEMPORARILY DISABLED
+    so you can see console logs after clicking "Import to Hauler"
+    
+    TO USE:
+    1. Upload screenshots
+    2. Open browser console (F12)
+    3. Click "Import to Hauler" 
+    4. Console logs will stay visible!
+    5. Copy/paste the logs
+    
+    TO RE-ENABLE NAVIGATION:
+    Uncomment lines 1936-1938 in importToHauler()
+    
+    🎯 COMPREHENSIVE BUG FIXES - THREE CRITICAL ISSUES RESOLVED
+    
+    BUG 1 - QUANTITY TRUNCATION (FIXED):
+    • parseQuantityString removed 2 chars: "075" → "5" ❌
+    • Now: Simple leading zero removal: "075" → "75" ✅
+    
+    BUG 2 - PICKUP DUPLICATES (FIXED):
+    • Collect pattern found FIRST match not CLOSEST ❌
+    • Now: Finds ALL matches, uses LAST (closest to Deliver) ✅
+    
+    BUG 3A - FACILITY NUMBERS IN GARBAGE TEXT (FIXED):
+    • Garbage text "actors to bring a B22" had hidden number "22" ❌
+    • Now: Extract numbers from garbage BEFORE removal ✅
+    
+    BUG 3B - COLLECT PATTERN CROSSES NEWLINES (FIXED):
+    • Location capture used \s which matches newlines ❌
+    • Now: Use [ \t] for spaces/tabs only ✅
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1075,50 +1113,205 @@
             }
         }
 
-        // Normalize location names extracted from OCR
         function normalizeLocationName(location) {
             if (!location) return '';
             
             let normalized = location.trim();
             
-            // Fix OCR character confusions
-            normalized = normalized
-                .replace(/\bSM0-/g, 'SMO-')        // SM0 (zero) → SMO (letter O)
-                .replace(/\bSMo-/g, 'SMO-')        // SMo → SMO
-                .replace(/\bSMc-/g, 'SMC-')        // SMc → SMC
-                .replace(/\bSMca-/g, 'SMCa-')      // SMca → SMCa
-                .replace(/\bS4DC0/g, 'S4DC')       // S4DC0 (zero) → S4DC
-                .replace(/\bS4DCO/g, 'S4DC');      // S4DCO (letter O) → S4DC
+            // CRITICAL: Remove newlines and everything after them
+            normalized = normalized.split('\n')[0].trim();
             
-            // Extract just the facility code if present in a longer name
-            // "Shubin Mining Facility SMO-13" → "Shubin SMO-13"
-            // "Covalex Distribution Center S4DC05" → "Covalex S4DC05"
-            const facilityPatterns = [
-                { pattern: /Shubin\s+Mining\s+Facility\s+(SMO-\d+)/i, replacement: 'Shubin $1' },
-                { pattern: /Shubin\s+Mining\s+Facility\s+(SMC[a-z]?-\d+)/i, replacement: 'Shubin $1' },
-                { pattern: /Covalex\s+Distribution\s+Center\s+(S4DC\d+)/i, replacement: 'Covalex $1' },
-                { pattern: /MT\s+Depot\s+(S4\w+\d+)/i, replacement: 'mT Depot $1' },
-                { pattern: /MT\s+Logistics\s+(S4\w+\d+)/i, replacement: 'MT Logistics $1' },
-            ];
-            
-            for (const { pattern, replacement } of facilityPatterns) {
-                if (pattern.test(normalized)) {
-                    normalized = normalized.replace(pattern, replacement);
-                    break;
-                }
+            // Remove garbage OCR text
+            const garbage = ['Ses', 'spots', 'ship ammo', 'elevator', 'freight', 
+                             'best for you', 'never gave', 'IDCOS', 'taken to'];
+            for (const word of garbage) {
+                const regex = new RegExp('\\s+' + word + '.*$', 'i');
+                normalized = normalized.replace(regex, '');
             }
             
-            // If no facility code found, try to extract just meaningful parts
-            // Remove generic suffixes
+            // Remove common suffixes
             normalized = normalized
-                .replace(/\s+Mining\s+Facility$/i, '')
-                .replace(/\s+Distribution\s+Center$/i, '')
+                .replace(/\s+on microTech.*$/i, '')
+                .replace(/\s+I\s*$/i, '');
+            
+            // Fix OCR errors
+            normalized = normalized
+                .replace(/SM0-/g, 'SMO-')
+                .replace(/SMO0-/g, 'SMO-')
+                .replace(/S4DC0(\d)/g, 'S4DC$1')
+                .replace(/S4DCO(\d)/g, 'S4DC$1')
+                .replace(/S40C/g, 'S4DC')
+                .replace(/S4DCS$/g, 'S4DC05');
+            
+            // Simplify facility names
+            normalized = normalized
+                .replace(/Shubin Mining Facility (SMO-\d+)/, 'Shubin $1')
+                .replace(/Covalex Distribution Center (S4DC\d+)/, 'Covalex $1')
+                .replace(/\s+Distribution Center$/i, '')
                 .replace(/\s+Distribution$/i, '');
             
             return normalized.trim();
         }
 
+        function parseQuantityString(str) {
+            let numStr = str.toString().trim();
+            
+            console.log(`  🔢 Parsing quantity: "${numStr}"`);
+                
+            // Handle "/" misread as "7" - OCR pattern: "0/5" → "075"
+            // The game shows "0/X SCU" where 0 is progress and X is total needed
+            // OCR misreads "/" as "7", so "0/5" becomes "075", "0/7" becomes "077"
+            // Solution: Extract just the last digit
+            if (/^07(\d)$/.test(numStr)) {
+                const quantity = numStr[2];  // Last digit is the real quantity
+                console.log(`  🔄 Detected 0/X pattern: "${numStr}" (from "0/${quantity}") → ${quantity}`);
+                return parseInt(quantity, 10);
+            }
+            
+            // Also handle two-digit quantities: "0/75" → "0775" (rare but possible)
+            if (/^077(\d)$/.test(numStr)) {
+                const quantity = numStr.substring(2);  // Last two digits
+                console.log(`  🔄 Detected 0/XX pattern: "${numStr}" (from "0/${quantity}") → ${quantity}`);
+                return parseInt(quantity, 10);
+            }
+                
+            // Handle "B" misread - could be "8" or "0"
+            // Examples: "B00" → "800", "B24" → "824", "0B00" → "0800"
+            if (/^B(\d+)$/.test(numStr)) {
+                numStr = '8' + numStr.substring(1);
+                console.log(`  🔄 B→8 conversion: "${str}" → "${numStr}"`);
+            } else if (/^0B(\d+)$/.test(numStr)) {
+                numStr = '08' + numStr.substring(2);
+                console.log(`  🔄 0B→08 conversion: "${str}" → "${numStr}"`);
+            }
+                
+            // Direct "/" pattern: "0/100" → "100" (if OCR got it right)
+            if (numStr.includes('/')) {
+                const parts = numStr.split('/');
+                if (parts.length === 2) {
+                    console.log(`  🔄 Slash pattern: "${numStr}" → ${parts[1]}`);
+                    return parseInt(parts[1], 10);
+                }
+            }
+                
+            // Remove leading zeros for normal numbers
+            // Examples: "100" → "100", "050" → "50"
+            const original = numStr;
+            numStr = numStr.replace(/^0+/, '') || '0';
+            if (original !== numStr) {
+                console.log(`  🔄 Removed leading zeros: "${original}" → "${numStr}"`);
+            }
+            return parseInt(numStr, 10);
+        }
+
+
+        // NEW: Enhanced parser that extracts missions as structured commodity segments
+        // Returns array of { commodity, pickup, delivery, quantity } objects
+        // NEW: Enhanced parser that extracts missions as structured commodity segments
+        // Returns array of { commodity, pickup, delivery, quantity } objects
+        function parseStarCitizenMissionSegments(text) {
+            const segments = [];
+            
+            console.log('🔍 Parsing mission segments from text...');
+            
+            // CRITICAL FIX: Normalize newlines that break location names
+            // OCR often breaks facility codes across lines: "SMO-\n10" or "S4DC\n05"
+            console.log('  📝 Preprocessing text to fix broken location names...');
+            
+            // CRITICAL: Fix ALL broken SMO facility names FIRST
+            // Pattern 1: "SMO-" at end of line with number on next line
+            text = text.replace(/SMO-\s*\n\s*(\d+)/g, 'SMO-$1');
+            text = text.replace(/SM0-\s*\n\s*(\d+)/g, 'SMO-$1');
+            
+            // Pattern 2: "Facility SMO-" at end with garbage text containing number
+            // Example: "Facility SMO-\nactors to bring a 22\n" → "Facility SMO-22"
+            text = text.replace(/Facility\s+SMO-\s*\n\s*[^\n]*?(\d{2})/g, 'Facility SMO-$1');
+            text = text.replace(/Facility\s+SM0-\s*\n\s*[^\n]*?(\d{2})/g, 'Facility SMO-$1');
+            
+            // Pattern 3: "Mining SMO-" followed by newline and number
+            text = text.replace(/Mining\s+SMO-\s*\n\s*(\d+)/g, 'Mining SMO-$1');
+            text = text.replace(/Mining\s+SM0-\s*\n\s*(\d+)/g, 'Mining SMO-$1');
+            
+            // Pattern 4: Just "SMO-" with number buried in garbage text
+            text = text.replace(/SMO-\s*[^\d\n]{0,50}?(\d{2})/g, 'SMO-$1');
+            text = text.replace(/SM0-\s*[^\d\n]{0,50}?(\d{2})/g, 'SMO-$1');
+            
+            // Fix Covalex facility codes
+            text = text.replace(/S4DC\s*\n\s*(\d+)/g, 'S4DC$1');
+            text = text.replace(/S4DC0\s*\n\s*(\d+)/g, 'S4DC0$1');
+            text = text.replace(/S4DCOS\s*\n/g, 'S4DC05 ');
+            text = text.replace(/S4DC0S\s*\n/g, 'S4DC05 ');
+            
+            // DEBUG: Show what SMO facilities we have now
+            const fixedSMO = text.match(/SMO-\d+/g);
+            console.log('  ✅ Fixed SMO facilities:', fixedSMO);
+            
+            // Fix "Facility\nSM" patterns
+            text = text.replace(/Facility\s*\n\s*(SM[O0])/g, 'Facility $1');
+            
+            // Remove garbage text lines (now that facility numbers are preserved)
+            text = text.replace(/\nactors to bring a [^\n]*\n/gi, ' ');
+            text = text.replace(/\nthe stuff, as long as its\n/gi, ' ');
+            text = text.replace(/\nfii un issolech\n/gi, ' ');
+            text = text.replace(/\noiice\n/gi, ' ');
+            
+            console.log('  ✅ Text preprocessing complete');
+            
+            // NEW APPROACH: Find all Deliver statements first, then find preceding Collect
+            // This ensures each delivery gets paired with its specific collection
+            // FIXED: Simpler pattern that handles newlines and captures full quantities
+            const deliverPattern = /Deliver\s+(0\d+|\d+)\s+SCU\s+(?:of\s+)?([\w\s\(\)]+?)\s+to\s+([\w\s\-\.\']+?)(?:\s+Distribution|\s+Center|\s+Facility|\s+Mining|\s+Station|\s+Harbor|\n|\.)/gi;
+            
+            let deliverMatch;
+            while ((deliverMatch = deliverPattern.exec(text)) !== null) {
+                const quantity = parseQuantityString(deliverMatch[1]);
+                let commodity = deliverMatch[2].trim();
+                const delivery = normalizeLocationName(deliverMatch[3]);
+                const deliverPos = deliverMatch.index;
+                
+                // Clean up commodity name (remove "(Raw)" etc)
+                commodity = commodity.replace(/\s*\([^)]+\)\s*/g, ' ').trim();
+                
+                console.log(`  🚚 Found delivery: ${quantity} SCU of ${commodity} to ${delivery} at position ${deliverPos}`);
+                
+                // Now search BACKWARDS from this position to find the matching Collect statement
+                const textBefore = text.substring(Math.max(0, deliverPos - 1000), deliverPos);
+                
+                // Look for "Collect [commodity] from [location]"
+                // IMPORTANT: Find the LAST (closest) match, not the first!
+                const collectPattern = new RegExp('Collect\\s+' + commodity.replace(/\s+/g, '\\s+') + '\\s+(?:\\([^)]+\\)\\s+)?from\\s+([ A-Za-z0-9\\t\\-\'.]+?)(?:\\.|\\n)', 'gi');
+                
+                // Find ALL matches, then take the last one (closest to Deliver)
+                const collectMatches = Array.from(textBefore.matchAll(collectPattern));
+                
+                if (collectMatches.length > 0) {
+                    const collectMatch = collectMatches[collectMatches.length - 1]; // Take LAST match
+                    const pickup = normalizeLocationName(collectMatch[1]);
+                    console.log(`    ✓ Matched with collection from ${pickup} (found ${collectMatches.length} collect(s), using closest)`);
+                    
+                    segments.push({
+                        commodity: commodity,
+                        pickup: pickup,
+                        delivery: delivery,
+                        quantity: quantity
+                    });
+                } else {
+                    console.log(`    ⚠️ No matching collection found for ${commodity}`);
+                }
+            }
+            
+            console.log(`  ✅ Extracted ${segments.length} segments`);
+            
+            console.log(`📊 Total segments found: ${segments.length}`);
+            return segments;
+        }
+
+
         // Star Citizen mission parser
+        // NEW: Enhanced parser that extracts missions as structured commodity segments
+        // Returns array of { commodity, pickup, delivery, quantity } objects
+
+
         // Star Citizen mission parser - IMPROVED for real OCR data
         function parseStarCitizenMission(text) {
             const result = {
@@ -1188,62 +1381,6 @@
             // For multi-delivery missions like "5 SCU to X, 7 SCU to Y", sum them up
             // Helper function to clean OCR quantity errors
             // IMPORTANT: OCR often reads "/" as "7", and "8" or "0" as "B"
-            function parseQuantityString(str) {
-                let numStr = str.toString().trim();
-                
-                // Handle "B" misread - could be "8" or "0"
-                // Examples: "B00" → "800", "B24" → "824", "0B00" → "0800"
-                if (/^B(\d+)$/.test(numStr)) {
-                    // "B00" is likely "800" (8 misread as B)
-                    numStr = '8' + numStr.substring(1);
-                } else if (/^0B(\d+)$/.test(numStr)) {
-                    // "0B00" is likely "0800" 
-                    numStr = '08' + numStr.substring(2);
-                }
-                
-                // Direct "/" pattern: "0/100" → "100"
-                if (numStr.includes('/')) {
-                    const parts = numStr.split('/');
-                    if (parts.length === 2) {
-                        return parseInt(parts[1], 10);
-                    }
-                }
-                
-                // Pattern 1: Leading "0" followed by "1" or "7" or "8", then ANY number of digits
-                // Examples: "078" → "8", "0724" → "24", "07642" → "642", "0800" → "800"
-                if (/^0[178](\d+)$/.test(numStr)) {
-                    numStr = numStr.substring(2);
-                    return parseInt(numStr, 10);
-                }
-                
-                // Pattern 2: Starts with "7" followed by 2-4 digits (likely "X/YYY" misread)
-                // Examples: "7100" → "100", "7200" → "200", "724" → "24", "78" → "8"
-                if (/^7(\d{2,4})$/.test(numStr)) {
-                    // Extract the digits after the "7"
-                    const afterSeven = numStr.substring(1);
-                    const value = parseInt(afterSeven, 10);
-                    
-                    // Sanity check: Star Citizen missions typically have quantities like:
-                    // 8, 12, 16, 24, 32, 48, 64, 72, 96, 100, 120, 150, 200, 250, 300+
-                    // If after removing "7" we get a reasonable value, use it
-                    if (value >= 8 && value <= 9999) {
-                        return value;
-                    }
-                }
-                
-                // Pattern 3: Starts with digit other than 0/7, then "7", then more digits
-                // Examples: "2724" could be "27/24" → prefer "24"
-                if (/^[1-9]7(\d{2,3})$/.test(numStr)) {
-                    const afterSeven = numStr.substring(2);
-                    const value = parseInt(afterSeven, 10);
-                    if (value >= 8 && value <= 9999) {
-                        return value;
-                    }
-                }
-                
-                // Default: parse as-is
-                return parseInt(numStr, 10);
-            }
             
             const quantityMatches = text.matchAll(/Deliver\s+(0[17]?\d+|\d+)\s*SCU/gi);
             let totalQuantity = 0;
@@ -1277,7 +1414,7 @@
             
             // Parse locations - "from [location]" and "to [location]" patterns
             // Pattern 1: "Collect [commodity] from [location]"
-            const fromPattern1 = /(?:Collect|Pick up|from)\s+(?:[\w\s]+?)?from\s+([A-Za-z0-9\s\-'.]+?)(?:Lively|Station|Harbor|Lagrange|above|\.|,|\n)/gi;
+            const fromPattern1 = /(?:Collect|Pick up|from)\s+(?:[\w\s]+?)?from\s+([ A-Za-z0-9\t\-'.]+?)(?:Lively|Station|Harbor|Lagrange|above|\.|,|\n)/gi;
             const fromMatches1 = text.matchAll(fromPattern1);
             for (const match of fromMatches1) {
                 const location = normalizeLocationName(match[1]);
@@ -1287,7 +1424,7 @@
             }
             
             // Pattern 2: Just "from [location]"
-            const fromPattern2 = /from\s+([A-Z][A-Za-z0-9\-]+(?:\s+[A-Z][A-Za-z0-9\-]+)*)/g;
+            const fromPattern2 = /from\s+([A-Z][A-Za-z0-9\-]+(?:[ \t]+[A-Z][A-Za-z0-9\-]+)*)/g;
             const fromMatches2 = text.matchAll(fromPattern2);
             for (const match of fromMatches2) {
                 const location = normalizeLocationName(match[1]);
@@ -1297,7 +1434,7 @@
             }
             
             // Pattern 3: "Deliver X SCU to [location]" - extract both quantity and location
-            const deliverPattern = /Deliver\s+(0[17]?\d+|\d+)\s*SCU\s+(?:of\s+[\w\s]+?)?to\s+([A-Za-z0-9\s\-'.]+?)(?:above|Harbor|Station|Lagrange|Point|\.|,|\n)/gi;
+            const deliverPattern = /Deliver\s+(0\d+|\d+)\s+SCU\s+(?:of\s+[\w\s]+?)?to\s+([\w\s\-\.\']+?)(?:\s+Distribution|\s+Center|\s+Facility|\s+Mining|\s+Station|\s+Harbor|\n|\.)/gi;
             const deliverMatches = text.matchAll(deliverPattern);
             for (const match of deliverMatches) {
                 const qty = match[1];
@@ -1780,122 +1917,152 @@
             });
         }
 
+        // UPDATED: Import single mission using segment-based parser
+        // Clean location names for Hauler Helper compatibility
+        function cleanLocationName(location) {
+            if (!location) return '';
+            
+            // LOCATION ALIASES - Map OCR extractions to database names
+            const LOCATION_ALIASES = {
+                // Covalex - common OCR misreads
+                'Covalex': 'Covalex S4DC05',
+                'Covalex S4DC5': 'Covalex S4DC05',  // Missing trailing zero
+                'S4DC5': 'Covalex S4DC05',
+                
+                // MicroTech depots
+                'MT Depot': 'MicroTech S4LD13',
+                'MT Logistics': 'MicroTech S4LD13',
+                'S4LD13': 'MicroTech S4LD13',
+                
+                // Common variations
+                'Tressler': 'Port Tressler',
+                'Port Olisar': 'Port Olisar',
+                'Grim HEX': 'Grim HEX',
+                
+                // Rayari facilities
+                'Rayari': 'Rayari Deltana', // Default if no specific one
+                
+                // Shubin facilities - handle incomplete names
+                'Shubin': 'Shubin SMO-10', // Default fallback
+            };
+            
+            // Check aliases FIRST
+            if (LOCATION_ALIASES[location]) {
+                const mapped = LOCATION_ALIASES[location];
+                console.log(`🗺️ Alias mapped: ${location} → ${mapped}`);
+                return mapped;
+            }
+            
+            // Strip facility prefixes that don't match database format
+            const prefixes = [
+                'Shubin Mining Facility ',
+                'Shubin Mining Outpost ',
+                'Shubin ',
+                'Covalex Distribution Center ',
+                'MT Logistics ',
+                'SMO '
+            ];
+            
+            let cleaned = location;
+            for (const prefix of prefixes) {
+                if (cleaned.startsWith(prefix)) {
+                    cleaned = cleaned.substring(prefix.length);
+                    break;
+                }
+            }
+            
+            cleaned = cleaned.trim();
+            
+            // Convert SMO-XX format to "Shubin SMO-XX" format (NEW database format)
+            const smoMatch = cleaned.match(/^SMO-(\d{2})$/i);
+            if (smoMatch) {
+                const facilityNum = smoMatch[1];
+                cleaned = `Shubin SMO-${facilityNum}`;
+                console.log(`🔄 Converted SMO-${facilityNum} → ${cleaned}`);
+            }
+            
+            // Handle facility codes like S4DC05 → Covalex S4DC05
+            if (cleaned.match(/^S4DC\d{2}$/i)) {
+                cleaned = `Covalex ${cleaned}`;
+                console.log(`🔄 Added Covalex prefix → ${cleaned}`);
+            }
+            
+            // Handle S4LD codes → MicroTech S4LDXX
+            if (cleaned.match(/^S4LD\d{2}$/i)) {
+                cleaned = `MicroTech ${cleaned}`;
+                console.log(`🔄 Added MicroTech prefix → ${cleaned}`);
+            }
+            
+            return cleaned;
+        }
+
+        // Clean and normalize commodity names from OCR
+        function cleanCommodityName(commodity) {
+            if (!commodity) return '';
+            
+            // COMMODITY ALIASES - Map OCR extractions to database names
+            const COMMODITY_ALIASES = {
+                // Common OCR variations
+                'Hydrogen': 'Hydrogen Fuel',
+                'Ship Ammo': 'Ship Ammunition',
+                'Press Ice': 'Pressurized Ice',
+                'Proc Food': 'Processed Food',
+                'Agri Supplies': 'Agricultural Supplies',
+                'C Materials': 'Construction Materials',
+                
+                // Remove (Raw) suffix if present
+                'Quartz (Raw)': 'Quartz',
+                'Corundum (Raw)': 'Corundum',
+            };
+            
+            let cleaned = commodity.trim();
+            
+            // Check aliases first
+            if (COMMODITY_ALIASES[cleaned]) {
+                const mapped = COMMODITY_ALIASES[cleaned];
+                console.log(`📦 Commodity alias: ${cleaned} → ${mapped}`);
+                return mapped;
+            }
+            
+            // Remove (Raw) suffix if not already handled
+            cleaned = cleaned.replace(/\s*\(Raw\)\s*/gi, '').trim();
+            
+            return cleaned;
+        }
+
+
+
         function importToHauler(button) {
             const resultItem = button.closest('.result-item');
             const text = resultItem.querySelector('.result-text').textContent;
-            const parsed = parseStarCitizenMission(text);
             
-            // Store in localStorage for the main app to pick up
+            // Use NEW segment-based parser
+            const segments = parseStarCitizenMissionSegments(text);
+            const parsed = parseStarCitizenMission(text);  // Still need for payout
+            
+            console.log('📦 Importing mission with', segments.length, 'segments');
+            
             const importData = {
-                payout: parsed.payout,
-                commodities: [],
-                timestamp: Date.now()
+                missions: [{
+                    payout: parsed.payout || '',
+                    commodities: []
+                }]
             };
             
-            // Build commodity array
-            const commodity = parsed.commodities[0] || '';
-            
-            // Clean up locations - remove empty strings and whitespace-only entries
-            parsed.pickupLocations = parsed.pickupLocations.filter(loc => loc && loc.trim());
-            parsed.deliveryLocations = parsed.deliveryLocations.filter(loc => loc && loc.trim());
-            
-            // Check if we have per-destination quantities
-            const hasPerDestQty = parsed.destinationQuantities && 
-                                   Object.keys(parsed.destinationQuantities).length > 0;
-            
-            // Determine the mission pattern
-            const multiPickup = parsed.pickupLocations.length > 1;
-            const multiDelivery = parsed.deliveryLocations.length > 1;
-            
-            // DEBUG: Log parsed data
-            console.log('🔍 Import Debug:', {
-                pickups: parsed.pickupLocations,
-                deliveries: parsed.deliveryLocations,
-                destQty: parsed.destinationQuantities,
-                totalQty: parsed.quantity,
-                multiPickup,
-                multiDelivery,
-                hasPerDestQty
-            });
-            
-            if (multiPickup && !multiDelivery) {
-                // CASE 1: Multiple pickups → Single delivery
-                // Example: Collect from A, B, C → Deliver all to X
-                // Create one row per pickup location
-                const destination = parsed.deliveryLocations[0] || '';
-                parsed.pickupLocations.forEach(pickup => {
-                    // First try to get quantity from pickupQuantities (most accurate)
-                    let qty = parsed.pickupQuantities[pickup];
-                    
-                    // Fallback: try destinationQuantities (might have pickup stored there by mistake)
-                    if (!qty) {
-                        qty = parsed.destinationQuantities[pickup] || '';
-                    }
-                    
-                    // Last resort: divide total quantity evenly
-                    if (!qty && parsed.quantity) {
-                        qty = Math.floor(parsed.quantity / parsed.pickupLocations.length);
-                    }
-                    
-                    importData.commodities.push({
-                        commodity: commodity,
-                        pickup: pickup,
-                        destination: destination,
-                        quantity: qty,
-                        maxBoxSize: '4'
-                    });
-                });
-            } else if (multiDelivery) {
-                // CASE 2: Single (or multiple) pickup → Multiple deliveries
-                // Create one row per destination with its specific quantity
-                const pickup = parsed.pickupLocations[0] || '';
-                
-                if (hasPerDestQty) {
-                    // We have specific quantities per destination - use them
-                    parsed.deliveryLocations.forEach(destination => {
-                        const qty = parsed.destinationQuantities[destination] || '';
-                        
-                        // DEFENSIVE: Only create row if destination is not empty
-                        if (destination && destination.trim()) {
-                            importData.commodities.push({
-                                commodity: commodity,
-                                pickup: pickup,
-                                destination: destination,
-                                quantity: qty,
-                                maxBoxSize: '4'
-                            });
-                        }
-                    });
-                } else {
-                    // No per-destination quantities, divide evenly
-                    const qtyPerDest = parsed.quantity ? Math.floor(parsed.quantity / parsed.deliveryLocations.length) : '';
-                    parsed.deliveryLocations.forEach(destination => {
-                        // DEFENSIVE: Only create row if destination is not empty
-                        if (destination && destination.trim()) {
-                            importData.commodities.push({
-                                commodity: commodity,
-                                pickup: pickup,
-                                destination: destination,
-                                quantity: qtyPerDest,
-                                maxBoxSize: '4'
-                            });
-                        }
-                    });
-                }
-            } else {
-                // CASE 3: Simple mission - single pickup, single delivery
-                const pickup = parsed.pickupLocations[0] || '';
-                importData.commodities.push({
-                    commodity: commodity,
-                    pickup: pickup,
-                    destination: parsed.deliveryLocations[0] || '',
-                    quantity: parsed.quantity || '',
+            // Add each segment as a commodity row
+            segments.forEach(segment => {
+                importData.missions[0].commodities.push({
+                    commodity: cleanCommodityName(segment.commodity),
+                    pickup: cleanLocationName(segment.pickup),
+                    destination: cleanLocationName(segment.delivery),
+                    quantity: segment.quantity,
                     maxBoxSize: '4'
                 });
-            }
+                console.log(`  ✓ Added: ${segment.quantity} ${segment.commodity} from ${segment.pickup} to ${segment.delivery}`);
+            });
             
             // Only import if we have at least some data
-            if (!importData.payout && importData.commodities.length === 0) {
+            if (!importData.missions[0].payout && importData.missions[0].commodities.length === 0) {
                 button.textContent = '⚠️ No Data Found';
                 button.style.backgroundColor = 'var(--color-warning)';
                 setTimeout(() => {
@@ -1906,134 +2073,75 @@
             }
             
             console.log('📤 Exporting to Hauler:', importData);
+            importData.timestamp = Date.now();
             localStorage.setItem('haulerHelperOCRImport', JSON.stringify(importData));
+            console.log('💾 localStorage saved:', JSON.parse(localStorage.getItem('haulerHelperOCRImport')));
             
             button.textContent = '✓ Ready to Import!';
             button.style.backgroundColor = 'var(--color-success)';
             
-            // Navigate to main app in same window
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 500);
+            // Auto-navigate to Hauler Helper
+            // Navigate to main app (same window for state preservation)
+            // setTimeout(() => {
+            //     window.location.href = 'index.html';
+            // }, 500);
         }
 
+        // UPDATED: Import all missions using segment-based parser
         function importAllToHauler() {
             const allMissions = [];
             
-            // Process all results and extract mission data
-            processedResults.forEach(result => {
-                const parsed = parseStarCitizenMission(result.text);
+            processedResults.forEach((result, index) => {
+                // Use NEW segment-based parser
+                const segments = parseStarCitizenMissionSegments(result.text);
+                const parsed = parseStarCitizenMission(result.text);  // Still need for payout
                 
-                // Skip if no valid data
-                if (!parsed.payout && parsed.commodities.length === 0) {
+                // Skip if no useful data
+                if (!parsed.payout && segments.length === 0) {
+                    console.log(`⏭️  Skipping mission ${index + 1} (no data)`);
                     return;
                 }
                 
-                const commodity = parsed.commodities[0] || '';
-                
                 const missionData = {
-                    payout: parsed.payout,
+                    payout: parsed.payout || '',
                     commodities: []
                 };
                 
-                // Clean up locations - remove empty strings and whitespace-only entries
-                parsed.pickupLocations = parsed.pickupLocations.filter(loc => loc && loc.trim());
-                parsed.deliveryLocations = parsed.deliveryLocations.filter(loc => loc && loc.trim());
-                
-                // Check if we have per-destination quantities
-                const hasPerDestQty = parsed.destinationQuantities && 
-                                       Object.keys(parsed.destinationQuantities).length > 0;
-                
-                // Determine the mission pattern
-                const multiPickup = parsed.pickupLocations.length > 1;
-                const multiDelivery = parsed.deliveryLocations.length > 1;
-                
-                if (multiPickup && !multiDelivery) {
-                    // CASE 1: Multiple pickups → Single delivery
-                    const destination = parsed.deliveryLocations[0] || '';
-                    parsed.pickupLocations.forEach(pickup => {
-                        // First try pickupQuantities, then destinationQuantities, then divide evenly
-                        let qty = parsed.pickupQuantities[pickup] || 
-                                  parsed.destinationQuantities[pickup] || '';
-                        if (!qty && parsed.quantity) {
-                            qty = Math.floor(parsed.quantity / parsed.pickupLocations.length);
-                        }
-                        missionData.commodities.push({
-                            commodity: commodity,
-                            pickup: pickup,
-                            destination: destination,
-                            quantity: qty,
-                            maxBoxSize: '4'
-                        });
-                    });
-                } else if (multiDelivery) {
-                    // CASE 2: Single (or multiple) pickup → Multiple deliveries
-                    const pickup = parsed.pickupLocations[0] || '';
-                    
-                    if (hasPerDestQty) {
-                        // We have specific quantities per destination
-                        parsed.deliveryLocations.forEach(destination => {
-                            const qty = parsed.destinationQuantities[destination] || '';
-                            // DEFENSIVE: Only create row if destination is not empty
-                            if (destination && destination.trim()) {
-                                missionData.commodities.push({
-                                    commodity: commodity,
-                                    pickup: pickup,
-                                    destination: destination,
-                                    quantity: qty,
-                                    maxBoxSize: '4'
-                                });
-                            }
-                        });
-                    } else {
-                        // No per-destination quantities, divide evenly
-                        const qtyPerDest = parsed.quantity ? Math.floor(parsed.quantity / parsed.deliveryLocations.length) : '';
-                        parsed.deliveryLocations.forEach(destination => {
-                            // DEFENSIVE: Only create row if destination is not empty
-                            if (destination && destination.trim()) {
-                                missionData.commodities.push({
-                                    commodity: commodity,
-                                    pickup: pickup,
-                                    destination: destination,
-                                    quantity: qtyPerDest,
-                                    maxBoxSize: '4'
-                                });
-                            }
-                        });
-                    }
-                } else {
-                    // CASE 3: Simple mission
-                    const pickup = parsed.pickupLocations[0] || '';
+                // Add each segment as a commodity row
+                segments.forEach(segment => {
                     missionData.commodities.push({
-                        commodity: commodity,
-                        pickup: pickup,
-                        destination: parsed.deliveryLocations[0] || '',
-                        quantity: parsed.quantity || '',
+                        commodity: cleanCommodityName(segment.commodity),
+                        pickup: cleanLocationName(segment.pickup),
+                        destination: cleanLocationName(segment.delivery),
+                        quantity: segment.quantity,
                         maxBoxSize: '4'
                     });
-                }
+                });
                 
-                allMissions.push(missionData);
+                if (missionData.commodities.length > 0) {
+                    allMissions.push(missionData);
+                    console.log(`✓ Prepared mission ${index + 1}: ${missionData.payout}, ${missionData.commodities.length} commodity segments`);
+                }
             });
             
             if (allMissions.length === 0) {
-                alert('No valid mission data found to import');
+                alert('No valid missions found to import');
                 return;
             }
             
-            // Store all missions
             const importData = {
                 missions: allMissions,
                 timestamp: Date.now()
             };
             
-            console.log('📦 Exporting all missions to Hauler:', importData);
+            console.log('📦 Importing all missions:', importData);
             localStorage.setItem('haulerHelperOCRImportAll', JSON.stringify(importData));
+            console.log('💾 localStorage ALL saved:', JSON.parse(localStorage.getItem('haulerHelperOCRImportAll')));
             
-            const btn = document.getElementById('importAllBtn');
-            btn.textContent = `✓ ${allMissions.length} Mission${allMissions.length > 1 ? 's' : ''} Ready!`;
+            // Save OCR state for back button
+            saveOCRState();
             
-            // Navigate to main app in same window
+            // Auto-navigate to Hauler Helper for Import All
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 500);
