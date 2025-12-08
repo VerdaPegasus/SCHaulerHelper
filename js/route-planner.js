@@ -227,9 +227,27 @@ function generateRoutePlan() {
                     if (otherLocationsPending.length > 0) {
                         console.log(`    🚫 BLOCKED: ${otherLocationsPending.join(', ')}`);
                         continue; // Skip warehouse - deliver to other locations first
-                    } else {
-                        console.log(`    ✅ ALLOWED: All non-warehouse deliveries complete`);
                     }
+                    
+                    // Check if there are still pickups at other locations that go TO this warehouse
+                    const otherLocationPickups = [];
+                    for (const [loc, data] of Object.entries(locationMap)) {
+                        if (loc !== primaryWarehouse) {
+                            const unpickedToWarehouse = data.pickups.filter(p => 
+                                allPickupIds.has(p.id) && p.destination === primaryWarehouse
+                            ).length;
+                            if (unpickedToWarehouse > 0) {
+                                otherLocationPickups.push(`${loc} (${unpickedToWarehouse} pickups)`);
+                            }
+                        }
+                    }
+                    
+                    if (otherLocationPickups.length > 0) {
+                        console.log(`    🚫 BLOCKED: Pickups remaining at ${otherLocationPickups.join(', ')}`);
+                        continue; // Skip warehouse - pick up from other locations first
+                    }
+                    
+                    console.log(`    ✅ ALLOWED: All non-warehouse deliveries complete & all pickups collected`);
                 }
                 
                 // Score by actual SCU delivered/picked up (not just item count)
