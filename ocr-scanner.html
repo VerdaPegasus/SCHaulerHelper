@@ -1,12 +1,13 @@
 <!-- 
     HAULER HELPER - OCR SCANNER
-    Version: v4.1.1-DEBUG-MODE
-    Updated: 2025-12-07 23:49:49
+    Version: v4.5.1-DELIVERY-FIX
+    Updated: 2025-12-09
     
-    🐛 OCR Scanner - NAVIGATION DISABLED
+    🔧 DELIVERY PARSING FIX
     
-    Auto-navigation to Hauler Helper is TEMPORARILY DISABLED
-    so you can see console logs after clicking "Import to Hauler"
+    Fixed regex patterns to capture full location names including facility identifiers.
+    Now correctly parses "Shubin Mining Facility SMO-10" instead of just "Shubin".
+    All delivery locations with their SCU quantities are now extracted correctly.
     
     TO USE:
     1. Upload screenshots
@@ -43,6 +44,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCR Scanner - Hauler Helper</title>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+    <!-- OCR Mappings for consistent name normalization -->
+    <script src="js/data/ocr-mappings.js"></script>
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/main.css">
     <style>
@@ -1260,7 +1263,10 @@
             // NEW APPROACH: Find all Deliver statements first, then find preceding Collect
             // This ensures each delivery gets paired with its specific collection
             // FIXED: Simpler pattern that handles newlines and captures full quantities
-            const deliverPattern = /Deliver\s+(0\d+|\d+)\s+SCU\s+(?:of\s+)?([\w\s\(\)]+?)\s+to\s+([\w\s\-\.\']+?)(?:\s+Distribution|\s+Center|\s+Facility|\s+Mining|\s+Station|\s+Harbor|\n|\.)/gi;
+            // CRITICAL FIX: Changed ending delimiter from "Mining|Facility" to " on " to capture full facility names
+            // Example: "Deliver 077 SCU of Pressurized Ice to Shubin Mining Facility SMO-10 on microTech"
+            // Now captures: "Shubin Mining Facility SMO-10" instead of just "Shubin"
+            const deliverPattern = /Deliver\s+(0\d+|\d+)\s+SCU\s+(?:of\s+)?([\w\s\(\)]+?)\s+to\s+([\w\s\-\.\']+?)\s+on\s+/gi;
             
             let deliverMatch;
             while ((deliverMatch = deliverPattern.exec(text)) !== null) {
@@ -1434,7 +1440,7 @@
             }
             
             // Pattern 3: "Deliver X SCU to [location]" - extract both quantity and location
-            const deliverPattern = /Deliver\s+(0\d+|\d+)\s+SCU\s+(?:of\s+[\w\s]+?)?to\s+([\w\s\-\.\']+?)(?:\s+Distribution|\s+Center|\s+Facility|\s+Mining|\s+Station|\s+Harbor|\n|\.)/gi;
+            const deliverPattern = /Deliver\s+(0\d+|\d+)\s+SCU\s+(?:of\s+[\w\s]+?)?to\s+([A-Za-z0-9\s\-\.\']+?)(?:\s+on\s+|\s+above\s+|\n|$)/gi;
             const deliverMatches = text.matchAll(deliverPattern);
             for (const match of deliverMatches) {
                 const qty = match[1];
@@ -1456,7 +1462,7 @@
             // "Salen B00 SCU of Tungsten to Baijini Point"
             // "[AnyWord] [quantity] SCU of [commodity] to [location]"
             // This ensures we don't miss quantities when OCR misreads "Deliver"
-            const flexDeliverPattern = /\b\w+\s+(0[178]?\d+|[B]\d{2,3}|\d+)\s*SCU\s+(?:of\s+[\w\s]+?)?to\s+([A-Za-z0-9\s\-'.]+?)(?:above|Harbor|Station|Lagrange|Point|\.|,|\n)/gi;
+            const flexDeliverPattern = /\b\w+\s+(0[178]?\d+|[B]\d{2,3}|\d+)\s*SCU\s+(?:of\s+[\w\s]+?)?to\s+([A-Za-z0-9\s\-'.]+?)(?:\s+on\s+|\s+above\s+|\s+Harbor|\s+Station|\s+Lagrange|\s+Point|\n|$)/gi;
             const flexMatches = text.matchAll(flexDeliverPattern);
             for (const match of flexMatches) {
                 const qty = match[1];
@@ -1478,7 +1484,7 @@
             }
             
             // Also check generic "to [location]" pattern for destinations without quantities
-            const toPattern1 = /(?:Deliver|to)\s+(?:[\d\/]+\s+SCU\s+of\s+[\w\s]+?)?to\s+([A-Za-z0-9\s\-'.]+?)(?:above|Harbor|Station|Lagrange|\.|,|\n)/gi;
+            const toPattern1 = /(?:Deliver|to)\s+(?:[\d\/]+\s+SCU\s+of\s+[\w\s]+?)?to\s+([A-Za-z0-9\s\-'.]+?)(?:\s+on\s+|\s+above\s+|Harbor|Station|Lagrange|\n|$)/gi;
             const toMatches1 = text.matchAll(toPattern1);
             for (const match of toMatches1) {
                 const location = normalizeLocationName(match[1]);
@@ -1922,38 +1928,16 @@
         function cleanLocationName(location) {
             if (!location) return '';
             
-            // LOCATION ALIASES - Map OCR extractions to database names
-            const LOCATION_ALIASES = {
-                // Covalex - common OCR misreads
-                'Covalex': 'Covalex S4DC05',
-                'Covalex S4DC5': 'Covalex S4DC05',  // Missing trailing zero
-                'S4DC5': 'Covalex S4DC05',
-                
-                // MicroTech depots
-                'MT Depot': 'MicroTech S4LD13',
-                'MT Logistics': 'MicroTech S4LD13',
-                'S4LD13': 'MicroTech S4LD13',
-                
-                // Common variations
-                'Tressler': 'Port Tressler',
-                'Port Olisar': 'Port Olisar',
-                'Grim HEX': 'Grim HEX',
-                
-                // Rayari facilities
-                'Rayari': 'Rayari Deltana', // Default if no specific one
-                
-                // Shubin facilities - handle incomplete names
-                'Shubin': 'Shubin SMO-10', // Default fallback
-            };
-            
-            // Check aliases FIRST
-            if (LOCATION_ALIASES[location]) {
-                const mapped = LOCATION_ALIASES[location];
-                console.log(`🗺️ Alias mapped: ${location} → ${mapped}`);
-                return mapped;
+            // 🆕 STEP 1: Apply OCR alias mapping FIRST
+            if (window.OCR_MAPPINGS) {
+                const normalized = window.OCR_MAPPINGS.applyLocationAlias(location);
+                if (normalized !== location) {
+                    console.log(`🗺️ Location alias: "${location}" → "${normalized}"`);
+                    return normalized;
+                }
             }
             
-            // Strip facility prefixes that don't match database format
+            // STEP 2: Strip facility prefixes that don't match database format
             const prefixes = [
                 'Shubin Mining Facility ',
                 'Shubin Mining Outpost ',
@@ -1973,7 +1957,7 @@
             
             cleaned = cleaned.trim();
             
-            // Convert SMO-XX format to "Shubin SMO-XX" format (NEW database format)
+            // STEP 3: Convert SMO-XX format to "Shubin SMO-XX" format
             const smoMatch = cleaned.match(/^SMO-(\d{2})$/i);
             if (smoMatch) {
                 const facilityNum = smoMatch[1];
@@ -2000,31 +1984,18 @@
         function cleanCommodityName(commodity) {
             if (!commodity) return '';
             
-            // COMMODITY ALIASES - Map OCR extractions to database names
-            const COMMODITY_ALIASES = {
-                // Common OCR variations
-                'Hydrogen': 'Hydrogen Fuel',
-                'Ship Ammo': 'Ship Ammunition',
-                'Press Ice': 'Pressurized Ice',
-                'Proc Food': 'Processed Food',
-                'Agri Supplies': 'Agricultural Supplies',
-                'C Materials': 'Construction Materials',
-                
-                // Remove (Raw) suffix if present
-                'Quartz (Raw)': 'Quartz',
-                'Corundum (Raw)': 'Corundum',
-            };
-            
             let cleaned = commodity.trim();
             
-            // Check aliases first
-            if (COMMODITY_ALIASES[cleaned]) {
-                const mapped = COMMODITY_ALIASES[cleaned];
-                console.log(`📦 Commodity alias: ${cleaned} → ${mapped}`);
-                return mapped;
+            // 🆕 STEP 1: Apply OCR alias mapping FIRST
+            if (window.OCR_MAPPINGS) {
+                const normalized = window.OCR_MAPPINGS.applyCommodityAlias(cleaned);
+                if (normalized !== cleaned) {
+                    console.log(`📦 Commodity alias: "${cleaned}" → "${normalized}"`);
+                    return normalized;
+                }
             }
             
-            // Remove (Raw) suffix if not already handled
+            // STEP 2: Remove (Raw) suffix if not already handled
             cleaned = cleaned.replace(/\s*\(Raw\)\s*/gi, '').trim();
             
             return cleaned;
