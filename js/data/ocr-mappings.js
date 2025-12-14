@@ -272,9 +272,13 @@ const LOCATION_ALIASES = {
  */
 const COMMODITY_ALIASES = {
     // Common abbreviations and OCR variations
-    'hydrogen': 'Hydrogen Fuel',
+    'hydrogen': 'Hydrogen',
+    'hydr0gen': 'Hydrogen',
+   
+
     'hydrogen fuel': 'Hydrogen Fuel',
-    'h2': 'Hydrogen Fuel',
+    'hydr0gen fuel': 'Hydrogen Fuel',
+
     
     'ship ammo': 'Ship Ammunition',               // CRITICAL FIX
     'ammunition': 'Ship Ammunition',
