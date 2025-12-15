@@ -23,6 +23,7 @@ window.GLOBAL_COMMODITIES = [
     "Scrap",
     "Ship Ammo",
     "Silicon",
+    "Souvenirs",
     "Stims",
     "Tin",
     "Titanium",
