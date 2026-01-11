@@ -269,13 +269,17 @@ function createCommodityRow(missionId, commodityId, showRemove) {
     const globalCommodities = window.GLOBAL_COMMODITIES || [];
     
     row.innerHTML = `
-        <input type="text" 
-               list="globalLocationList" 
-               placeholder="Pickup Location..."
-               class="location-input"
-               onchange="updateCommodity('${commodityId}', 'pickup', this.value)"
-               onfocus="this.select()"
-               autocomplete="off">
+        <div class="location-input-wrapper">
+            <input type="text" 
+                   list="globalLocationList" 
+                   placeholder="Pickup"
+                   class="location-input"
+                   onchange="updateCommodity('${commodityId}', 'pickup', this.value)"
+                   onfocus="clearLocationInput(this)"
+                   onkeydown="handleLocationInputKeydown(event)"
+                   autocomplete="off">
+            <button class="btn-clear-location" onclick="clearAndFocusLocation(this)" title="Clear and select new location">✕</button>
+        </div>
         
         <select onchange="updateCommodity('${commodityId}', 'commodity', this.value)">
             <option value="">Commodity</option>
@@ -294,13 +298,17 @@ function createCommodityRow(missionId, commodityId, showRemove) {
             <option value="32">Max: 32 SCU</option>
         </select>
         
-        <input type="text" 
-               list="globalLocationList" 
-               placeholder="Destination..."
-               class="location-input"
-               onchange="updateCommodity('${commodityId}', 'destination', this.value)"
-               onfocus="this.select()"
-               autocomplete="off">
+        <div class="location-input-wrapper">
+            <input type="text" 
+                   list="globalLocationList" 
+                   placeholder="Dropoff"
+                   class="location-input"
+                   onchange="updateCommodity('${commodityId}', 'destination', this.value)"
+                   onfocus="clearLocationInput(this)"
+                   onkeydown="handleLocationInputKeydown(event)"
+                   autocomplete="off">
+            <button class="btn-clear-location" onclick="clearAndFocusLocation(this)" title="Clear and select new location">✕</button>
+        </div>
         
         ${showRemove ? 
             `<button class="btn-remove-commodity" onclick="removeCommodityRow('${missionId}', '${commodityId}')">-</button>` :
@@ -447,4 +455,52 @@ function applyAutoFillPattern(mission, firstCommodity, system) {
         updateStats();
         saveSession();
     }, 100);
+}
+// =============================================================================
+// LOCATION INPUT HELPERS
+// =============================================================================
+
+/**
+ * Clear location input and show dropdown list on focus
+ */
+function clearLocationInput(input) {
+    // Only clear if it has a value and user is focusing to change it
+    if (input.value && input.selectionStart === 0 && input.selectionEnd === input.value.length) {
+        // Text is already selected, clear it and let dropdown show
+        setTimeout(() => {
+            input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }, 0);
+    }
+}
+
+/**
+ * Clear location input on button click and open dropdown
+ */
+function clearAndFocusLocation(button) {
+    const wrapper = button.closest('.location-input-wrapper');
+    if (!wrapper) return;
+    
+    const input = wrapper.querySelector('.location-input');
+    if (!input) return;
+    
+    input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.focus();
+    
+    // Trigger the dropdown to show by simulating typing
+    input.dispatchEvent(new Event('focus', { bubbles: true }));
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', ctrlKey: true }));
+}
+
+/**
+ * Handle keydown in location inputs for better UX
+ */
+function handleLocationInputKeydown(event) {
+    // If user presses Escape, clear the input and show fresh dropdown
+    if (event.key === 'Escape') {
+        event.target.value = '';
+        event.target.dispatchEvent(new Event('input', { bubbles: true }));
+        event.preventDefault();
+    }
 }

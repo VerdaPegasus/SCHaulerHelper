@@ -44,7 +44,7 @@
         }
         
         .header h1::after {
-            content: 'v4.0.0';
+            content: 'v4.0.2';
             position: absolute;
             top: -15px;
             right: 0;
@@ -218,10 +218,49 @@
 
         .commodity-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 80px 100px 1fr 40px;
+            grid-template-columns: 2fr 0.8fr 60px 80px 2fr 40px;
             gap: 10px;
             margin-bottom: 10px;
             align-items: center;
+        }
+
+        /* Location input wrapper for clear button */
+        .location-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .location-input-wrapper .location-input {
+            width: 100%;
+            padding-right: 35px; /* Space for clear button */
+        }
+
+        .btn-clear-location {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 16px;
+            transition: all 0.2s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .location-input-wrapper:hover .btn-clear-location,
+        .location-input-wrapper .location-input:focus + .btn-clear-location {
+            opacity: 1;
+            pointer-events: auto;
+            color: var(--color-warning);
+        }
+
+        .btn-clear-location:hover {
+            color: var(--color-error);
+            transform: scale(1.2);
         }
 
         .commodity-row select,
