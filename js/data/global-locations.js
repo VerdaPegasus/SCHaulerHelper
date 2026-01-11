@@ -107,14 +107,17 @@ window.GLOBAL_LOCATIONS = [
     "Long Forest",
     "Baljini",
     
-    // Nyx System (Future)
+    // Nyx System (Future) /////
     "Levski",
     "Delamar",
     
-    //Pyro
+    // Pyro System //////
 
-    //Pyro IV
+    // Pyro IV
     "Sacren's Plot",
+
+    // Pyro VI
+    "Canard View",
 
     // Add more as discovered...
 ];
