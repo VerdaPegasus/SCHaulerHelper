@@ -1293,7 +1293,7 @@
         .btn-reset {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            right: 120px; /* moved further left to avoid widget overlap */
             background-color: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             color: var(--text-secondary);
