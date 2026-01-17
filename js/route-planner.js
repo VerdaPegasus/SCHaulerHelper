@@ -209,45 +209,27 @@ function generateRoutePlan() {
                 
                 console.log(`    - Is primary warehouse: ${isWarehouse}`);
                 
-                // Block warehouse return if ANY non-warehouse location has pending deliveries
-                if (isWarehouse && hasDeliveriesHere) {
-                    console.log(`    🔒 WAREHOUSE RETURN CHECK:`);
+                // GENERAL DELIVERY BLOCKING: Don't deliver to a location if pickups to that location are still pending
+                if (hasDeliveriesHere) {
+                    console.log(`    🔒 DELIVERY CHECK:`);
                     
-                    // Check if any non-warehouse location has pending deliveries (on board or not)
-                    const otherLocationsPending = [];
+                    // Check if there are still pickups destined for this location
+                    const unpickedToHere = [];
                     for (const [loc, data] of Object.entries(locationMap)) {
-                        if (loc !== primaryWarehouse) {
-                            const pendingHere = data.deliveries.filter(d => allDeliveryIds.has(d.id)).length;
-                            if (pendingHere > 0) {
-                                otherLocationsPending.push(`${loc} (${pendingHere} pending)`);
-                            }
+                        const itemsToHere = data.pickups.filter(p => 
+                            allPickupIds.has(p.id) && p.destination === location
+                        ).length;
+                        if (itemsToHere > 0) {
+                            unpickedToHere.push(`${loc} (${itemsToHere} items)`);
                         }
                     }
                     
-                    if (otherLocationsPending.length > 0) {
-                        console.log(`    🚫 BLOCKED: ${otherLocationsPending.join(', ')}`);
-                        continue; // Skip warehouse - deliver to other locations first
+                    if (unpickedToHere.length > 0) {
+                        console.log(`    🚫 BLOCKED: Unpicked cargo bound for here: ${unpickedToHere.join(', ')}`);
+                        continue; // Skip - pick up all items for this location first
                     }
                     
-                    // Check if there are still pickups at other locations that go TO this warehouse
-                    const otherLocationPickups = [];
-                    for (const [loc, data] of Object.entries(locationMap)) {
-                        if (loc !== primaryWarehouse) {
-                            const unpickedToWarehouse = data.pickups.filter(p => 
-                                allPickupIds.has(p.id) && p.destination === primaryWarehouse
-                            ).length;
-                            if (unpickedToWarehouse > 0) {
-                                otherLocationPickups.push(`${loc} (${unpickedToWarehouse} pickups)`);
-                            }
-                        }
-                    }
-                    
-                    if (otherLocationPickups.length > 0) {
-                        console.log(`    🚫 BLOCKED: Pickups remaining at ${otherLocationPickups.join(', ')}`);
-                        continue; // Skip warehouse - pick up from other locations first
-                    }
-                    
-                    console.log(`    ✅ ALLOWED: All non-warehouse deliveries complete & all pickups collected`);
+                    console.log(`    ✅ ALLOWED: All items destined for ${location} have been picked up`);
                 }
                 
                 // Score by actual SCU delivered/picked up (not just item count)

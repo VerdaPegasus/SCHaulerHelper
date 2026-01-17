@@ -13,7 +13,19 @@
         <script src="js/data/global-locations.js?v=20250113"></script>
         <script src="js/data/global-commodities.js?v=20250113"></script>
         <script src="js/data/global-payouts.js?v=20250113"></script>
-    </head>
+        <!-- Bug/Feedback Reporting Widget -->
+        <script>
+          window.Userback = window.Userback || {};
+          Userback.access_token = "A-fR9mrfGGc7ZC7WP0pAOccUaJ4";
+          (function(d) {
+            var s = d.createElement('script');s.async = true;s.src = 'https://static.userback.io/widget/v1.js';(d.head || d.body).appendChild(s);
+          })(document);
+        </script>
+        <!-- Buy Me a Coffee Widget -->
+        <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="Wednesdaywoe" 
+            data-description="Support me on Buy me a coffee!" data-message="I'm fueled by espresso, thank you for enabling me" data-color="#BD5FFF" data-position="Right" data-x_margin="18" data-y_margin="80">
+        </script>
+        </head>
 
     <body data-theme="stardust">
         <!-- Global location datalist - used by all location inputs -->
@@ -796,7 +808,7 @@
 
             // Main initialization function
             function init() {
-                console.log('%c🎯 HAULER HELPER v4.0.0', 'background: #4dd4ac; color: #000; font-size: 16px; padding: 8px;');
+                console.log('%c🎯 HAULER HELPER', 'background: #4dd4ac; color: #000; font-size: 16px; padding: 8px;');
                 checkForOCRImport();
                 // Check if modules are loaded
             const requiredFunctions = [

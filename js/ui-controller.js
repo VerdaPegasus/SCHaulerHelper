@@ -9,6 +9,24 @@
 // =============================================================================
 
 /**
+ * Format a number in shorthand notation (10.45k, 507.3k, 2.7m, etc)
+ */
+function formatPayoutShorthand(value) {
+    if (typeof value === 'string') {
+        value = parseFloat(value.replace('k', '')) * 1000;
+    }
+    
+    const absValue = Math.abs(value);
+    
+    if (absValue >= 1000000) {
+        return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'm';
+    } else if (absValue >= 1000) {
+        return (value / 1000).toFixed(2).replace(/\.?0+$/, '') + 'k';
+    }
+    return value.toString();
+}
+
+/**
  * Update statistics display (payout, SCU, capacity)
  */
 function updateStats() {
@@ -25,8 +43,7 @@ function updateStats() {
         }
     });
     
-    const payoutK = Math.floor(totalPayout / 1000);
-    document.getElementById('totalPayout').textContent = payoutK + 'K';
+    document.getElementById('totalPayout').textContent = formatPayoutShorthand(totalPayout);
     
     // Calculate total SCU
     let totalSCU = 0;
