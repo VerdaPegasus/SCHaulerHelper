@@ -1,0 +1,182 @@
+export const LOCATIONS: string[] = [
+  // Space Stations
+  'Pyro Gateway - Stanton',
+  'Nyx Gateway - Stanton',
+
+  // Stanton System - Lagrange Points
+  'ARC-L1 Wide Forest',
+  'ARC-L2',
+  'ARC-L3 Modern Express',
+  'ARC-L4 Feint Glen',
+  'ARC-L5 Yellow Core',
+  'CRU-L1 Ambitious Dream',
+  'CRU-L2',
+  'CRU-L3',
+  'CRU-L4 Shallow Fields',
+  'CRU-L5 Beautiful Glen',
+  'HUR-L1 Green Glade',
+  'HUR-L2 Faithful Dream',
+  'HUR-L3 Thundering Express',
+  'HUR-L4 Melodic Fields',
+  'HUR-L5 High Course',
+  'MIC-L1 Shallow Frontier',
+  'MIC-L2 Long Forest',
+  'MIC-L3 Endless Odyssey',
+  'MIC-L4 Red Crossroads',
+  'MIC-L5 Modern Icarus',
+
+  // ArcCorp
+  'Area 18',
+  'Baijini Point',
+  // Lyria
+  'Humbolt Mines',
+  'Loveridge Mineral Reserve',
+  'Shubin Mining Facility SAL-2',
+  'Shubin Mining Facility SAL-5',
+  // Wala
+  'ArcCorp Mining Area 045',
+  'ArcCorp Mining Area 048',
+  'ArcCorp Mining Area 056',
+  'ArcCorp Mining Area 061',
+  'Samson & Sons Salvage',
+  'Shady Glen Farms',
+
+  // Crusader
+  'Orison',
+  'Remember Port Olisar <3',
+  'Seraphim Station',
+  // Cellin
+  'Gallete Family Farms',
+  'Hickes Research Outpost',
+  'Terra Mills HydroFarm',
+  'Tram & Myers Mining',
+  // Yela
+  'ArcCorp Mining Area 157',
+  'Benson Mining Outpost',
+  'Deakins Research Outpost',
+  'Grim HEX',
+  // Daymar
+  'ArcCorp Mining Area 141',
+  'Bountiful Harvest Hyroponics',
+  "Brio's Breaker Yard",
+  'Kudre Ore',
+  'Nuen Waste Management',
+  'Shubin Mining Facility SCD-1',
+
+  // Hurston
+  'Dupree Industrial',
+  'Everus Harbor',
+  'Greycat Complex-B',
+  'HDMS-Edmond',
+  'HDMS-Hadley',
+  'HDMS-Oparei',
+  'HDMS-Pinewood',
+  'HDMS-Stanhope',
+  'HDMS-Thedus',
+  'HDPC-Cassillo',
+  'HDPC-Farnesway',
+  'Lorville',
+  'Reclamation & Disposal Orinth',
+  'Sakura Sun Magnolia',
+  // Aberdeen
+  'HDMS-Anderson',
+  'HDMS-Norgaard',
+  // Arial
+  'HDMS-Bezdek',
+  'HDMS-Lathan',
+  // Magda
+  'HDMS-Hahn',
+  'HDMS-Pearlman',
+  // Ita
+  'HDMS-Ryder',
+  'HDMS-Woodruff',
+
+  // MicroTech
+  'Covalex S4DC05',
+  'Cry-Astro 19-02',
+  'Cry-Astro 34-12',
+  'Greycat Complex A',
+  'MicroTech S4LD01',
+  'MicroTech S4LD13',
+  'New Babbage',
+  'Port Tressler',
+  'Rayari Deltana',
+  'Sakura Sun Goldenrod',
+  'Shubin SMO-10',
+  'Shubin SMO-13',
+  'Shubin SMO-18',
+  'Shubin SMO-22',
+  // Caliope
+  'Rayari Anvik',
+  'Rayari Kaltag',
+  'Shubin SMCa-6',
+  'Shubin SMCa-8',
+  // Clio
+  'Rayari Cantwell',
+  'Rayari McGrath',
+  // Euterpe
+  "Bud's Growery",
+  'Devlin Scrap & Salvage',
+
+  // Nyx
+  'Pyro Gateway - Nyx',
+  'Stanton Gateway - Nyx',
+  'Levski',
+
+  // Pyro - Pyro I
+  'Gray Gardens Depot',
+  'Outpost 10Q-YK',
+  'Rustville',
+  "Stag's Rut",
+  // Monox
+  'Arid Reach',
+  "Jackson's Swap",
+  'Last Ditch',
+  'Slowburn Depot',
+  'Sunset Mesa',
+  "Yang's Place",
+  // Bloom
+  'Bueno Ravine',
+  "Carver's Ridge",
+  'Frigid Knot',
+  'Orbituary',
+  'Prospect Depot',
+  'Shadowfall',
+  "Shepherd's Rest",
+  'The Golden Riviera',
+  'The Yard',
+  'Windfall',
+  // Pyro IV
+  "Chawla's Beach",
+  "Dinger's Depot",
+  'Fallow Field',
+  "Goner's Deal",
+  "Sacren's Plot",
+  // Pyro V moons
+  'Ashland',
+  "Kabir's Post",
+  "Seer's Canyon",
+  'Outpost 12R',
+  "Prophet's Peak",
+  'FEO Canyon Depot',
+  'Outpost 08P',
+  // Terminus
+  'Blackrock Exchange',
+  "Bullock's Reach",
+  'Canard View',
+  'Kinder Plots',
+  'Last Landings',
+  'Outpost 56L',
+  'Rough Landing',
+  'Ruin Station',
+  "Scarper's Turn",
+  'Stonetree',
+  "Watcher's Depot",
+  // Pyro Lagrange
+  'Checkmate Station',
+  'Starlight Service Station',
+  'Patch City',
+  'Endgame',
+  'Dudley & Daughters',
+  'Megumi Refueling',
+].sort();
