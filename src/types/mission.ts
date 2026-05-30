@@ -4,7 +4,7 @@ export interface CommodityRow {
   pickup: string;
   destination: string;
   quantity: number;
-  maxBoxSize: 1 | 2 | 3 | 4;
+  maxBoxSize: 1 | 2 | 4 | 8 | 16 | 24 | 32;
 }
 
 export interface Mission {

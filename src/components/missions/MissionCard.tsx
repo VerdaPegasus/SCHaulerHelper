@@ -78,6 +78,7 @@ export function MissionCard({ mission, index }: MissionCardProps) {
             missionId={mission.id}
             commodity={commodity}
             showRemove={cIndex > 0}
+            rowIndex={cIndex}
           />
         ))}
       </div>

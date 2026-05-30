@@ -1,13 +1,6 @@
 export type ThemeId =
-  | 'stardust'
-  | 'lux'
-  | 'pulse'
-  | 'flow'
-  | 'dark'
-  | 'wednesday'
-  | 'moonshine'
-  | 'cassette'
-  | 'cetacean'
+  | 'stardust' | 'lux' | 'pulse' | 'flow' | 'dark'
+  | 'wednesday' | 'moonshine' | 'cassette' | 'cetacean'
   | 'cargo-explorer';
 
 export interface ThemeDefinition {

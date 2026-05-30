@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -11,6 +12,9 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useDeliveryStore } from '@/stores/deliveryStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useMissionStore } from '@/stores/missionStore';
+import { BoxBreakdownIcons } from './BoxBreakdownIcons';
+import { calculateBoxBreakdown } from '@/utils/box-breakdown';
 import type { CargoGroup } from '@/types';
 
 interface DraggableCargoCardProps {
@@ -19,7 +23,11 @@ interface DraggableCargoCardProps {
   onOpenColorPicker: (location: string) => void;
 }
 
-function DraggableCargoCard({ location, group, onOpenColorPicker }: DraggableCargoCardProps) {
+function DraggableCargoCard({
+  location,
+  group,
+  onOpenColorPicker,
+}: DraggableCargoCardProps) {
   const {
     attributes,
     listeners,
@@ -33,6 +41,9 @@ function DraggableCargoCard({ location, group, onOpenColorPicker }: DraggableCar
     opacity: isDragging ? 0.5 : undefined,
     borderColor: group.color,
   };
+
+  const deliveries = group.items.filter((i) => i.type === 'delivery');
+  const pickups = group.items.filter((i) => i.type === 'pickup');
 
   return (
     <div
@@ -57,6 +68,9 @@ function DraggableCargoCard({ location, group, onOpenColorPicker }: DraggableCar
           >
             {group.label}
           </span>
+          <span className="text-[10px] text-[var(--text-secondary)] shrink-0">
+            {group.totalSCU} SCU
+          </span>
         </div>
         <button
           type="button"
@@ -66,17 +80,62 @@ function DraggableCargoCard({ location, group, onOpenColorPicker }: DraggableCar
           title="Change color"
         />
       </div>
-      <div className="space-y-0.5">
-        {group.items.map((item, i) => (
-          <div
-            key={i}
-            className="flex justify-between text-xs text-[var(--text-secondary)]"
-          >
-            <span className="truncate">{item.commodity}</span>
-            <span className="ml-1 shrink-0">{item.quantity}</span>
+
+      {deliveries.length > 0 && (
+        <div className="mb-1">
+          <div className="text-[9px] font-bold uppercase text-green-400 mb-0.5">
+            Drop off
           </div>
-        ))}
-      </div>
+          {deliveries.map((item, i) => {
+            const breakdown = calculateBoxBreakdown(item.quantity, item.maxBoxSize);
+            return (
+              <div
+                key={i}
+                className="flex items-center justify-between text-xs text-[var(--text-secondary)] py-0.5"
+              >
+                <span className="truncate">
+                  <span className="text-[10px] font-semibold text-[var(--text-highlight)]">
+                    M{item.missionNum}
+                  </span>{' '}
+                  {item.commodity}
+                </span>
+                <span className="flex items-center gap-1 shrink-0 ml-1">
+                  <span>{item.quantity}</span>
+                  <BoxBreakdownIcons breakdown={breakdown} />
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {pickups.length > 0 && (
+        <div>
+          <div className="text-[9px] font-bold uppercase text-blue-400 mb-0.5">
+            Pick up
+          </div>
+          {pickups.map((item, i) => {
+            const breakdown = calculateBoxBreakdown(item.quantity, item.maxBoxSize);
+            return (
+              <div
+                key={i}
+                className="flex items-center justify-between text-xs text-[var(--text-secondary)] py-0.5"
+              >
+                <span className="truncate">
+                  <span className="text-[10px] font-semibold text-[var(--text-highlight)]">
+                    M{item.missionNum}
+                  </span>{' '}
+                  {item.commodity}
+                </span>
+                <span className="flex items-center gap-1 shrink-0 ml-1">
+                  <span>{item.quantity}</span>
+                  <BoxBreakdownIcons breakdown={breakdown} />
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -106,19 +165,24 @@ function DroppableCell({ cellIndex, children }: DroppableCellProps) {
 }
 
 export function CargoVisualizer() {
-  const cargoGroups = useDeliveryStore((s) => s.cargoGroups);
   const cargoGroupPositions = useDeliveryStore((s) => s.cargoGroupPositions);
   const cargoGridLayout = useDeliveryStore((s) => s.cargoGridLayout);
   const setGridLayout = useDeliveryStore((s) => s.setGridLayout);
   const moveCargoGroup = useDeliveryStore((s) => s.moveCargoGroup);
+  const getComputedCargoGroups = useDeliveryStore((s) => s.getComputedCargoGroups);
   const openColorPicker = useUIStore((s) => s.openColorPicker);
+  const missions = useMissionStore((s) => s.missions);
+
+  const computedCargoGroups = useMemo(
+    () => getComputedCargoGroups(missions),
+    [getComputedCargoGroups, missions],
+  );
 
   const totalCells = cargoGridLayout.cols * cargoGridLayout.rows;
 
-  // Build a reverse map: cell index → location key
   const cellToLocation: Record<number, string> = {};
   for (const [location, cellIndex] of Object.entries(cargoGroupPositions)) {
-    if (location in cargoGroups && cellIndex < totalCells) {
+    if (location in computedCargoGroups && cellIndex < totalCells) {
       cellToLocation[cellIndex] = location;
     }
   }
@@ -127,7 +191,7 @@ export function CargoVisualizer() {
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
     }),
-    useSensor(KeyboardSensor)
+    useSensor(KeyboardSensor),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -137,7 +201,6 @@ export function CargoVisualizer() {
     const location = active.id as string;
     const targetId = over.id as string;
 
-    // Extract cell index from droppable id "cell-N"
     if (!targetId.startsWith('cell-')) return;
     const toCellIndex = parseInt(targetId.replace('cell-', ''), 10);
 
@@ -146,11 +209,10 @@ export function CargoVisualizer() {
     }
   };
 
-  const hasGroups = Object.keys(cargoGroups).length > 0;
+  const hasGroups = Object.keys(computedCargoGroups).length > 0;
 
   return (
     <div className="space-y-3 p-3">
-      {/* Grid controls */}
       <div className="flex items-center gap-3">
         <label className="text-xs text-[var(--text-secondary)]">Cols:</label>
         <input
@@ -201,7 +263,7 @@ export function CargoVisualizer() {
                   {location ? (
                     <DraggableCargoCard
                       location={location}
-                      group={cargoGroups[location]}
+                      group={computedCargoGroups[location]}
                       onOpenColorPicker={openColorPicker}
                     />
                   ) : undefined}

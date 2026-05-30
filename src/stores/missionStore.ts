@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Mission, CommodityRow, Ship, SystemId, Category } from '@/types';
+import type { Mission, CommodityRow, Ship } from '@/types';
 import { findShipById } from '@/data';
 import { parsePayoutToNumber } from '@/utils/box-breakdown';
 
@@ -18,14 +18,10 @@ function generateCommodityId(): string {
 interface MissionState {
   missions: Mission[];
   selectedShip: Ship | null;
-  selectedSystem: SystemId | '';
-  selectedCategory: Category | '';
   hydrated: boolean;
 
-  // Ship & filter actions
+  // Ship actions
   setShip: (ship: Ship | null) => void;
-  setSystem: (system: SystemId | '') => void;
-  setCategory: (category: Category | '') => void;
 
   // Mission actions
   addMission: () => void;
@@ -43,19 +39,6 @@ interface MissionState {
     value: string | number
   ) => void;
 
-  // OCR import
-  importOCRMissions: (
-    parsed: Array<{
-      payout: number | null;
-      commodities: Array<{
-        commodity: string;
-        pickup: string;
-        destination: string;
-        quantity: number;
-      }>;
-    }>
-  ) => void;
-
   // Reset
   clearMissions: () => void;
   clearAll: () => void;
@@ -70,14 +53,10 @@ export const useMissionStore = create<MissionState>()(
     (set, get) => ({
       missions: [],
       selectedShip: null,
-      selectedSystem: '',
-      selectedCategory: '',
       hydrated: false,
 
-      // Ship & filters
+      // Ship
       setShip: (ship) => set({ selectedShip: ship }),
-      setSystem: (system) => set({ selectedSystem: system }),
-      setCategory: (category) => set({ selectedCategory: category }),
 
       // Mission CRUD
       addMission: () =>
@@ -165,40 +144,11 @@ export const useMissionStore = create<MissionState>()(
           ),
         })),
 
-      // OCR import — directly creates missions from parsed OCR data
-      importOCRMissions: (parsed) =>
-        set((state) => {
-          const newMissions = parsed.map((p) => {
-            const id = generateMissionId();
-            const payout = p.payout
-              ? (p.payout / 1000).toFixed(2).replace(/\.?0+$/, '') + 'k'
-              : '';
-            return {
-              id,
-              payout,
-              commodities: p.commodities.map((c) => ({
-                id: generateCommodityId(),
-                commodity: c.commodity,
-                pickup: c.pickup,
-                destination: c.destination,
-                quantity: c.quantity,
-                maxBoxSize: 4 as const,
-              })),
-            };
-          });
-          return { missions: [...state.missions, ...newMissions] };
-        }),
-
       // Reset
       clearMissions: () =>
         set({ missions: [] }),
       clearAll: () => {
-        set({
-          missions: [],
-          selectedShip: null,
-          selectedSystem: '',
-          selectedCategory: '',
-        });
+        set({ missions: [], selectedShip: null });
         localStorage.removeItem('haulerHelperSession');
         localStorage.removeItem('haulerHelperUI');
       },
@@ -222,8 +172,6 @@ export const useMissionStore = create<MissionState>()(
       partialize: (state) => ({
         missions: state.missions,
         selectedShipId: state.selectedShip?.id ?? null,
-        selectedSystem: state.selectedSystem,
-        selectedCategory: state.selectedCategory,
       }),
       onRehydrateStorage: () => {
         return (rehydrated?: MissionState) => {
@@ -273,5 +221,3 @@ export const useMissionStore = create<MissionState>()(
 // Selector hooks for granular subscriptions
 export const useMissions = () => useMissionStore((s) => s.missions);
 export const useShip = () => useMissionStore((s) => s.selectedShip);
-export const useSystem = () => useMissionStore((s) => s.selectedSystem);
-export const useCategory = () => useMissionStore((s) => s.selectedCategory);

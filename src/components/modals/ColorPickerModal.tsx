@@ -7,21 +7,28 @@ import { Button } from '@/components/ui/Button';
 
 export function ColorPickerModal() {
   const { colorPickerModal, closeColorPicker, theme } = useUIStore();
-  const { cargoGroups, updateCargoGroupColor } = useDeliveryStore();
+  const { cargoGroups, updateCargoGroupColor, updateCargoGroupLabel } = useDeliveryStore();
 
   const [selectedColor, setSelectedColor] = useState('#4dd4ac');
+  const [labelValue, setLabelValue] = useState('');
   const palette = THEME_COLOR_PALETTES[theme] ?? THEME_COLOR_PALETTES.stardust;
   const location = colorPickerModal.targetLocation;
 
   useEffect(() => {
     if (location && cargoGroups[location]) {
       setSelectedColor(cargoGroups[location].color);
+      setLabelValue(cargoGroups[location].label);
+    } else if (location) {
+      setLabelValue('');
     }
   }, [location, cargoGroups]);
 
   const handleConfirm = () => {
     if (location) {
       updateCargoGroupColor(location, selectedColor);
+      if (labelValue.trim()) {
+        updateCargoGroupLabel(location, labelValue.trim());
+      }
     }
     closeColorPicker();
   };
@@ -30,11 +37,23 @@ export function ColorPickerModal() {
     <Modal
       isOpen={colorPickerModal.isOpen}
       onClose={closeColorPicker}
-      title="Choose Color"
+      title="Edit Group"
       size="sm"
     >
       <ModalBody>
         <div className="space-y-4">
+          {/* Group label */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-[var(--text-secondary)] font-medium">Name</label>
+            <input
+              type="text"
+              value={labelValue}
+              onChange={(e) => setLabelValue(e.target.value)}
+              className="bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-color)] rounded-md px-2 py-1.5 text-sm"
+              placeholder="Group name"
+            />
+          </div>
+
           {/* Preset palette */}
           <div className="grid grid-cols-8 gap-2">
             {palette.map((color) => (

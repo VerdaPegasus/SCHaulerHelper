@@ -16,19 +16,6 @@ interface UIState {
   activeDeliveryTab: DeliveryTab;
   setActiveDeliveryTab: (tab: DeliveryTab) => void;
 
-  // Modals
-  ocrModalOpen: boolean;
-  openOCRModal: () => void;
-  closeOCRModal: () => void;
-
-  feedbackModalOpen: boolean;
-  openFeedbackModal: () => void;
-  closeFeedbackModal: () => void;
-
-  exportModalOpen: boolean;
-  openExportModal: () => void;
-  closeExportModal: () => void;
-
   colorPickerModal: ColorPickerState;
   openColorPicker: (location: string) => void;
   closeColorPicker: () => void;
@@ -47,21 +34,6 @@ export const useUIStore = create<UIState>()(
       // Delivery tabs
       activeDeliveryTab: 'route',
       setActiveDeliveryTab: (tab) => set({ activeDeliveryTab: tab }),
-
-      // OCR Modal
-      ocrModalOpen: false,
-      openOCRModal: () => set({ ocrModalOpen: true }),
-      closeOCRModal: () => set({ ocrModalOpen: false }),
-
-      // Feedback Modal
-      feedbackModalOpen: false,
-      openFeedbackModal: () => set({ feedbackModalOpen: true }),
-      closeFeedbackModal: () => set({ feedbackModalOpen: false }),
-
-      // Export Modal
-      exportModalOpen: false,
-      openExportModal: () => set({ exportModalOpen: true }),
-      closeExportModal: () => set({ exportModalOpen: false }),
 
       // Color Picker Modal
       colorPickerModal: { isOpen: false, targetLocation: null },

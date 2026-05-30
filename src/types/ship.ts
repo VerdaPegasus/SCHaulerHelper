@@ -3,5 +3,4 @@ export interface Ship {
   name: string;
   manufacturer: string;
   capacity: number;
-  grids?: number;
 }

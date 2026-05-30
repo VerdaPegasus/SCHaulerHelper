@@ -4,15 +4,33 @@ import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { Button } from '@/components/ui/Button';
 import type { CommodityRow as CommodityRowType } from '@/types';
 
+const BOX_SIZES = [1, 2, 4, 8, 16, 24, 32] as const;
+
+function autoMaxBoxSize(scu: number): 1 | 2 | 4 | 8 | 16 | 24 | 32 {
+  for (const size of [...BOX_SIZES].reverse()) {
+    if (scu >= size) return size;
+  }
+  return 1;
+}
+
 interface CommodityRowProps {
   missionId: string;
   commodity: CommodityRowType;
   showRemove: boolean;
+  rowIndex: number;
 }
 
-export function CommodityRow({ missionId, commodity, showRemove }: CommodityRowProps) {
+export function CommodityRow({ missionId, commodity, showRemove, rowIndex }: CommodityRowProps) {
   const updateCommodityRow = useMissionStore((s) => s.updateCommodityRow);
   const removeCommodityRow = useMissionStore((s) => s.removeCommodityRow);
+
+  const handleQuantityChange = (value: number) => {
+    updateCommodityRow(missionId, commodity.id, 'quantity', value || 0);
+    if (rowIndex === 0 && value > 0) {
+      const auto = autoMaxBoxSize(value);
+      updateCommodityRow(missionId, commodity.id, 'maxBoxSize', auto);
+    }
+  };
 
   return (
     <div className="grid grid-cols-[minmax(160px,1fr)_minmax(120px,1fr)_80px_100px_minmax(160px,1fr)_2rem] gap-2 items-center">
@@ -46,14 +64,7 @@ export function CommodityRow({ missionId, commodity, showRemove }: CommodityRowP
         min={1}
         value={commodity.quantity || ''}
         placeholder="SCU"
-        onChange={(e) =>
-          updateCommodityRow(
-            missionId,
-            commodity.id,
-            'quantity',
-            parseInt(e.target.value, 10) || 0
-          )
-        }
+        onChange={(e) => handleQuantityChange(parseInt(e.target.value, 10) || 0)}
         className="bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-color)] rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] w-full"
       />
 
@@ -65,7 +76,7 @@ export function CommodityRow({ missionId, commodity, showRemove }: CommodityRowP
             missionId,
             commodity.id,
             'maxBoxSize',
-            parseInt(e.target.value, 10) as 1 | 2 | 3 | 4
+            parseInt(e.target.value, 10) as 1 | 2 | 4 | 8 | 16 | 24 | 32,
           )
         }
         className="bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-color)] rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"

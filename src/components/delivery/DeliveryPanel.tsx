@@ -21,7 +21,11 @@ export function DeliveryPanel() {
         onTabChange={(id) => setActiveTab(id as DeliveryTab)}
       />
 
-      {activeTab === 'route' ? <RoutePlanner /> : <CargoVisualizer />}
+      {activeTab === 'route' ? (
+        <RoutePlanner />
+      ) : activeTab === 'cargo' ? (
+        <CargoVisualizer />
+      ) : null}
     </div>
   );
 }

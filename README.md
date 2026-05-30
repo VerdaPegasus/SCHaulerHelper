@@ -2,7 +2,10 @@
 
 A Star Citizen cargo hauling companion tool. Plan routes, manage commodities, track missions, and visualize cargo — all in your browser.
 
-Forked from [loeken/SCHaulerHelper](https://github.com/loeken/SCHaulerHelper) and rewritten in React + TypeScript with Vite.
+Forked from [loeken/SCHaulerHelper](https://github.com/loeken/SCHaulerHelper)
+All thanks and merit to @wednesdaywoeplays [youtube](https://www.youtube.com/@wednesdaywoeplays)
+
+
 
 ## Features
 
@@ -14,7 +17,7 @@ Forked from [loeken/SCHaulerHelper](https://github.com/loeken/SCHaulerHelper) an
 
 ## Tech stack
 
-[React 18](https://react.dev) · [TypeScript](https://www.typescriptlang.org) · [Vite 6](https://vite.dev) · [Tailwind CSS v4](https://tailwindcss.com) · [Zustand](https://github.com/pmndrs/zustand) · [@dnd-kit](https://dndkit.com) · [Tesseract.js](https://tesseract.projectnaptha.com)
+[React 18](https://react.dev) · [TypeScript](https://www.typescriptlang.org) · [Vite 6](https://vite.dev) · [Tailwind CSS v4](https://tailwindcss.com) · [Zustand](https://github.com/pmndrs/zustand) · [@dnd-kit](https://dndkit.com)
 
 ## Getting started
 
@@ -56,7 +59,7 @@ src/
 ├── data/               # Static data (commodities, locations, ships, payouts, themes)
 ├── stores/             # Zustand state stores (delivery, mission, ui)
 ├── types/              # TypeScript type definitions
-└── utils/              # Helpers (OCR, export, migration, box breakdown)
+└── utils/              # Helpers (export, migration, box breakdown)
 ```
 
 ## License
