@@ -12,8 +12,9 @@ export default defineConfig({
   },
   base: '/SCHaulerHelper/',
   server: {
+    host: true,
     port: 3000,
-    open: true,
+    open: !process.env.DOCKER,
   },
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
