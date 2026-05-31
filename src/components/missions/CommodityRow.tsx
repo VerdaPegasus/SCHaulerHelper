@@ -1,6 +1,6 @@
 import { useMissionStore } from '@/stores/missionStore';
-import { LOCATIONS, COMMODITIES } from '@/data';
-import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { COMMODITIES } from '@/data';
+import { LocationAutocomplete } from '@/components/ui/LocationAutocomplete';
 import { Button } from '@/components/ui/Button';
 import type { CommodityRow as CommodityRowType } from '@/types';
 
@@ -35,8 +35,7 @@ export function CommodityRow({ missionId, commodity, showRemove, rowIndex }: Com
   return (
     <div className="grid grid-cols-[minmax(160px,1fr)_minmax(120px,1fr)_80px_100px_minmax(160px,1fr)_2rem] gap-2 items-center">
       {/* Pickup */}
-      <SearchableSelect
-        options={LOCATIONS}
+      <LocationAutocomplete
         value={commodity.pickup}
         onChange={(v) => updateCommodityRow(missionId, commodity.id, 'pickup', v)}
         placeholder="Pickup"
@@ -91,8 +90,7 @@ export function CommodityRow({ missionId, commodity, showRemove, rowIndex }: Com
       </select>
 
       {/* Destination */}
-      <SearchableSelect
-        options={LOCATIONS}
+      <LocationAutocomplete
         value={commodity.destination}
         onChange={(v) =>
           updateCommodityRow(missionId, commodity.id, 'destination', v)

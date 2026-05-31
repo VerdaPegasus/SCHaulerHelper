@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { Ship } from '@/types';
 
 interface ShipSelectProps {
@@ -23,6 +24,8 @@ export function ShipSelect({ ships, value, onChange }: ShipSelectProps) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
+
   const filtered = search
     ? ships.filter(s =>
         s.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -30,8 +33,21 @@ export function ShipSelect({ ships, value, onChange }: ShipSelectProps) {
       )
     : ships;
 
+  useEffect(() => {
+    if (open && inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: 'fixed',
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 9999,
+      });
+    }
+  }, [open, filtered.length]);
+
   return (
-    <div className="flex flex-col gap-1 relative" ref={ref}>
+    <div className="flex flex-col gap-1" ref={ref}>
       <label className="text-xs text-[var(--text-secondary)] font-medium">Ship</label>
       <div className="relative">
         <input
@@ -74,8 +90,8 @@ export function ShipSelect({ ships, value, onChange }: ShipSelectProps) {
           </div>
         )}
       </div>
-      {open && (
-        <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md shadow-lg max-h-60 overflow-y-auto">
+      {open && createPortal(
+        <div style={dropdownStyle} className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md shadow-lg">
           {filtered.length === 0 ? (
             <div className="px-3 py-2 text-sm text-[var(--text-secondary)]">No ships match</div>
           ) : (
@@ -104,7 +120,8 @@ export function ShipSelect({ ships, value, onChange }: ShipSelectProps) {
               </button>
             ))
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

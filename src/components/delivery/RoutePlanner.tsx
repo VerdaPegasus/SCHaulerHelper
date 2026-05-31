@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -118,6 +118,8 @@ interface SortableRouteStopProps {
   outOfOrderDeliveries: Set<string>;
   stopDistances: number[];
   cargoGroups: Record<string, { label: string; color: string }>;
+  deliverySort: 'mission' | 'group';
+  pickupSort: 'mission' | 'group';
   onToggleStep: (index: number, stop: RouteStop) => void;
   onToggleItem: (key: string) => void;
 }
@@ -130,10 +132,13 @@ function SortableRouteStop({
   outOfOrderDeliveries,
   stopDistances,
   cargoGroups,
+  deliverySort,
+  pickupSort,
   onToggleStep,
   onToggleItem,
 }: SortableRouteStopProps) {
   const openColorPicker = useUIStore((s) => s.openColorPicker);
+  const selectedShip = useMissionStore((s) => s.selectedShip);
   const {
     attributes,
     listeners,
@@ -161,6 +166,11 @@ function SortableRouteStop({
     [stop.pickups, stopIndex, completion, invalidItems, cargoGroups, stop.location],
   );
 
+  const cargoAlert = selectedShip?.capacity != null && (stop.cargoAfterStop > selectedShip.capacity || stop.cargoAfterStop < 0);
+
+  const pickupSCU = stop.pickups.reduce((s, p) => s + p.quantity, 0);
+  const deliverySCU = stop.deliveries.reduce((s, d) => s + d.quantity, 0);
+
   return (
     <div
       ref={setNodeRef}
@@ -181,25 +191,22 @@ function SortableRouteStop({
             &#x2630;
           </button>
           <span className="text-sm font-semibold text-[var(--text-primary)] truncate">
-            {stop.location}
+            Stop {stopIndex + 1}: {stop.location}
           </span>
-          <span className="text-xs text-[var(--text-secondary)] whitespace-nowrap">
-            {stop.cargoBeforeStop} &rarr; {stop.cargoAfterStop} SCU
-          </span>
-          {stopDistances[stopIndex] >= 0 && (
-            <span className="text-xs text-[var(--text-secondary)] whitespace-nowrap">
-              &middot; {formatDistance(stopDistances[stopIndex])} next
-            </span>
-          )}
         </div>
-        <button
-          onClick={() => onToggleStep(stopIndex, stop)}
-          className={`w-5 h-5 rounded border-2 transition-colors cursor-pointer shrink-0 ${
-            done
-              ? 'bg-[var(--color-success)] border-[var(--color-success)]'
-              : 'border-[var(--border-color)] hover:border-[var(--color-primary)]'
-          }`}
-        />
+        <div className="flex items-center gap-2 shrink-0">
+          <span className={`rounded bg-[var(--bg-primary)] px-2 py-1 text-[11px] text-[var(--text-secondary)] tabular-nums ${cargoAlert ? 'border border-red-500' : ''}`}>
+            Cargo: {stop.cargoAfterStop}/{selectedShip?.capacity ?? '--'} SCU
+          </span>
+          <button
+            onClick={() => onToggleStep(stopIndex, stop)}
+            className={`w-5 h-5 rounded border-2 transition-colors cursor-pointer shrink-0 ${
+              done
+                ? 'bg-[var(--color-success)] border-[var(--color-success)]'
+                : 'border-[var(--border-color)] hover:border-[var(--color-primary)]'
+            }`}
+          />
+        </div>
       </div>
 
       {deliveryGroups.length > 0 && (
@@ -207,8 +214,13 @@ function SortableRouteStop({
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs text-[var(--color-success)] font-bold tracking-wider">&#9660; DELIVERY</span>
           </div>
-          {deliveryGroups.flatMap((group) =>
-            group.items.map((item, ri) => {
+          {deliveryGroups.flatMap((group) => {
+            const sortedItems = [...group.items].sort((a, b) =>
+              deliverySort === 'mission'
+                ? a.missionNum - b.missionNum
+                : a.groupLabel.localeCompare(b.groupLabel),
+            );
+            return sortedItems.map((item, ri) => {
               const breakdown = calculateBoxBreakdown(item.quantity, item.maxBoxSize);
               return (
                 <div
@@ -256,8 +268,8 @@ function SortableRouteStop({
                   <BoxBreakdownIcons breakdown={breakdown} />
                 </div>
               );
-            }),
-          )}
+            });
+          })}
         </div>
       )}
 
@@ -266,8 +278,13 @@ function SortableRouteStop({
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs text-[var(--color-warning)] font-bold tracking-wider">&#9650; PICKUP</span>
           </div>
-          {pickupGroups.flatMap((group) =>
-            group.items.map((item, ri) => {
+          {pickupGroups.flatMap((group) => {
+            const sortedItems = [...group.items].sort((a, b) =>
+              pickupSort === 'mission'
+                ? a.missionNum - b.missionNum
+                : a.groupLabel.localeCompare(b.groupLabel),
+            );
+            return sortedItems.map((item, ri) => {
               const breakdown = calculateBoxBreakdown(item.quantity, item.maxBoxSize);
               return (
                 <div
@@ -313,8 +330,37 @@ function SortableRouteStop({
                   <BoxBreakdownIcons breakdown={breakdown} />
                 </div>
               );
-            }),
-          )}
+            });
+          })}
+        </div>
+      )}
+
+      {(deliveryGroups.length > 0 || pickupGroups.length > 0) && (
+        <div className="mt-3 flex items-center justify-between gap-5 border-t border-[var(--border-color)] pt-3 text-xs">
+          <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+            <span className="tracking-wider uppercase">Distance next step:</span>
+            <span className="font-bold tabular-nums text-[var(--text-primary)]">
+              {stopDistances[stopIndex] >= 0 ? formatDistance(stopDistances[stopIndex]) : '--'}
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            {pickupSCU > 0 && (
+              <div className="flex items-center gap-1">
+                <span className="tracking-wider text-[var(--color-warning)] uppercase">
+                  &#9650; Pickup SCU:
+                </span>
+                <span className="font-bold text-[var(--text-primary)] tabular-nums">{pickupSCU}</span>
+              </div>
+            )}
+            {deliverySCU > 0 && (
+              <div className="flex items-center gap-1">
+                <span className="tracking-wider text-[var(--color-success)] uppercase">
+                  &#9660; Delivery SCU:
+                </span>
+                <span className="font-bold text-[var(--text-primary)] tabular-nums">{deliverySCU}</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -332,6 +378,7 @@ export function RoutePlanner() {
   const reorderStops = useDeliveryStore((s) => s.reorderStops);
   const getInvalidItems = useDeliveryStore((s) => s.getInvalidItems);
   const missions = useMissionStore((s) => s.missions);
+  const generateRoute = useDeliveryStore((s) => s.generateRoute);
 
   const currentStepIndex = useMemo(() => {
     for (let i = 0; i < routeStops.length; i++) {
@@ -351,13 +398,16 @@ export function RoutePlanner() {
       if (startIdx === -1) return [];
       return withIndex.slice(startIdx, startIdx + 2);
     }
-    if (routeViewMode === 'remaining') {
+    if (routeViewMode === 'remaining' || routeViewMode === 'incomplete') {
       return withIndex.filter(
         (item) => !isStepDone(routeStepCompletion, item.index, item.stop),
       );
     }
     return withIndex;
   }, [routeStops, routeViewMode, currentStepIndex, routeStepCompletion]);
+
+  const [deliverySort, setDeliverySort] = useState<'mission' | 'group'>('mission');
+  const [pickupSort, setPickupSort] = useState<'mission' | 'group'>('mission');
 
   const cargoGroups = useDeliveryStore((s) => s.cargoGroups);
 
@@ -385,8 +435,8 @@ export function RoutePlanner() {
 
   const stopDistances = useMemo(() => {
     return routeStops.map((stop, i) => {
-      if (i === 0) return -1;
-      return travelCost(routeStops[i - 1].location, stop.location);
+      if (i === routeStops.length - 1) return -1;
+      return travelCost(stop.location, routeStops[i + 1].location);
     });
   }, [routeStops]);
 
@@ -416,20 +466,47 @@ export function RoutePlanner() {
 
   return (
     <div className="space-y-3 p-3">
-      <div className="flex items-center justify-between gap-2">
-        <Select
-          value={routeViewMode}
-          onChange={(e) => setRouteViewMode(e.target.value as RouteViewMode)}
-          className="text-xs"
-        >
-          <option value="all">All Stops</option>
-          <option value="current">Current Only</option>
-          <option value="current-next">Current + Next</option>
-          <option value="remaining">Remaining</option>
-        </Select>
-        <Button variant="secondary" size="sm" onClick={resetSteps}>
-          Reset
-        </Button>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <Select
+            value={routeViewMode}
+            onChange={(e) => setRouteViewMode(e.target.value as RouteViewMode)}
+            className="text-xs"
+          >
+            <option value="all">All Stops</option>
+            <option value="incomplete">Incomplete Steps</option>
+            <option value="current">Current Only</option>
+            <option value="current-next">Current + Next</option>
+          </Select>
+          <div className="flex items-center gap-1">
+            <Button variant="secondary" size="sm" onClick={() => generateRoute(missions)} title="Recalculate route">
+              Recalc
+            </Button>
+            <Button variant="secondary" size="sm" onClick={resetSteps}>
+              Reset
+            </Button>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-xs text-[var(--text-secondary)]">
+          <span>
+            Delivery sort:{' '}
+            <button
+              onClick={() => setDeliverySort(s => s === 'mission' ? 'group' : 'mission')}
+              className="font-semibold text-[var(--color-success)] hover:underline cursor-pointer"
+            >
+              {deliverySort === 'mission' ? 'Mission' : 'Destination'}
+            </button>
+          </span>
+          <span>
+            Pickup sort:{' '}
+            <button
+              onClick={() => setPickupSort(s => s === 'mission' ? 'group' : 'mission')}
+              className="font-semibold text-[var(--color-warning)] hover:underline cursor-pointer"
+            >
+              {pickupSort === 'mission' ? 'Mission' : 'Destination'}
+            </button>
+          </span>
+        </div>
       </div>
 
       {visibleStops.length === 0 ? (
@@ -459,6 +536,8 @@ export function RoutePlanner() {
                   outOfOrderDeliveries={outOfOrderDeliveries}
                   stopDistances={stopDistances}
                   cargoGroups={cargoGroups}
+                  deliverySort={deliverySort}
+                  pickupSort={pickupSort}
                   onToggleStep={toggleStep}
                   onToggleItem={toggleRouteItem}
                 />

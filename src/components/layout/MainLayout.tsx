@@ -1,3 +1,5 @@
+import { useUIStore } from '@/stores/uiStore';
+import { THEMES } from '@/data';
 import { Header } from './Header';
 import { StatsPanel } from './StatsPanel';
 import { MissionPanel } from '@/components/missions/MissionPanel';
@@ -7,12 +9,26 @@ import { ColorPickerModal } from '@/components/modals/ColorPickerModal';
 declare const __BUILD_TIME__: string;
 
 export function MainLayout() {
+  const { theme, setTheme } = useUIStore();
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
  
       {/* App Banner */}
-      <div className="text-center pt-6 pb-1 px-4">
+      <div className="text-center pt-6 pb-1 px-4 relative">
+        <div className="absolute top-4 right-4">
+          <select
+            value={theme}
+            onChange={(e) => setTheme(e.target.value as typeof theme)}
+            className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded px-2 py-1 text-xs text-[var(--text-secondary)] cursor-pointer"
+          >
+            {THEMES.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <h1 className="text-3xl font-bold tracking-widest text-[var(--text-primary)]">
           HAULER HELPER
         </h1>

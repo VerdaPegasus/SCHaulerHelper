@@ -7,7 +7,6 @@ import type {
   RouteViewMode,
   Mission,
 } from '@/types';
-import { travelCost } from '@/data/location-graph';
 import { shortName } from '@/utils/short-name';
 
 const PALETTE = [
@@ -153,15 +152,8 @@ export const useDeliveryStore = create<DeliveryState>()(
                   .filter((p) => pendingPickups.has(`${p.from}|${p.commodity}|${p.to}|${p.missionIdx}`))
                   .reduce((s, p) => s + p.scu, 0);
 
-                const distance = stops.length > 0
-                  ? travelCost(stops[stops.length - 1].location, location)
-                  : 0;
-
-                const normalizedDistance = distance / 1e8;
-
                 const score = deliveryScu * 3 + pickupScu * 2
-                  + (deliveryScu > 0 && pickupScu > 0 ? 200 : 0)
-                  - normalizedDistance * 0.5;
+                  + (deliveryScu > 0 && pickupScu > 0 ? 200 : 0);
 
                 if (score > bestScore) {
                   bestScore = score;

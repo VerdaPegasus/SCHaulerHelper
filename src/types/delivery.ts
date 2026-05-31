@@ -39,4 +39,4 @@ export interface CargoGridLayout {
   rows: number;
 }
 
-export type RouteViewMode = 'all' | 'current' | 'current-next' | 'remaining';
+export type RouteViewMode = 'all' | 'current' | 'current-next' | 'remaining' | 'incomplete';

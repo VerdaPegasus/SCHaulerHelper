@@ -24,7 +24,6 @@ export function MissionPanel() {
   const addMission = useMissionStore((s) => s.addMission);
   const reorderMissions = useMissionStore((s) => s.reorderMissions);
   const generateRoute = useDeliveryStore((s) => s.generateRoute);
-
   // Regenerate route when missions change
   useEffect(() => {
     generateRoute(missions);

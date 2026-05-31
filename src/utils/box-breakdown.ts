@@ -39,8 +39,7 @@ export function formatPayoutShorthand(value: string | number): string {
 export function formatDistance(meters: number): string {
   if (meters >= 1e9) return `${(meters / 1e9).toFixed(2)} Gm`;
   if (meters >= 1e6) return `${(meters / 1e6).toFixed(2)} Mm`;
-  if (meters >= 1e3) return `${(meters / 1e3).toFixed(2)} km`;
-  return `${meters.toFixed(0)} m`;
+  return `${(meters / 1e3).toFixed(2)} km`;
 }
 
 export function parsePayoutToNumber(payout: string): number {
