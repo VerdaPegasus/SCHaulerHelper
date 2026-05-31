@@ -704,3 +704,6 @@ export function getSystem(location: string): string | null {
 export function getPlanet(location: string): string | null {
   return getSystem(location);
 }
+
+// Flat list of all location names derived from LOCATION_GRAPH
+export const LOCATIONS: string[] = [...new Set(Object.values(LOCATION_GRAPH).map(n => n.name))].sort();
