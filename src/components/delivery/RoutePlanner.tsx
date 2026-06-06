@@ -16,33 +16,17 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useDeliveryStore, itemKey } from '@/stores/deliveryStore';
+import { useDeliveryStore, isStepDone, itemKey } from '@/stores/deliveryStore';
 import { useUIStore } from '@/stores/uiStore';
 import { useMissionStore } from '@/stores/missionStore';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { BoxBreakdownIcons } from './BoxBreakdownIcons';
 import { calculateBoxBreakdown, formatDistance } from '@/utils/box-breakdown';
+import { CARGO_PALETTE } from '@/data';
 import { travelCost } from '@/data/location-graph';
 import { shortName } from '@/utils/short-name';
 import type { RouteStop, RouteViewMode } from '@/types';
-
-function isStepDone(
-  completion: Record<string, boolean>,
-  index: number,
-  stop: RouteStop,
-): boolean {
-  const totalItems = stop.deliveries.length + stop.pickups.length;
-  if (totalItems === 0) return false;
-  let done = 0;
-  for (let di = 0; di < stop.deliveries.length; di++) {
-    if (completion[itemKey(index, 'del', di)]) done++;
-  }
-  for (let pi = 0; pi < stop.pickups.length; pi++) {
-    if (completion[itemKey(index, 'pick', pi)]) done++;
-  }
-  return done === totalItems;
-}
 
 interface GroupedSection {
   label: string;
@@ -73,7 +57,6 @@ function groupItemsByLocation(
   cargoGroups: Record<string, { label: string; color: string }>,
   stopLocation: string,
 ): GroupedSection[] {
-  const FALLBACK_PALETTE = ['#4dd4ac', '#ec4899', '#fbbf24', '#8b5cf6', '#3b82f6', '#f97316', '#84cc16', '#06b6d4'];
   const groups = new Map<string, GroupedSection>();
   let colorIdx = Object.keys(cargoGroups).length;
   items.forEach((item, idx) => {
@@ -83,7 +66,7 @@ function groupItemsByLocation(
       groups.set(loc, {
         label: existing?.label ?? shortName(loc),
         location: loc,
-        color: existing?.color ?? FALLBACK_PALETTE[colorIdx++ % FALLBACK_PALETTE.length],
+        color: existing?.color ?? CARGO_PALETTE[colorIdx++ % CARGO_PALETTE.length],
         totalSCU: 0,
         items: [],
       });
@@ -104,7 +87,7 @@ function groupItemsByLocation(
       done: completion[key] ?? false,
       groupKey,
       groupLabel: grp?.label ?? shortName(groupKey),
-      groupColor: grp?.color ?? FALLBACK_PALETTE[colorIdx % FALLBACK_PALETTE.length],
+      groupColor: grp?.color ?? CARGO_PALETTE[colorIdx % CARGO_PALETTE.length],
     });
   });
   return Array.from(groups.values());

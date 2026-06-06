@@ -13,6 +13,11 @@ export const THEMES: ThemeDefinition[] = [
   { id: 'cargo-explorer', name: 'Cargo Explorer' },
 ];
 
+export const CARGO_PALETTE = [
+  '#4dd4ac', '#ec4899', '#fbbf24', '#8b5cf6',
+  '#3b82f6', '#f97316', '#84cc16', '#06b6d4', '#ef4444',
+];
+
 export const THEME_COLOR_PALETTES: Record<ThemeId, string[]> = {
   stardust: ['#4dd4ac', '#ec4899', '#fbbf24', '#8b5cf6', '#3b82f6', '#f97316', '#84cc16', '#06b6d4'],
   lux: ['#B4F500', '#9DFF00', '#32CD32', '#00D9FF', '#FFD600', '#FF4757', '#7FE800', '#d9f99d'],

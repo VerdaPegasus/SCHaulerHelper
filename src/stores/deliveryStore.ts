@@ -7,12 +7,8 @@ import type {
   RouteViewMode,
   Mission,
 } from '@/types';
+import { CARGO_PALETTE } from '@/data';
 import { shortName } from '@/utils/short-name';
-
-const PALETTE = [
-  '#4dd4ac', '#ec4899', '#fbbf24', '#8b5cf6',
-  '#3b82f6', '#f97316', '#84cc16', '#06b6d4', '#ef4444',
-];
 
 interface DeliveryState {
   routeStops: RouteStop[];
@@ -103,10 +99,8 @@ export const useDeliveryStore = create<DeliveryState>()(
 
           const stops: RouteStop[] = [];
           let currentCargo = 0;
-          let iteration = 0;
 
-          while (pendingDeliveries.size > 0 && iteration < 50) {
-            iteration++;
+          while (pendingDeliveries.size > 0) {
             let bestLocation: string | null = null;
             let bestScore = -1;
 
@@ -210,6 +204,55 @@ export const useDeliveryStore = create<DeliveryState>()(
             });
           }
 
+          // Fallback: schedule any remaining items the greedy loop couldn't place
+          if (pendingPickups.size > 0 || pendingDeliveries.size > 0) {
+            for (const location of locations) {
+              const remainingPickups = locationMap[location].pickups.filter((p) =>
+                pendingPickups.has(`${p.from}|${p.commodity}|${p.to}|${p.missionIdx}`),
+              );
+              const remainingDeliveries = locationMap[location].deliveries.filter((d) =>
+                pendingDeliveries.has(`${d.to}|${d.commodity}|${d.from}|${d.missionIdx}`),
+              );
+              if (remainingPickups.length === 0 && remainingDeliveries.length === 0) continue;
+
+              const delScu = remainingDeliveries.reduce((s, d) => s + d.scu, 0);
+              const picScu = remainingPickups.reduce((s, p) => s + p.scu, 0);
+              const cargoBefore = currentCargo;
+              currentCargo = currentCargo - delScu + picScu;
+
+              stops.push({
+                location,
+                pickups: remainingPickups.map((p) => ({
+                  missionNum: p.missionIdx,
+                  commodity: p.commodity,
+                  quantity: p.scu,
+                  maxBoxSize: p.maxBoxSize,
+                  from: p.from,
+                  to: p.to,
+                })),
+                deliveries: remainingDeliveries.map((d) => ({
+                  missionNum: d.missionIdx,
+                  commodity: d.commodity,
+                  quantity: d.scu,
+                  maxBoxSize: d.maxBoxSize,
+                  from: d.from,
+                  to: d.to,
+                })),
+                cargoBeforeStop: cargoBefore,
+                cargoAfterStop: currentCargo,
+              });
+
+              remainingDeliveries.forEach((d) => {
+                cargoOnBoard.delete(`${d.to}|${d.commodity}|${d.from}|${d.missionIdx}`);
+                pendingDeliveries.delete(`${d.to}|${d.commodity}|${d.from}|${d.missionIdx}`);
+              });
+              remainingPickups.forEach((p) => {
+                pendingPickups.delete(`${p.from}|${p.commodity}|${p.to}|${p.missionIdx}`);
+                cargoOnBoard.add(`${p.to}|${p.commodity}|${p.from}|${p.missionIdx}`);
+              });
+            }
+          }
+
           // Merge consecutive same-location stops
           const merged = new Map<string, RouteStop>();
           for (const stop of stops) {
@@ -250,7 +293,7 @@ export const useDeliveryStore = create<DeliveryState>()(
               const existing = saved[loc];
               newGroups[loc] = {
                 label: existing?.label ?? shortName(loc),
-                color: existing?.color ?? PALETTE[colorIdx % PALETTE.length],
+                color: existing?.color ?? CARGO_PALETTE[colorIdx % CARGO_PALETTE.length],
                 position: existing?.position ?? null,
               };
               if (!(loc in newPositions)) {
@@ -277,11 +320,7 @@ export const useDeliveryStore = create<DeliveryState>()(
       toggleStep: (stopIndex, stop) =>
         set((state) => {
           const next = { ...state.routeStepCompletion };
-          const allDone = stop.pickups.every((_, pi) =>
-            next[itemKey(stopIndex, 'pick', pi)]
-          ) && stop.deliveries.every((_, di) =>
-            next[itemKey(stopIndex, 'del', di)]
-          );
+          const allDone = isStepDone(next, stopIndex, stop);
           const newVal = !allDone;
           stop.deliveries.forEach((_, di) => {
             next[itemKey(stopIndex, 'del', di)] = newVal;
@@ -348,7 +387,7 @@ export const useDeliveryStore = create<DeliveryState>()(
               const existing = cargoGroups[c.destination];
               groupData[c.destination] = {
                 label: existing?.label ?? shortName(c.destination),
-                color: existing?.color ?? PALETTE[groupIdx % PALETTE.length],
+                color: existing?.color ?? CARGO_PALETTE[groupIdx % CARGO_PALETTE.length],
                 position: existing?.position ?? null,
                 totalSCU: 0,
                 type: 'delivery',
@@ -371,7 +410,7 @@ export const useDeliveryStore = create<DeliveryState>()(
                 const existing = cargoGroups[c.pickup];
                 groupData[c.pickup] = {
                   label: existing?.label ?? shortName(c.pickup),
-                  color: existing?.color ?? PALETTE[groupIdx % PALETTE.length],
+                  color: existing?.color ?? CARGO_PALETTE[groupIdx % CARGO_PALETTE.length],
                   position: existing?.position ?? null,
                   totalSCU: 0,
                   type: 'pickup',
@@ -431,13 +470,7 @@ export const useDeliveryStore = create<DeliveryState>()(
       getCurrentStepIndex: () => {
         const { routeStops, routeStepCompletion } = get();
         for (let i = 0; i < routeStops.length; i++) {
-          const stop = routeStops[i];
-          const allDone = stop.pickups.every((_, pi) =>
-            routeStepCompletion[itemKey(i, 'pick', pi)]
-          ) && stop.deliveries.every((_, di) =>
-            routeStepCompletion[itemKey(i, 'del', di)]
-          );
-          if (!allDone) return i;
+          if (!isStepDone(routeStepCompletion, i, routeStops[i])) return i;
         }
         return routeStops.length - 1;
       },
@@ -453,6 +486,23 @@ export const useDeliveryStore = create<DeliveryState>()(
     }
   )
 );
+
+export function isStepDone(
+  completion: Record<string, boolean>,
+  index: number,
+  stop: RouteStop,
+): boolean {
+  const totalItems = stop.deliveries.length + stop.pickups.length;
+  if (totalItems === 0) return false;
+  let done = 0;
+  for (let di = 0; di < stop.deliveries.length; di++) {
+    if (completion[itemKey(index, 'del', di)]) done++;
+  }
+  for (let pi = 0; pi < stop.pickups.length; pi++) {
+    if (completion[itemKey(index, 'pick', pi)]) done++;
+  }
+  return done === totalItems;
+}
 
 export function itemKey(stopIndex: number, type: 'del' | 'pick', itemIdx: number): string {
   return `step-${stopIndex}-${type}-${itemIdx}`;

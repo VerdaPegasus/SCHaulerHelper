@@ -110,95 +110,95 @@ export const LOCATION_GRAPH: Record<string, LocationNode> = {
   // --- Stanton Outposts ---
 
   // Lyria Outposts
-  'humbolt-mines': { id: 'humbolt-mines', name: 'Humbolt Mines', type: 'outpost', system: 'Stanton', x: 32903757824, y: 4811407360, z: 5319593984 },
-  'loveridge-mineral-reserve': { id: 'loveridge-mineral-reserve', name: 'Loveridge Mineral Reserve', type: 'outpost', system: 'Stanton', x: 32903757824, y: 4811407360, z: 5319593984 },
-  'shubin-sal-2': { id: 'shubin-sal-2', name: 'Shubin Mining Facility SAL-2', type: 'outpost', system: 'Stanton', x: 32903757824, y: 4811407360, z: 5319593984 },
-  'shubin-sal-5': { id: 'shubin-sal-5', name: 'Shubin Mining Facility SAL-5', type: 'outpost', system: 'Stanton', x: 32903757824, y: 4811407360, z: 5319593984 },
+  'humbolt-mines': { id: 'humbolt-mines', name: 'Humbolt Mines', type: 'outpost', system: 'Stanton', x: 32903444741, y: 4811250460, z: 5320000385 },
+  'loveridge-mineral-reserve': { id: 'loveridge-mineral-reserve', name: 'Loveridge Mineral Reserve', type: 'outpost', system: 'Stanton', x: 32903698296, y: 4811459015, z: 5319034805 },
+  'shubin-sal-2': { id: 'shubin-sal-2', name: 'Shubin Mining Facility SAL-2', type: 'outpost', system: 'Stanton', x: 32903254773, y: 4811370858, z: 5319804820 },
+  'shubin-sal-5': { id: 'shubin-sal-5', name: 'Shubin Mining Facility SAL-5', type: 'outpost', system: 'Stanton', x: 32903370728, y: 4811029823, z: 5319380938 },
 
   // Wala Outposts
-  'arccorp-045': { id: 'arccorp-045', name: 'ArcCorp Mining Area 045', type: 'outpost', system: 'Stanton', x: 33989439488, y: 5123699712, z: 4899110912 },
-  'arccorp-048': { id: 'arccorp-048', name: 'ArcCorp Mining Area 048', type: 'outpost', system: 'Stanton', x: 33989439488, y: 5123699712, z: 4899110912 },
-  'arccorp-056': { id: 'arccorp-056', name: 'ArcCorp Mining Area 056', type: 'outpost', system: 'Stanton', x: 33989439488, y: 5123699712, z: 4899110912 },
-  'arccorp-061': { id: 'arccorp-061', name: 'ArcCorp Mining Area 061', type: 'outpost', system: 'Stanton', x: 33989439488, y: 5123699712, z: 4899110912 },
-  'samson-sons': { id: 'samson-sons', name: 'Samson & Sons Salvage', type: 'outpost', system: 'Stanton', x: 33989439488, y: 5123699712, z: 4899110912 },
-  'shady-glen': { id: 'shady-glen', name: 'Shady Glen Farms', type: 'outpost', system: 'Stanton', x: 33989439488, y: 5123699712, z: 4899110912 },
+  'arccorp-045': { id: 'arccorp-045', name: 'ArcCorp Mining Area 045', type: 'outpost', system: 'Stanton', x: 33989312274, y: 5123904654, z: 4898652901 },
+  'arccorp-048': { id: 'arccorp-048', name: 'ArcCorp Mining Area 048', type: 'outpost', system: 'Stanton', x: 33989176986, y: 5123495719, z: 4899465796 },
+  'arccorp-056': { id: 'arccorp-056', name: 'ArcCorp Mining Area 056', type: 'outpost', system: 'Stanton', x: 33989596993, y: 5123445673, z: 4899496460 },
+  'arccorp-061': { id: 'arccorp-061', name: 'ArcCorp Mining Area 061', type: 'outpost', system: 'Stanton', x: 33989062932, y: 5123644389, z: 4898898053 },
+  'samson-sons': { id: 'samson-sons', name: 'Samson & Sons Salvage', type: 'outpost', system: 'Stanton', x: 33989810278, y: 5123854051, z: 4898688673 },
+  'shady-glen': { id: 'shady-glen', name: 'Shady Glen Farms', type: 'outpost', system: 'Stanton', x: 33989435678, y: 5123299315, z: 4899457242 },
 
   // Cellin Outposts
-  'gallete-farms': { id: 'gallete-farms', name: 'Gallete Family Farms', type: 'outpost', system: 'Stanton', x: -18143768576, y: 4743823360, z: -15137264640 },
-  'hickes-research': { id: 'hickes-research', name: 'Hickes Research Outpost', type: 'outpost', system: 'Stanton', x: -18143768576, y: 4743823360, z: -15137264640 },
-  'terra-mills': { id: 'terra-mills', name: 'Terra Mills HydroFarm', type: 'outpost', system: 'Stanton', x: -18143768576, y: 4743823360, z: -15137264640 },
-  'tram-myers': { id: 'tram-myers', name: 'Tram & Myers Mining', type: 'outpost', system: 'Stanton', x: -18143768576, y: 4743823360, z: -15137264640 },
+  'gallete-farms': { id: 'gallete-farms', name: 'Gallete Family Farms', type: 'outpost', system: 'Stanton', x: -18143867151, y: 4743981487, z: -15136742376 },
+  'hickes-research': { id: 'hickes-research', name: 'Hickes Research Outpost', type: 'outpost', system: 'Stanton', x: -18143737786, y: 4743837239, z: -15136840099 },
+  'terra-mills': { id: 'terra-mills', name: 'Terra Mills HydroFarm', type: 'outpost', system: 'Stanton', x: -18143870582, y: 4743374602, z: -15137543383 },
+  'tram-myers': { id: 'tram-myers', name: 'Tram & Myers Mining', type: 'outpost', system: 'Stanton', x: -18143395646, y: 4743950221, z: -15137424445 },
 
   // Yela Outposts
-  'arccorp-157': { id: 'arccorp-157', name: 'ArcCorp Mining Area 157', type: 'outpost', system: 'Stanton', x: -19421607936, y: 4583866368, z: -14809772032 },
-  'benson-mining': { id: 'benson-mining', name: 'Benson Mining Outpost', type: 'outpost', system: 'Stanton', x: -19421607936, y: 4583866368, z: -14809772032 },
-  'deakins-research': { id: 'deakins-research', name: 'Deakins Research Outpost', type: 'outpost', system: 'Stanton', x: -19421607936, y: 4583866368, z: -14809772032 },
+  'arccorp-157': { id: 'arccorp-157', name: 'ArcCorp Mining Area 157', type: 'outpost', system: 'Stanton', x: -19421660291, y: 4583726845, z: -14810244787 },
+  'benson-mining': { id: 'benson-mining', name: 'Benson Mining Outpost', type: 'outpost', system: 'Stanton', x: -19421528660, y: 4584189177, z: -14810075654 },
+  'deakins-research': { id: 'deakins-research', name: 'Deakins Research Outpost', type: 'outpost', system: 'Stanton', x: -19421498715, y: 4584101139, z: -14809267543 },
 
   // Daymar Outposts
-  'arccorp-141': { id: 'arccorp-141', name: 'ArcCorp Mining Area 141', type: 'outpost', system: 'Stanton', x: -17204183040, y: 4914298880, z: -15174461440 },
-  'bountiful-harvest': { id: 'bountiful-harvest', name: 'Bountiful Harvest Hyroponics', type: 'outpost', system: 'Stanton', x: -17204183040, y: 4914298880, z: -15174461440 },
-  'brios-breaker': { id: 'brios-breaker', name: "Brio's Breaker Yard", type: 'outpost', system: 'Stanton', x: -17204183040, y: 4914298880, z: -15174461440 },
-  'kudre-ore': { id: 'kudre-ore', name: 'Kudre Ore', type: 'outpost', system: 'Stanton', x: -17204183040, y: 4914298880, z: -15174461440 },
-  'nuen-waste': { id: 'nuen-waste', name: 'Nuen Waste Management', type: 'outpost', system: 'Stanton', x: -17204183040, y: 4914298880, z: -15174461440 },
-  'shubin-scd-1': { id: 'shubin-scd-1', name: 'Shubin Mining Facility SCD-1', type: 'outpost', system: 'Stanton', x: -17204183040, y: 4914298880, z: -15174461440 },
+  'arccorp-141': { id: 'arccorp-141', name: 'ArcCorp Mining Area 141', type: 'outpost', system: 'Stanton', x: -17204197614, y: 4914245142, z: -15174974506 },
+  'bountiful-harvest': { id: 'bountiful-harvest', name: 'Bountiful Harvest Hyroponics', type: 'outpost', system: 'Stanton', x: -17204054530, y: 4914580888, z: -15173966082 },
+  'brios-breaker': { id: 'brios-breaker', name: "Brio's Breaker Yard", type: 'outpost', system: 'Stanton', x: -17204416853, y: 4914362826, z: -15174918825 },
+  'kudre-ore': { id: 'kudre-ore', name: 'Kudre Ore', type: 'outpost', system: 'Stanton', x: -17204160579, y: 4914061440, z: -15174053039 },
+  'nuen-waste': { id: 'nuen-waste', name: 'Nuen Waste Management', type: 'outpost', system: 'Stanton', x: -17204529505, y: 4914486321, z: -15174191301 },
+  'shubin-scd-1': { id: 'shubin-scd-1', name: 'Shubin Mining Facility SCD-1', type: 'outpost', system: 'Stanton', x: -17204164469, y: 4914351922, z: -15173993430 },
 
   // Hurston Outposts
-  'dupree-industrial': { id: 'dupree-industrial', name: 'Dupree Industrial', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'greycat-complex-b': { id: 'greycat-complex-b', name: 'Greycat Complex-B', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdms-edmond': { id: 'hdms-edmond', name: 'HDMS-Edmond', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdms-hadley': { id: 'hdms-hadley', name: 'HDMS-Hadley', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdms-oparei': { id: 'hdms-oparei', name: 'HDMS-Oparei', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdms-pinewood': { id: 'hdms-pinewood', name: 'HDMS-Pinewood', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdms-stanhope': { id: 'hdms-stanhope', name: 'HDMS-Stanhope', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdms-thedus': { id: 'hdms-thedus', name: 'HDMS-Thedus', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdpc-cassillo': { id: 'hdpc-cassillo', name: 'HDPC-Cassillo', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'hdpc-farnesway': { id: 'hdpc-farnesway', name: 'HDPC-Farnesway', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'reclamation-orinth': { id: 'reclamation-orinth', name: 'Reclamation & Disposal Orinth', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
-  'sakura-sun-magnolia': { id: 'sakura-sun-magnolia', name: 'Sakura Sun Magnolia', type: 'outpost', system: 'Stanton', x: -26759234560, y: -10396758016, z: 3244097536 },
+  'dupree-industrial': { id: 'dupree-industrial', name: 'Dupree Industrial', type: 'outpost', system: 'Stanton', x: -26758454197, y: -10397504862, z: 3245347168 },
+  'greycat-complex-b': { id: 'greycat-complex-b', name: 'Greycat Complex-B', type: 'outpost', system: 'Stanton', x: -26759061300, y: -10395035725, z: 3243730775 },
+  'hdms-edmond': { id: 'hdms-edmond', name: 'HDMS-Edmond', type: 'outpost', system: 'Stanton', x: -26758956389, y: -10396775293, z: 3245539076 },
+  'hdms-hadley': { id: 'hdms-hadley', name: 'HDMS-Hadley', type: 'outpost', system: 'Stanton', x: -26758270490, y: -10395337944, z: 3243986344 },
+  'hdms-oparei': { id: 'hdms-oparei', name: 'HDMS-Oparei', type: 'outpost', system: 'Stanton', x: -26758793630, y: -10396867881, z: 3245560346 },
+  'hdms-pinewood': { id: 'hdms-pinewood', name: 'HDMS-Pinewood', type: 'outpost', system: 'Stanton', x: -26758256358, y: -10396549358, z: 3243204039 },
+  'hdms-stanhope': { id: 'hdms-stanhope', name: 'HDMS-Stanhope', type: 'outpost', system: 'Stanton', x: -26759479774, y: -10396772928, z: 3242566533 },
+  'hdms-thedus': { id: 'hdms-thedus', name: 'HDMS-Thedus', type: 'outpost', system: 'Stanton', x: -26757939756, y: -10396078158, z: 3244353717 },
+  'hdpc-cassillo': { id: 'hdpc-cassillo', name: 'HDPC-Cassillo', type: 'outpost', system: 'Stanton', x: -26760156485, y: -10398036514, z: 3243257969 },
+  'hdpc-farnesway': { id: 'hdpc-farnesway', name: 'HDPC-Farnesway', type: 'outpost', system: 'Stanton', x: -26759169772, y: -10396917367, z: 3242890912 },
+  'reclamation-orinth': { id: 'reclamation-orinth', name: 'Reclamation & Disposal Orinth', type: 'outpost', system: 'Stanton', x: -26758965488, y: -10395321086, z: 3243899232 },
+  'sakura-sun-magnolia': { id: 'sakura-sun-magnolia', name: 'Sakura Sun Magnolia', type: 'outpost', system: 'Stanton', x: -26759441002, y: -10398310069, z: 3243438360 },
 
   // Aberdeen Outposts
-  'hdms-anderson': { id: 'hdms-anderson', name: 'HDMS-Anderson', type: 'outpost', system: 'Stanton', x: -28455798784, y: -8454120448, z: 3569098752 },
-  'hdms-norgaard': { id: 'hdms-norgaard', name: 'HDMS-Norgaard', type: 'outpost', system: 'Stanton', x: -28455798784, y: -8454120448, z: 3569098752 },
+  'hdms-anderson': { id: 'hdms-anderson', name: 'HDMS-Anderson', type: 'outpost', system: 'Stanton', x: -28455627217, y: -8453733682, z: 3568704917 },
+  'hdms-norgaard': { id: 'hdms-norgaard', name: 'HDMS-Norgaard', type: 'outpost', system: 'Stanton', x: -28455565406, y: -8454188419, z: 3568729170 },
 
   // Arial Outposts
-  'hdms-bezdek': { id: 'hdms-bezdek', name: 'HDMS-Bezdek', type: 'outpost', system: 'Stanton', x: -25762164736, y: -10364698624, z: 3029767168 },
-  'hdms-lathan': { id: 'hdms-lathan', name: 'HDMS-Lathan', type: 'outpost', system: 'Stanton', x: -25762164736, y: -10364698624, z: 3029767168 },
+  'hdms-bezdek': { id: 'hdms-bezdek', name: 'HDMS-Bezdek', type: 'outpost', system: 'Stanton', x: -25762539962, y: -10364970363, z: 3030040754 },
+  'hdms-lathan': { id: 'hdms-lathan', name: 'HDMS-Lathan', type: 'outpost', system: 'Stanton', x: -25762678051, y: -10364509299, z: 3029786309 },
 
   // Magda Outposts
-  'hdms-hahn': { id: 'hdms-hahn', name: 'HDMS-Hahn', type: 'outpost', system: 'Stanton', x: -25227634688, y: -10067617792, z: 3981975552 },
-  'hdms-pearlman': { id: 'hdms-pearlman', name: 'HDMS-Pearlman', type: 'outpost', system: 'Stanton', x: -25227634688, y: -10067617792, z: 3981975552 },
+  'hdms-hahn': { id: 'hdms-hahn', name: 'HDMS-Hahn', type: 'outpost', system: 'Stanton', x: -25228075277, y: -10067847167, z: 3982163192 },
+  'hdms-pearlman': { id: 'hdms-pearlman', name: 'HDMS-Pearlman', type: 'outpost', system: 'Stanton', x: -25227564814, y: -10067398894, z: 3982390715 },
 
   // Ita Outposts
-  'hdms-ryder': { id: 'hdms-ryder', name: 'HDMS-Ryder', type: 'outpost', system: 'Stanton', x: -27448064000, y: -11110930432, z: 3741856768 },
-  'hdms-woodruff': { id: 'hdms-woodruff', name: 'HDMS-Woodruff', type: 'outpost', system: 'Stanton', x: -27448064000, y: -11110930432, z: 3741856768 },
+  'hdms-ryder': { id: 'hdms-ryder', name: 'HDMS-Ryder', type: 'outpost', system: 'Stanton', x: -27448248126, y: -11111187796, z: 3742159086 },
+  'hdms-woodruff': { id: 'hdms-woodruff', name: 'HDMS-Woodruff', type: 'outpost', system: 'Stanton', x: -27447666297, y: -11111143945, z: 3741955013 },
 
   // Microtech Outposts
-  'covalex-s4dc05': { id: 'covalex-s4dc05', name: 'Covalex S4DC05', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
+  'covalex-s4dc05': { id: 'covalex-s4dc05', name: 'Covalex S4DC05', type: 'outpost', system: 'Stanton', x: -23908599458, y: 6914929110, z: -7473894859 },
   'cry-astro-19-02': { id: 'cry-astro-19-02', name: 'Cry-Astro 19-02', type: 'station', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
   'cry-astro-34-12': { id: 'cry-astro-34-12', name: 'Cry-Astro 34-12', type: 'station', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'greycat-complex-a': { id: 'greycat-complex-a', name: 'Greycat Complex A', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'microtech-s4ld01': { id: 'microtech-s4ld01', name: 'MicroTech S4LD01', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'microtech-s4ld13': { id: 'microtech-s4ld13', name: 'MicroTech S4LD13', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'rayari-deltana': { id: 'rayari-deltana', name: 'Rayari Deltana', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'sakura-sun-goldenrod': { id: 'sakura-sun-goldenrod', name: 'Sakura Sun Goldenrod', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'shubin-smo-10': { id: 'shubin-smo-10', name: 'Shubin SMO-10', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'shubin-smo-13': { id: 'shubin-smo-13', name: 'Shubin SMO-13', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'shubin-smo-18': { id: 'shubin-smo-18', name: 'Shubin SMO-18', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
-  'shubin-smo-22': { id: 'shubin-smo-22', name: 'Shubin SMO-22', type: 'outpost', system: 'Stanton', x: -23907530752, y: 6914310144, z: -7473033216 },
+  'greycat-complex-a': { id: 'greycat-complex-a', name: 'Greycat Complex A', type: 'outpost', system: 'Stanton', x: -23907662611, y: 6914642609, z: -7474205763 },
+  'microtech-s4ld01': { id: 'microtech-s4ld01', name: 'MicroTech S4LD01', type: 'outpost', system: 'Stanton', x: -23907431645, y: 6914337183, z: -7471757345 },
+  'microtech-s4ld13': { id: 'microtech-s4ld13', name: 'MicroTech S4LD13', type: 'outpost', system: 'Stanton', x: -23907110432, y: 6915507684, z: -7473799114 },
+  'rayari-deltana': { id: 'rayari-deltana', name: 'Rayari Deltana', type: 'outpost', system: 'Stanton', x: -23906883213, y: 6913630648, z: -7472205029 },
+  'sakura-sun-goldenrod': { id: 'sakura-sun-goldenrod', name: 'Sakura Sun Goldenrod', type: 'outpost', system: 'Stanton', x: -23908778340, y: 6913533029, z: -7472985815 },
+  'shubin-smo-10': { id: 'shubin-smo-10', name: 'Shubin SMO-10', type: 'outpost', system: 'Stanton', x: -23907565057, y: 6915459379, z: -7471964977 },
+  'shubin-smo-13': { id: 'shubin-smo-13', name: 'Shubin SMO-13', type: 'outpost', system: 'Stanton', x: -23906386990, y: 6914733428, z: -7473884089 },
+  'shubin-smo-18': { id: 'shubin-smo-18', name: 'Shubin SMO-18', type: 'outpost', system: 'Stanton', x: -23907661816, y: 6915186022, z: -7474337409 },
+  'shubin-smo-22': { id: 'shubin-smo-22', name: 'Shubin SMO-22', type: 'outpost', system: 'Stanton', x: -23907045587, y: 6914782015, z: -7471974598 },
 
   // Calliope Outposts
-  'rayari-anvik': { id: 'rayari-anvik', name: 'Rayari Anvik', type: 'outpost', system: 'Stanton', x: -24911392768, y: 6936068096, z: -7353786368 },
-  'rayari-kaltag': { id: 'rayari-kaltag', name: 'Rayari Kaltag', type: 'outpost', system: 'Stanton', x: -24911392768, y: 6936068096, z: -7353786368 },
-  'shubin-smca-6': { id: 'shubin-smca-6', name: 'Shubin SMCa-6', type: 'outpost', system: 'Stanton', x: -24911392768, y: 6936068096, z: -7353786368 },
-  'shubin-smca-8': { id: 'shubin-smca-8', name: 'Shubin SMCa-8', type: 'outpost', system: 'Stanton', x: -24911392768, y: 6936068096, z: -7353786368 },
+  'rayari-anvik': { id: 'rayari-anvik', name: 'Rayari Anvik', type: 'outpost', system: 'Stanton', x: -24910948722, y: 6936373943, z: -7353807768 },
+  'rayari-kaltag': { id: 'rayari-kaltag', name: 'Rayari Kaltag', type: 'outpost', system: 'Stanton', x: -24911373255, y: 6936072897, z: -7354315398 },
+  'shubin-smca-6': { id: 'shubin-smca-6', name: 'Shubin SMCa-6', type: 'outpost', system: 'Stanton', x: -24911049306, y: 6935790544, z: -7353596231 },
+  'shubin-smca-8': { id: 'shubin-smca-8', name: 'Shubin SMCa-8', type: 'outpost', system: 'Stanton', x: -24911218951, y: 6936570243, z: -7353806616 },
 
   // Clio Outposts
-  'rayari-cantwell': { id: 'rayari-cantwell', name: 'Rayari Cantwell', type: 'outpost', system: 'Stanton', x: -23139651584, y: 6444539904, z: -7552311296 },
-  'rayari-mcgrath': { id: 'rayari-mcgrath', name: 'Rayari McGrath', type: 'outpost', system: 'Stanton', x: -23139651584, y: 6444539904, z: -7552311296 },
+  'rayari-cantwell': { id: 'rayari-cantwell', name: 'Rayari Cantwell', type: 'outpost', system: 'Stanton', x: -23139567265, y: 6444115959, z: -7552425414 },
+  'rayari-mcgrath': { id: 'rayari-mcgrath', name: 'Rayari McGrath', type: 'outpost', system: 'Stanton', x: -23139517451, y: 6444679232, z: -7551864281 },
 
   // Euterpe Outposts
-  'buds-growery': { id: 'buds-growery', name: "Bud's Growery", type: 'outpost', system: 'Stanton', x: -24480688128, y: 6172803072, z: -7827476480 },
-  'devlin-scrap': { id: 'devlin-scrap', name: 'Devlin Scrap & Salvage', type: 'outpost', system: 'Stanton', x: -24480688128, y: 6172803072, z: -7827476480 },
+  'buds-growery': { id: 'buds-growery', name: "Bud's Growery", type: 'outpost', system: 'Stanton', x: -24480621966, y: 6172909694, z: -7826963769 },
+  'devlin-scrap': { id: 'devlin-scrap', name: 'Devlin Scrap & Salvage', type: 'outpost', system: 'Stanton', x: -24480959127, y: 6173252921, z: -7827246465 },
 
   // ===========================================
   // PYRO SYSTEM
@@ -274,52 +274,52 @@ export const LOCATION_GRAPH: Record<string, LocationNode> = {
   // --- Pyro Outposts ---
 
   // Pyro I Outposts
-  'gray-gardens': { id: 'gray-gardens', name: 'Gray Gardens Depot', type: 'outpost', system: 'Pyro', x: 117000000000, y: 19800000000, z: 20300000000 },
-  'outpost-10q-yk': { id: 'outpost-10q-yk', name: 'Outpost 10Q-YK', type: 'outpost', system: 'Pyro', x: 117000000000, y: 19800000000, z: 20300000000 },
-  'rustville': { id: 'rustville', name: 'Rustville', type: 'outpost', system: 'Pyro', x: 117000000000, y: 19800000000, z: 20300000000 },
-  'stags-rut': { id: 'stags-rut', name: "Stag's Rut", type: 'outpost', system: 'Pyro', x: 117000000000, y: 19800000000, z: 20300000000 },
+  'gray-gardens': { id: 'gray-gardens', name: 'Gray Gardens Depot', type: 'outpost', system: 'Pyro', x: 116999668678, y: 19799834476, z: 20298289039 },
+  'outpost-10q-yk': { id: 'outpost-10q-yk', name: 'Outpost 10Q-YK', type: 'outpost', system: 'Pyro', x: 117000500239, y: 19799511410, z: 20298930690 },
+  'rustville': { id: 'rustville', name: 'Rustville', type: 'outpost', system: 'Pyro', x: 117001146405, y: 19800159174, z: 20300791841 },
+  'stags-rut': { id: 'stags-rut', name: "Stag's Rut", type: 'outpost', system: 'Pyro', x: 117001342358, y: 19799350551, z: 20300847658 },
 
   // Monox Outposts
-  'arid-reach': { id: 'arid-reach', name: 'Arid Reach', type: 'outpost', system: 'Pyro', x: 118961152000, y: 20006934528, z: 20034469888 },
-  'jacksons-swap': { id: 'jacksons-swap', name: "Jackson's Swap", type: 'outpost', system: 'Pyro', x: 118961152000, y: 20006934528, z: 20034469888 },
-  'last-ditch': { id: 'last-ditch', name: 'Last Ditch', type: 'outpost', system: 'Pyro', x: 118961152000, y: 20006934528, z: 20034469888 },
-  'slowburn-depot': { id: 'slowburn-depot', name: 'Slowburn Depot', type: 'outpost', system: 'Pyro', x: 118961152000, y: 20006934528, z: 20034469888 },
-  'sunset-mesa': { id: 'sunset-mesa', name: 'Sunset Mesa', type: 'outpost', system: 'Pyro', x: 118961152000, y: 20006934528, z: 20034469888 },
-  'yangs-place': { id: 'yangs-place', name: "Yang's Place", type: 'outpost', system: 'Pyro', x: 118961152000, y: 20006934528, z: 20034469888 },
+  'arid-reach': { id: 'arid-reach', name: 'Arid Reach', type: 'outpost', system: 'Pyro', x: 118961346622, y: 20006821447, z: 20034084536 },
+  'jacksons-swap': { id: 'jacksons-swap', name: "Jackson's Swap", type: 'outpost', system: 'Pyro', x: 118961276851, y: 20006956106, z: 20034002035 },
+  'last-ditch': { id: 'last-ditch', name: 'Last Ditch', type: 'outpost', system: 'Pyro', x: 118961273476, y: 20007162696, z: 20034991291 },
+  'slowburn-depot': { id: 'slowburn-depot', name: 'Slowburn Depot', type: 'outpost', system: 'Pyro', x: 118961149024, y: 20006858164, z: 20034002367 },
+  'sunset-mesa': { id: 'sunset-mesa', name: 'Sunset Mesa', type: 'outpost', system: 'Pyro', x: 118961408522, y: 20006992598, z: 20034859169 },
+  'yangs-place': { id: 'yangs-place', name: "Yang's Place", type: 'outpost', system: 'Pyro', x: 118961067232, y: 20007406579, z: 20034534406 },
 
   // Bloom Outposts
-  'bueno-ravine': { id: 'bueno-ravine', name: 'Bueno Ravine', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'carvers-ridge': { id: 'carvers-ridge', name: "Carver's Ridge", type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'frigid-knot': { id: 'frigid-knot', name: 'Frigid Knot', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'orbituary': { id: 'orbituary', name: 'Orbituary', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'prospect-depot': { id: 'prospect-depot', name: 'Prospect Depot', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'shadowfall': { id: 'shadowfall', name: 'Shadowfall', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'shepherds-rest': { id: 'shepherds-rest', name: "Shepherd's Rest", type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'golden-riviera': { id: 'golden-riviera', name: 'The Golden Riviera', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'the-yard': { id: 'the-yard', name: 'The Yard', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
-  'windfall': { id: 'windfall', name: 'Windfall', type: 'outpost', system: 'Pyro', x: 115128827904, y: 19578992640, z: 20497582080 },
+  'bueno-ravine': { id: 'bueno-ravine', name: 'Bueno Ravine', type: 'outpost', system: 'Pyro', x: 115128772134, y: 19579121264, z: 20497084594 },
+  'carvers-ridge': { id: 'carvers-ridge', name: "Carver's Ridge", type: 'outpost', system: 'Pyro', x: 115128796876, y: 19579202050, z: 20497158287 },
+  'frigid-knot': { id: 'frigid-knot', name: 'Frigid Knot', type: 'outpost', system: 'Pyro', x: 115129005242, y: 19578767539, z: 20497991334 },
+  'orbituary': { id: 'orbituary', name: 'Orbituary', type: 'outpost', system: 'Pyro', x: 115128750775, y: 19579509098, z: 20497735701 },
+  'prospect-depot': { id: 'prospect-depot', name: 'Prospect Depot', type: 'outpost', system: 'Pyro', x: 115128668354, y: 19578883208, z: 20497072472 },
+  'shadowfall': { id: 'shadowfall', name: 'Shadowfall', type: 'outpost', system: 'Pyro', x: 115128574792, y: 19578905060, z: 20498094324 },
+  'shepherds-rest': { id: 'shepherds-rest', name: "Shepherd's Rest", type: 'outpost', system: 'Pyro', x: 115128688916, y: 19578989701, z: 20497969667 },
+  'golden-riviera': { id: 'golden-riviera', name: 'The Golden Riviera', type: 'outpost', system: 'Pyro', x: 115129157739, y: 19579192106, z: 20497138773 },
+  'the-yard': { id: 'the-yard', name: 'The Yard', type: 'outpost', system: 'Pyro', x: 115128608542, y: 19579120533, z: 20498098741 },
+  'windfall': { id: 'windfall', name: 'Windfall', type: 'outpost', system: 'Pyro', x: 115129220793, y: 19578894985, z: 20497351541 },
 
   // Pyro IV Outposts
-  'chawlas-beach': { id: 'chawlas-beach', name: "Chawla's Beach", type: 'outpost', system: 'Pyro', x: 140000000000, y: 16000000000, z: 19500000000 },
-  'dingers-depot': { id: 'dingers-depot', name: "Dinger's Depot", type: 'outpost', system: 'Pyro', x: 140000000000, y: 16000000000, z: 19500000000 },
-  'fallow-field': { id: 'fallow-field', name: 'Fallow Field', type: 'outpost', system: 'Pyro', x: 140000000000, y: 16000000000, z: 19500000000 },
-  'goners-deal': { id: 'goners-deal', name: "Goner's Deal", type: 'outpost', system: 'Pyro', x: 140000000000, y: 16000000000, z: 19500000000 },
-  'sacrens-plot': { id: 'sacrens-plot', name: "Sacren's Plot", type: 'outpost', system: 'Pyro', x: 140000000000, y: 16000000000, z: 19500000000 },
+  'chawlas-beach': { id: 'chawlas-beach', name: "Chawla's Beach", type: 'outpost', system: 'Pyro', x: 140000824259, y: 15998490393, z: 19499990807 },
+  'dingers-depot': { id: 'dingers-depot', name: "Dinger's Depot", type: 'outpost', system: 'Pyro', x: 139999519622, y: 15998903058, z: 19501299404 },
+  'fallow-field': { id: 'fallow-field', name: 'Fallow Field', type: 'outpost', system: 'Pyro', x: 140000287642, y: 16001603120, z: 19500078019 },
+  'goners-deal': { id: 'goners-deal', name: "Goner's Deal", type: 'outpost', system: 'Pyro', x: 139999695760, y: 15999953632, z: 19498362791 },
+  'sacrens-plot': { id: 'sacrens-plot', name: "Sacren's Plot", type: 'outpost', system: 'Pyro', x: 140000056015, y: 15999480235, z: 19498497776 },
 
   // Ignis Outposts
-  'ashland': { id: 'ashland', name: 'Ashland', type: 'outpost', system: 'Pyro', x: 127500000000, y: 17000000000, z: 19300000000 },
-  'kabirs-post': { id: 'kabirs-post', name: "Kabir's Post", type: 'outpost', system: 'Pyro', x: 127500000000, y: 17000000000, z: 19300000000 },
+  'ashland': { id: 'ashland', name: 'Ashland', type: 'outpost', system: 'Pyro', x: 127500445166, y: 17000269853, z: 19300014915 },
+  'kabirs-post': { id: 'kabirs-post', name: "Kabir's Post", type: 'outpost', system: 'Pyro', x: 127500000815, y: 16999999683, z: 19300506666 },
 
   // Vatra Outposts
-  'seers-canyon': { id: 'seers-canyon', name: "Seer's Canyon", type: 'outpost', system: 'Pyro', x: 131500000000, y: 17800000000, z: 19700000000 },
+  'seers-canyon': { id: 'seers-canyon', name: "Seer's Canyon", type: 'outpost', system: 'Pyro', x: 131500083934, y: 17800535797, z: 19699963927 },
 
   // Adir Outposts
-  'outpost-12r': { id: 'outpost-12r', name: 'Outpost 12R', type: 'outpost', system: 'Pyro', x: 126722891776, y: 17273344000, z: 18170265600 },
-  'prophets-peak': { id: 'prophets-peak', name: "Prophet's Peak", type: 'outpost', system: 'Pyro', x: 126722891776, y: 17273344000, z: 18170265600 },
+  'outpost-12r': { id: 'outpost-12r', name: 'Outpost 12R', type: 'outpost', system: 'Pyro', x: 126722765828, y: 17273438624, z: 18170781701 },
+  'prophets-peak': { id: 'prophets-peak', name: "Prophet's Peak", type: 'outpost', system: 'Pyro', x: 126722706880, y: 17273389477, z: 18169822419 },
 
   // Fairo Outposts
-  'feo-canyon-depot': { id: 'feo-canyon-depot', name: 'FEO Canyon Depot', type: 'outpost', system: 'Pyro', x: 130206531584, y: 17992347648, z: 17791428608 },
-  'outpost-08p': { id: 'outpost-08p', name: 'Outpost 08P', type: 'outpost', system: 'Pyro', x: 130206531584, y: 17992347648, z: 17791428608 },
+  'feo-canyon-depot': { id: 'feo-canyon-depot', name: 'FEO Canyon Depot', type: 'outpost', system: 'Pyro', x: 130206012008, y: 17992049445, z: 17791441863 },
+  'outpost-08p': { id: 'outpost-08p', name: 'Outpost 08P', type: 'outpost', system: 'Pyro', x: 130206616048, y: 17992758112, z: 17791572677 },
 
   // ===========================================
   // NYX SYSTEM
